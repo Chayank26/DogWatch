@@ -7,3 +7,6 @@ coverage/
 !.env.example
 *.tsbuildinfo
 .DS_Store
+
+# Generated Prisma sources are recreated by db:generate/build/typecheck.
+packages/database/src/generated/

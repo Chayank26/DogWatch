@@ -1,6 +1,6 @@
 # DogWatch
 
-Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the Phase 1.2 foundation and shared contracts, not a working QA service.
+Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the Phase 1.4 foundation, shared contracts, and local data services, not a working QA service.
 
 ## Local setup
 
@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:3000 for the website. The API health endpoint is http://127.0.0.1:4000/health. The worker prints its scaffold status; it does not consume jobs yet. No credentials, database, or Redis are required. `.env.example` documents future configuration; environment-file loading is not implemented for the API or worker.
+Open http://127.0.0.1:3000 for the website. The API health endpoint is http://127.0.0.1:4000/health. The worker prints its scaffold status; it does not consume jobs yet. The website/API scaffold still needs no credentials or data services. Local Postgres/Redis and migration tools are now available separately; follow [database setup](packages/database/README.md). API/worker environment-file loading is not implemented yet.
 
 ## Verification
 

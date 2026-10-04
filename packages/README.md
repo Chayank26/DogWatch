@@ -11,3 +11,7 @@
 - Root `test` script runs tests in workspaces that define a test command. No API or website tests are claimed by this command yet.
 
 Database, analysis, and reporting packages will be created when their first consumers need them.
+
+## Database — Phase 1.4
+
+See [database setup](database/README.md) for local Postgres/Redis, schema ownership, migrations, generated files, and verification. The package is available to future consumers but is not wired into the application shells.

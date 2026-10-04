@@ -1,0 +1,89 @@
+// Prisma generates typed query methods into ignored source files before compilation.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// Connection configuration lives in prisma.config.ts (Prisma 7 convention).
+datasource db {
+  provider = "postgresql"
+}
+
+// Mirrors the domain contract; orchestration must still enforce legal transitions.
+enum RunState {
+  received
+  queued
+  waiting_for_preview
+  running
+  reporting
+  completed
+  failed
+  cancelled
+  superseded
+}
+
+// Minimal organization record. Authentication/membership comes in a later phase.
+model Tenant {
+  id            String         @id @default(uuid()) @db.Uuid
+  name          String
+  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
+  installations Installation[]
+}
+
+// A GitHub installation belongs to one tenant. BigInt avoids truncating GitHub IDs.
+model Installation {
+  id           BigInt       @id
+  tenantId     String       @db.Uuid
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  repositories Repository[]
+
+  // Composite keys let descendants enforce tenant ownership in foreign keys.
+  @@unique([tenantId, id])
+}
+
+// Repository identity cannot be attached to another tenant's installation.
+model Repository {
+  id             BigInt       @id
+  tenantId       String       @db.Uuid
+  installationId BigInt
+  fullName       String
+  installation   Installation @relation(fields: [tenantId, installationId], references: [tenantId, id], onDelete: Restrict)
+  runs           Run[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, installationId])
+}
+
+// Snapshot JSON contains redacted effective policy/budgets, never secret values.
+// No rows are created by the website or health endpoint in this phase.
+model Run {
+  id                  String       @id @default(uuid()) @db.Uuid
+  tenantId            String       @db.Uuid
+  repositoryId        BigInt
+  deliveryId          String       @unique
+  pullRequestNumber   Int
+  headSha             String       @db.VarChar(40)
+  state               RunState     @default(received)
+  policySnapshot      Json
+  budgetSnapshot      Json
+  createdAt           DateTime     @default(now()) @db.Timestamptz(3)
+  repository          Repository   @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
+  outboxEvents        OutboxEvent[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, repositoryId, createdAt])
+}
+
+// An instruction saved atomically with a run; no dispatcher consumes it yet.
+model OutboxEvent {
+  id          String    @id @default(uuid()) @db.Uuid
+  tenantId    String    @db.Uuid
+  runId       String    @db.Uuid
+  kind        String    @default("run.requested")
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  publishedAt DateTime? @db.Timestamptz(3)
+  run         Run       @relation(fields: [tenantId, runId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([runId, kind])
+  @@index([publishedAt, createdAt])
+}

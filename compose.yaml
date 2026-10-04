@@ -1,0 +1,46 @@
+# Local development only: fixed disposable credentials are not production secrets.
+# Compose scopes service/volume names to this project to avoid other projects.
+name: dogwatch
+services:
+  postgres:
+    # Pin the major version; package-level migrations should work on this family.
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: dogwatch
+      POSTGRES_PASSWORD: dogwatch_local_only
+      POSTGRES_DB: dogwatch
+    # Loopback publication prevents exposing the database on the local network.
+    ports:
+      - '127.0.0.1:5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # $$ postpones variable expansion until the command runs inside the container.
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    # Append-only persistence and no eviction protect future queue keys locally.
+    command:
+      [
+        'redis-server',
+        '--appendonly',
+        'yes',
+        '--maxmemory-policy',
+        'noeviction',
+      ]
+    ports:
+      - '127.0.0.1:6380:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+# Named volumes survive ordinary down/up; down deliberately omits --volumes.
+volumes:
+  postgres_data:
+  redis_data:

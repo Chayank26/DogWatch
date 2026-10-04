@@ -1,6 +1,7 @@
 # ADR 002 — Persist accepted work before dispatching it
 
-**Status:** Accepted design; persistence not implemented.  
+**Status:** Accepted design; local schema/migration implemented in Phase 1.4, application persistence and dispatch not implemented.
+
 **Phase:** Part 1, Phase 1.3.
 
 ## Problem

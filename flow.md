@@ -55,3 +55,15 @@ A future worker will use PR #42's designated preview, disposable test data, and 
 Today these are Markdown files on the developer's filesystem, not stored customer records. The existing synthetic contract tests remain in memory. Later, Postgres will store authorized run metadata; the queue will carry dispatch references; workers will resolve protected credential references; private storage will hold evidence. None of those new data paths exists yet.
 
 Current user flow remains **browser → informational page**. The new design flow is **identified risk → chosen control → assigned phase → required verification**, preparing the next implementation step.
+
+## Part 1 · Phase 1.4 — Local Postgres/Redis and migrations
+
+Maya still sees the same informational page. It does not create an account or contact the database. The new behavior is available to developers setting up DogWatch locally, not yet through website forms.
+
+A developer starts the Compose services and applies the initial migration. Postgres now has empty tables for organizations, GitHub installations, repositories, PR runs, and dispatch instructions. Redis is ready for a future queue but receives no application jobs.
+
+The explicit database verification command temporarily acts out PawMart PR #42: create a synthetic organization and installation, connect a repository, save a run with an exact commit hash, and save its outbox instruction. It reads those records and rolls back the transaction. The sample organization and run therefore do not remain in storage. A second transaction attempts a mismatched-tenant relationship and must fail.
+
+Local database and Redis files live in Docker named volumes and survive ordinary service stop/start. The root `.env`, if created, holds only local connection configuration and is excluded from Git. Real GitHub credentials, users, findings, and screenshots are not stored in this phase.
+
+Current user flow: **browser → informational page**. New developer flow: **start local services → migrate Postgres → explicitly verify synthetic transactions → roll back fixtures**. Later ingress will use these tables for actual authorized run persistence.

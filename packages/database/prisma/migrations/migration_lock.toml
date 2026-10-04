@@ -1,0 +1,3 @@
+# Prisma uses this provider marker to keep migrations tied to PostgreSQL.
+# Commit this file with migrations; switching database engines needs a new plan.
+provider = "postgresql"

@@ -16,7 +16,15 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "infra:up": "docker compose up -d --wait",
+    "infra:down": "docker compose down",
+    "infra:status": "docker compose ps",
+    "db:generate": "npm run generate -w @dogwatch/database",
+    "db:validate": "npm run validate -w @dogwatch/database",
+    "db:migrate": "npm run migrate -w @dogwatch/database",
+    "db:status": "npm run migration:status -w @dogwatch/database",
+    "db:verify": "npm run verify -w @dogwatch/database"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

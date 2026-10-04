@@ -59,3 +59,25 @@ Next proposed phase: Part 1, Phase 1.4 — local Postgres/Redis and migrations. 
 ### Phase 1.3 verification
 
 Checked all eight local documentation links across the README and six new design documents; every target exists. Prettier formatting and Git whitespace checks passed. Reviewed the records against the current contracts and phase roadmap, and confirmed that the diff contains documentation only. Runtime tests and builds were not repeated because no code, dependencies, or configuration changed.
+
+## Part 1 · Phase 1.4 — Local Postgres/Redis and migrations
+
+- Added infrastructure separately from the web/API/worker so the existing informational experience still runs without databases. Wiring persistence into ingress belongs to Part 2.
+- Selected a small initial schema for tenancy relationships and durable run/outbox groundwork. Adding all future membership, evidence, usage, and lease models now would lock in untested requirements.
+- Enforced tenant-consistent relationships through composite foreign keys. This does not authorize reads; row-level policies and least-privilege application roles need their own later implementation and tests before real multi-tenant deployment.
+- Used named volumes and a non-destructive stop command. Automatic reset scripts were an alternative, but risk destroying local work. Used dedicated loopback ports to avoid common native service conflicts.
+- Created an explicit connection factory rather than a global client. Future services control pool lifetime and credentials; the health route remains a process-only check.
+- Made verification transactional and self-cleaning through rollback, without persistent seed data. A separate seeded environment is planned with the fixture/CI phase.
+- Kept generated client code ignored; hand-maintained source carries detailed comments, and package JSON configuration is explained in Markdown.
+
+Next proposed phase: Part 1, Phase 1.5 — CI and fixture application. Stop for approval before that work.
+
+### Dependency review
+
+npm audit reported four high-severity entries in Prisma 7.10.0's development CLI dependency chain (`prisma`, `@prisma/config`, `deepmerge-ts`, and `mysql2`). The reported risks involve recursive-object merging and MySQL protocol handling. DogWatch uses PostgreSQL and trusted local CLI configuration; the CLI is not exposed as an application endpoint. No forced major downgrade or unverified transitive-major override was applied. These advisories remain unresolved and must be revisited before deployment/toolchain exposure; advisory count does not represent four independent runtime defects.
+
+`npm audit --omit=dev` also reports the same entries because Prisma CLI/config packages remain reachable in npm's workspace/peer dependency graph. They must not be described as a clean production dependency audit even though the CLI is not invoked by the application factory. Separating deployment artifacts and removing CLI tooling from runtime images is future deployment work.
+
+### Phase 1.4 verification
+
+Docker Postgres and Redis became healthy; Redis returned PONG. The initial migration applied and its history row was confirmed in Postgres. Database verification passed for atomic run/outbox writes, rollback cleanup, and cross-tenant foreign-key rejection. Eight existing contract tests, all workspace type checks/builds, ESLint, formatting, and Git whitespace checks passed. No row-level authorization, queue processing, or website persistence is claimed. The containers remain running locally; `npm run infra:down` stops them while preserving volumes. The dependency audit remains nonzero as documented above.

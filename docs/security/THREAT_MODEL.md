@@ -4,7 +4,7 @@
 
 ## What exists today
 
-There is an informational local website, an API health endpoint, a worker scaffold, shared runtime contracts with tested pure opt-in rules, and local Postgres/Redis services. The initial migration enforces tenant-consistent foreign keys and run/outbox identity constraints. The database factory and rollback verification are available, but no application endpoint persists user data. There is no authentication, webhook handler, queue consumer, browser agent, secret store, artifact service, or database row-level read policy. Runtime shape validation and foreign keys are not read authorization.
+There is an informational local website, an API health endpoint, a worker scaffold, shared runtime contracts with tested pure opt-in rules, and local Postgres/Redis services. The initial migration enforces tenant-consistent foreign keys and run/outbox identity constraints. The database factory and rollback verification are available, but no application endpoint persists user data. A raw-body signature-verifying webhook endpoint now exists (Phase 2.1), but it only acknowledges and discards valid objects. There is no installation/user authorization, event filtering, queue consumer, browser agent, secret store, artifact service, or database row-level read policy. Runtime shape validation and foreign keys are not read authorization.
 
 ## Assets and actors
 

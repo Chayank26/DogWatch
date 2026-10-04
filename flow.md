@@ -81,3 +81,15 @@ No money, real authentication, model calls, or persistent customer data is invol
 After a future push, GitHub Actions will install the lockfile, run checks/tests/builds, and use disposable services for migration verification. It receives no GitHub App or model secrets and does not publish QA findings. This is development CI for DogWatch itself, not the autonomous customer-PR pipeline.
 
 Current flows: **DogWatch visitor → informational page**; **fixture visitor → synthetic checkout → in-memory order → status message**; **future repository push → CI verification → check result**. Local service verification still rolls back its sample data.
+
+## Part 2 · Phase 2.1 — GitHub App configuration and raw-body verification
+
+Maya still cannot connect PawMart through the DogWatch website. The new behavior is a backend delivery-validation endpoint, not a functioning QA request flow.
+
+Imagine GitHub eventually sends a JSON delivery for PawMart PR #42. The API reads the original bytes, computes their HMAC using the configured secret, and compares it with the supplied signature. Changed bytes or a missing/wrong signature are rejected. Signed malformed JSON is also rejected. A valid signed object receives `verified_only` and `queued: false`.
+
+The body exists only in request memory and is discarded after acknowledgment; no tenant, delivery, run, or outbox row is created, no browser/model job starts, and nothing is posted to GitHub. An authentic request still needs installation/actor authorization in the next phase. A repeated body can verify again until later deduplication is implemented.
+
+The developer stores the real shared secret outside Git and exports it to the API process. Tests use synthetic secrets and temporary loopback servers. The setup guide describes a future private App and trusted HTTPS endpoint; none was created by this increment.
+
+Current additional flow: **signed HTTP body → bounded raw-byte capture → signature check → JSON object check → validation-only acknowledgment → discard**. The product website and the PawMart fixture otherwise retain their existing behavior.

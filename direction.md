@@ -100,3 +100,18 @@ Next proposed phase: Part 2, Phase 2.1 — GitHub App configuration and raw-body
 A fresh `npm ci --offline` succeeded from the committed lockfile using the local cache. This confirms installation reproducibility locally, not a refreshed vulnerability audit; the prior advisory limitation remains. Schema validation, all workspace type checks/builds, lint, formatting, and whitespace checks passed after resolving Prisma engine-cache sandbox permissions. Eleven behavior tests passed (three fixture HTTP groups and eight domain tests). The compiled fixture returned HTML, its module script, CSS, and OpenAPI successfully. Both repeated migration applications were no-ops, migration status was current, rollback/tenant verification passed, and Redis returned PONG. Local documentation links resolve.
 
 No hosted GitHub Actions run, real-browser interaction, or autonomous QA execution was performed. Workflow YAML is syntactically checked by Prettier; job behavior was exercised through local command equivalents rather than an Actions emulator. The fixture server was stopped after verification; pre-existing data-service containers remain available.
+
+## Part 2 · Phase 2.1 — GitHub App configuration and raw-body verification
+
+- Split the listener from an importable app factory so HTTP tests inject synthetic secrets without starting the production entry point. Added detailed comments to the new files and updated entry point.
+- Verify bounded raw bytes before JSON parsing; refuse compression, malformed digest syntax, and unequal-length comparisons. Re-serialized JSON and ordinary string comparison were rejected alternatives.
+- Missing configuration fails closed for webhooks while health remains usable. Configured startup secrets require at least 32 characters; this validates shape, not entropy, so the guide uses secure random generation.
+- Deliberately return a validation-only acknowledgment, not accepted-run status. Authorization, event normalization, tenant resolution, replay protection, persistence, and dispatch remain separate approved phases.
+- Documented a minimal GitHub App registration plan rather than registering an App with fabricated URLs or requesting credentials unnecessarily. Live registration/delivery remains pending real owner and endpoint configuration; local verification is complete independently.
+- Avoid logging webhook bodies or signatures and keep error responses generic. Body size limits do not replace future ingress rate limits or deployment request timeouts.
+
+Next proposed phase: Part 2, Phase 2.2 — authorization and event filtering. Wait for approval before starting it.
+
+### Phase 2.1 verification
+
+All 16 tests passed: five webhook groups, three fixture groups, and eight domain tests. The official-vector test initially caught a mistyped expected digest; correcting it against GitHub's published value made the independent test pass. All workspace type checks, API compilation, lint, formatting, whitespace checks, and local documentation links passed. No dependencies changed, so unrelated application builds were not repeated. No live GitHub App registration, public endpoint, or GitHub-originated delivery was performed; those require real account/endpoint configuration.

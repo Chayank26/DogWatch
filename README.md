@@ -38,3 +38,7 @@ See the [architecture decisions](docs/architecture/README.md) for choices and al
 Run `npm run fixture:dev` separately and open http://127.0.0.1:4100 for PawMart's disposable checkout. See the [fixture guide](apps/fixture/README.md) for healthy/fault modes and synthetic tokens. This is a testing target, not the DogWatch dashboard.
 
 The [CI guide](docs/development/CI.md) explains the automated checks and local equivalents. GitHub-hosted execution begins after pushing the workflow; it has not been triggered by creating these local files.
+
+## GitHub webhook foundation
+
+The API now exposes a validation-only `/webhooks/github` endpoint. See [App setup and endpoint behavior](docs/github/APP_SETUP.md). No live App is registered, and verified deliveries do not yet create QA runs.

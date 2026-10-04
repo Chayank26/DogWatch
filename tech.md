@@ -55,3 +55,14 @@ Configuration follows the [official Prisma 7 setup](https://www.prisma.io/docs/o
 | OpenAPI YAML                  | Defines healthy request/response expectations for later API fuzzing.                       | A contract is more useful than guessing endpoints. The document covers the order API, not fixture setup/static routes.                                           |
 
 No runtime dependency was added: the fixture uses the existing Express version. Root workspace/lockfile metadata now includes it. Source, HTML, CSS, workflow, and contract files include explanatory comments; JSON settings are documented in the fixture guide. CI choices follow [setup-node](https://github.com/actions/setup-node) and [GitHub's container guidance](https://docs.github.com/en/actions/tutorials/use-containerized-services).
+
+## Part 2 · Phase 2.1 — GitHub App configuration and raw-body verification
+
+| Technology                 | Current role                                                                    | Why chosen / alternative                                                                                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Node crypto                | HMAC-SHA256 and constant-time digest comparison.                                | Built-in primitives suffice for this narrow boundary. Octokit webhooks is an alternative once dispatch/auth integration needs justify it; no extra dependency is needed now. |
+| Express raw middleware     | Captures original bounded JSON bytes before parsing; rejects compressed bodies. | Re-serializing parsed JSON changes whitespace/encoding and can break signatures. Route-local parsing protects the future app from middleware ordering mistakes.              |
+| Node test runner and fetch | Tests the independent official vector and real HTTP rejection paths.            | Reuses the existing toolchain and tests behavior rather than merely the crypto formula.                                                                                      |
+| GitHub App setup guide     | Specifies minimal initial grants, endpoint setup, and deferred permissions.     | Registration cannot be truthfully automated without account/endpoint configuration. A guide makes the result concrete without inventing external state.                      |
+
+No new dependencies were installed. The API uses a shell-provided webhook secret, distinct from App private keys; automatic environment-file loading is still deferred. The verifier follows [GitHub's official guidance](https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries).

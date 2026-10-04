@@ -1,0 +1,16 @@
+# Technology decisions by phase
+
+## Part 1 · Phase 1.1 — Initial project setup
+
+| Technology                          | What it does now                                                                   | Why selected / alternatives                                                                                                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Node.js 24 and TypeScript           | Run the API and worker; check application types.                                   | One language across the stack. Python could serve the agent, but adds a second toolchain before it is needed.                                                            |
+| npm workspaces and lockfile         | Install dependencies and run app scripts from the root.                            | npm is already installed. Replaces the proposed pnpm default to avoid an extra setup prerequisite; pnpm remains an option if workspace scale justifies migration.        |
+| Express                             | Serve `/health` on the local API.                                                  | Matches the master architecture and gives direct control over future raw webhook bodies. Fastify is a reasonable alternative, but is unnecessary for this foundation.    |
+| Next.js and React                   | Serve an informational web page with metadata and responsive CSS.                  | Establish the planned dashboard framework. Vite would make a smaller client-only shell, but would need separate decisions for future authenticated routes and rendering. |
+| Plain CSS                           | Style the initial page.                                                            | This small page does not need a utility framework yet. Tailwind remains proposed for the expanded dashboard.                                                             |
+| tsx and concurrently                | Reload TypeScript entry points and run all three app development processes.        | Avoid building before each edit. Separate terminals are possible; one command makes local setup simpler.                                                                 |
+| ESLint, Prettier, TypeScript checks | Check code issues, consistent formatting, and types.                               | Complementary checks rather than application tests that merely repeat this scaffold.                                                                                     |
+| Git and `.gitignore`                | Prepare local version tracking and exclude dependencies, builds, and secret files. | No commit or remote was created.                                                                                                                                         |
+
+No database, Redis, browser automation, model API, authentication, or GitHub integration is installed in this phase. Those enter when a phase implements their first real use. Exact dependency versions are recorded in `package-lock.json`.

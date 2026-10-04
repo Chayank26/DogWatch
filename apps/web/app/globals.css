@@ -1,0 +1,49 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  background: #101820;
+  color: #edf4f1;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+.eyebrow {
+  color: #9fe4bd;
+  font-weight: 600;
+}
+h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.1;
+  max-width: 800px;
+}
+.intro {
+  font-size: 1.2rem;
+  max-width: 640px;
+  line-height: 1.7;
+  color: #bccbc5;
+}
+section {
+  margin-top: 48px;
+  border: 1px solid #35463f;
+  padding: 28px;
+  border-radius: 16px;
+  background: #17232b;
+}
+section p,
+li {
+  line-height: 1.7;
+}
+li {
+  padding: 4px 0;
+}
+.note {
+  color: #9fe4bd;
+}

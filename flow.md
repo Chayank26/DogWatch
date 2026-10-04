@@ -67,3 +67,17 @@ The explicit database verification command temporarily acts out PawMart PR #42: 
 Local database and Redis files live in Docker named volumes and survive ordinary service stop/start. The root `.env`, if created, holds only local connection configuration and is excluded from Git. Real GitHub credentials, users, findings, and screenshots are not stored in this phase.
 
 Current user flow: **browser → informational page**. New developer flow: **start local services → migrate Postgres → explicitly verify synthetic transactions → roll back fixtures**. Later ingress will use these tables for actual authorized run persistence.
+
+## Part 1 · Phase 1.5 — CI and fixture application
+
+Maya's DogWatch experience at port 3000 remains informational: no repository connection, account, or QA run is available. The new PawMart page at port 4100 is a separate disposable shop for developers testing DogWatch.
+
+On PawMart, Maya chooses synthetic Alice, enters `1 Test Lane` and quantity 1, and clicks Place order. The browser requests fixture configuration, then sends JSON to the order API with Alice's public fixture token. The server validates it, stores a synthetic order in process memory, and returns its ID. The page displays that ID. Bob cannot read Alice's seeded order; a missing token receives 401.
+
+In healthy mode, a blank address returns 400 and a visible validation message. In `missing-address-500` mode the same input returns a deliberate 500. In `checkout-stuck` mode the API returns the correct 400 but the screen remains on Processing. These faults are intentional test scenarios, not bugs secretly added to the DogWatch product. The process mode is selected before startup and cannot be changed through a webpage.
+
+No money, real authentication, model calls, or persistent customer data is involved. Orders disappear on restart. The fixture does not write Postgres or Redis. The API contract is public local test documentation. HTTP tests create fresh servers and close them after each case.
+
+After a future push, GitHub Actions will install the lockfile, run checks/tests/builds, and use disposable services for migration verification. It receives no GitHub App or model secrets and does not publish QA findings. This is development CI for DogWatch itself, not the autonomous customer-PR pipeline.
+
+Current flows: **DogWatch visitor → informational page**; **fixture visitor → synthetic checkout → in-memory order → status message**; **future repository push → CI verification → check result**. Local service verification still rolls back its sample data.

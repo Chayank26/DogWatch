@@ -1,0 +1,87 @@
+# Healthy behavior contract. Fault modes intentionally violate selected expectations.
+openapi: 3.0.3
+info:
+  title: PawMart synthetic API
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:4100
+# Public fixture tokens only; never use a real access token with this application.
+security:
+  - fixtureBearer: []
+paths:
+  /api/orders:
+    post:
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [address, quantity]
+              properties:
+                address:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  pattern: '\S'
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+      responses:
+        '201':
+          description: Synthetic order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid request
+        '401':
+          description: Missing or invalid synthetic token
+        '413':
+          description: JSON payload exceeds 16kb
+  /api/orders/{id}:
+    get:
+      operationId: getOrder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order owned by the synthetic caller
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          description: Missing or invalid synthetic token
+        '403':
+          description: Order belongs to another synthetic user
+        '404':
+          description: Order does not exist
+components:
+  securitySchemes:
+    fixtureBearer:
+      type: http
+      scheme: bearer
+  schemas:
+    Order:
+      type: object
+      required: [id, owner, address, quantity]
+      properties:
+        id:
+          type: string
+        owner:
+          type: string
+          enum: [alice, bob]
+        address:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 10

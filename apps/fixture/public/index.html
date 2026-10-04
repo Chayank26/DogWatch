@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- Standalone synthetic shop. Labels and a live region support future browser observations. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PawMart — DogWatch test fixture</title>
+    <link rel="stylesheet" href="/style.css" />
+    <!-- TypeScript emits ESM; module scripts are deferred automatically. -->
+    <script type="module" src="/browser.js"></script>
+  </head>
+  <body>
+    <main>
+      <p>DogWatch synthetic QA fixture · No real purchases</p>
+      <h1>PawMart checkout</h1>
+      <p>
+        Test basket: chew toy. Choose a synthetic user and place a disposable
+        order.
+      </p>
+      <!-- novalidate lets deliberate bad inputs reach the server for QA scenarios. -->
+      <form id="checkout" novalidate>
+        <label for="user">Test user</label>
+        <select id="user" name="user">
+          <option value="alice">Alice</option>
+          <option value="bob">Bob</option>
+        </select>
+        <label for="address">Delivery address</label>
+        <input id="address" name="address" autocomplete="off" />
+        <label for="quantity">Quantity</label>
+        <input id="quantity" name="quantity" type="number" value="1" />
+        <button type="submit">Place order</button>
+      </form>
+      <p id="status" role="status" aria-live="polite">Ready to test.</p>
+    </main>
+  </body>
+</html>

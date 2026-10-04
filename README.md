@@ -1,6 +1,6 @@
 # DogWatch
 
-Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the Phase 1.4 foundation, shared contracts, and local data services, not a working QA service.
+Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the completed Part 1 foundation, shared contracts, local data services, CI, and a synthetic QA fixture, not a working QA service.
 
 ## Local setup
 
@@ -32,3 +32,9 @@ Complete one small phase, update `tech.md`, `direction.md`, and `flow.md`, repor
 ## Architecture and security design
 
 See the [architecture decisions](docs/architecture/README.md) for choices and alternatives, and the [threat model](docs/security/THREAT_MODEL.md) for trust boundaries, planned controls, and phase-specific verification. These documents distinguish existing behavior from future security requirements.
+
+## Synthetic target and CI
+
+Run `npm run fixture:dev` separately and open http://127.0.0.1:4100 for PawMart's disposable checkout. See the [fixture guide](apps/fixture/README.md) for healthy/fault modes and synthetic tokens. This is a testing target, not the DogWatch dashboard.
+
+The [CI guide](docs/development/CI.md) explains the automated checks and local equivalents. GitHub-hosted execution begins after pushing the workflow; it has not been triggered by creating these local files.

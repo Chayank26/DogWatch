@@ -81,3 +81,22 @@ npm audit reported four high-severity entries in Prisma 7.10.0's development CLI
 ### Phase 1.4 verification
 
 Docker Postgres and Redis became healthy; Redis returned PONG. The initial migration applied and its history row was confirmed in Postgres. Database verification passed for atomic run/outbox writes, rollback cleanup, and cross-tenant foreign-key rejection. Eight existing contract tests, all workspace type checks/builds, ESLint, formatting, and Git whitespace checks passed. No row-level authorization, queue processing, or website persistence is claimed. The containers remain running locally; `npm run infra:down` stops them while preserving volumes. The dependency audit remains nonzero as documented above.
+
+## Part 1 · Phase 1.5 — CI and fixture application
+
+- Added two CI jobs: fast workspace verification and isolated local-service verification. Reusing Compose avoids drift and checks migrations twice without destructive reset commands. Kept permissions read-only, PR runs unprivileged, credentials absent, and timeouts bounded.
+- Built PawMart as a separate fixture rather than modifying the DogWatch landing page. Product onboarding is still unavailable; the fixture provides testable behavior for future tiers.
+- Used public synthetic tokens and in-memory orders. Real login/payment/database integration would introduce side effects irrelevant to a controlled QA target. Each process/test begins with deterministic ownership fixtures.
+- Chose a healthy default and startup-only fault selection. An HTTP fault-toggle endpoint was an alternative, but would allow parallel tests or agents to silently change each other's expectations.
+- Added two labeled faults only, rather than a broad fake benchmark. They cover a contract-visible server failure and a client-only stuck state. HTTP tests do not claim to verify the visual browser fault; Playwright coverage will follow in its phase.
+- Kept browser validation disabled intentionally so malformed checkout data reaches the API. Explicit labels and a live status region make later accessibility snapshots useful.
+- Used detailed comments in every authored code/config format that supports comments, and explained JSON in the fixture README. Dev builds once then watches compiled output; source editing requires a rebuild/restart, documented rather than pretending compilation is continuously watched.
+- Added no deployment or GitHub App integration. The workflow must be pushed and run on GitHub before hosted CI can be called verified. Known Prisma dependency advisories remain documented and are not suppressed as a successful audit.
+
+Next proposed phase: Part 2, Phase 2.1 — GitHub App configuration and raw-body webhook verification. Wait for approval before beginning it.
+
+### Phase 1.5 verification
+
+A fresh `npm ci --offline` succeeded from the committed lockfile using the local cache. This confirms installation reproducibility locally, not a refreshed vulnerability audit; the prior advisory limitation remains. Schema validation, all workspace type checks/builds, lint, formatting, and whitespace checks passed after resolving Prisma engine-cache sandbox permissions. Eleven behavior tests passed (three fixture HTTP groups and eight domain tests). The compiled fixture returned HTML, its module script, CSS, and OpenAPI successfully. Both repeated migration applications were no-ops, migration status was current, rollback/tenant verification passed, and Redis returned PONG. Local documentation links resolve.
+
+No hosted GitHub Actions run, real-browser interaction, or autonomous QA execution was performed. Workflow YAML is syntactically checked by Prettier; job behavior was exercised through local command equivalents rather than an Actions emulator. The fixture server was stopped after verification; pre-existing data-service containers remain available.

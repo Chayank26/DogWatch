@@ -24,3 +24,9 @@ No database, Redis, browser automation, model API, authentication, or GitHub int
 | Node test runner with tsx | Runs behavior tests for opt-in authorization, scope, commands, and contract validation.                                      | These synchronous unit tests do not need Vitest-specific mocking or a browser environment. Vitest remains an option when application testing needs justify it.               |
 
 JSON cannot contain comments, so package and compiler configuration is explained in `packages/README.md`. New source and test files include detailed comments. Generated JavaScript is build output, not a second source to edit manually.
+
+## Part 1 · Phase 1.3 — Threat model and architecture decisions
+
+No new runtime tool or dependency was added. Markdown decision records explain how the existing Express/Next.js/worker separation will grow, why Postgres plus a BullMQ/Redis outbox is planned, and why runtime Zod validation must be combined with actual authorization. Alternatives include a single server, GitHub Actions execution, Redis-only persistence, dynamic collaborator checks, and unrestricted model automation; their tradeoffs are recorded rather than introducing them prematurely.
+
+A Markdown threat matrix links risks to implementation phases and required evidence. A separate security tracking service could manage these requirements later, but repository documentation is easy to review alongside this project's code. Containers, private object storage, secret management, and network enforcement remain planned controls, not installed capabilities. The documents add no requests, storage, or UI behavior.

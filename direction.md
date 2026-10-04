@@ -43,3 +43,19 @@ Next proposed phase: Part 1, Phase 1.3 — threat model and architecture decisio
 Eight behavior tests passed. All workspace production sources passed type checking; the existing applications built successfully, and the new contracts package built successfully after correcting its initial workspace dependency installation. ESLint and formatting checks passed. npm reported no known dependency vulnerabilities at installation time. Tests required permission because the sandbox blocked tsx's local IPC socket. No website interaction or GitHub integration is claimed by these checks.
 
 The install also repaired an existing lockfile omission: Express was declared in the API manifest but its dependency tree was absent from the committed lockfile. This explains the larger lockfile diff and restores reproducible dependency resolution. Next.js refreshed its generated `next-env.d.ts` references from development paths to production-build paths; these generated declarations are not manually maintained.
+
+## Part 1 · Phase 1.3 — Threat model and architecture decisions
+
+- Wrote four linked architecture decision records and a threat model grounded in the current contracts and actual scaffold. Every record distinguishes accepted design from implemented controls, so documentation does not imply a working secure SaaS.
+- Chose focused records for service boundaries, durable runs, authority/isolation, and agent/evidence handling. One large architecture document was an alternative, but separate records make later supersession and review easier.
+- Linked each threat to a concrete verification obligation and implementation phase. A generic checklist would be quicker but would not tell the next implementer which boundary owns the behavior.
+- Resolved the MVP boundary: inspect source without executing repository scripts; test user-provided previews with synthetic accounts. Automatic builds, private-network connectivity, and fork credential inheritance require explicit future designs.
+- Defined the model as an action proposer, with executor code enforcing policy. Prompt instructions alone are not a control. Kept budgets, evidence confidence, and run completion distinct.
+- Documented missing persistence snapshot fields, revocation handling, report reconciliation, and artifact audiences as future obligations rather than expanding code outside the approved phase.
+- No source code was created; the detailed-comment convention remains in effect for future code. Markdown explains each decision, alternative, consequence, and verification gate directly.
+
+Next proposed phase: Part 1, Phase 1.4 — local Postgres/Redis and migrations. Wait for approval before creating infrastructure or changing application data flow.
+
+### Phase 1.3 verification
+
+Checked all eight local documentation links across the README and six new design documents; every target exists. Prettier formatting and Git whitespace checks passed. Reviewed the records against the current contracts and phase roadmap, and confirmed that the diff contains documentation only. Runtime tests and builds were not repeated because no code, dependencies, or configuration changed.

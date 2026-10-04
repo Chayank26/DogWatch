@@ -10,3 +10,7 @@ coverage/
 
 # Generated Prisma sources are recreated by db:generate/build/typecheck.
 packages/database/src/generated/
+
+# Operator-only GitHub configuration and private keys must not enter version control.
+.local/
+*.pem

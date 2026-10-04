@@ -53,3 +53,7 @@ Tests include the [official GitHub signature test vector](https://docs.github.co
 ## Implementation files
 
 `src/webhook.ts` uses Node crypto to compute HMAC-SHA256 and compare equal-length decoded digests with `timingSafeEqual`. `src/app.ts` installs the route-specific raw parser before parsing JSON, exposes a factory for tests, and returns sanitized errors. `src/index.ts` validates process configuration and starts the listener. Test files are excluded from production TypeScript output and executed separately through the API workspace's `test` script. Every source file documents its role inline.
+
+## Phase 2.2 update
+
+The verification-only behavior above is retained when only the webhook secret is configured. The [authorization guide](AUTHORIZATION.md) describes the new optional policy/App-credential configuration, supported-event filtering, current GitHub checks, and eligibility-only responses. Runs are still not durably accepted.

@@ -93,3 +93,15 @@ The body exists only in request memory and is discarded after acknowledgment; no
 The developer stores the real shared secret outside Git and exports it to the API process. Tests use synthetic secrets and temporary loopback servers. The setup guide describes a future private App and trusted HTTPS endpoint; none was created by this increment.
 
 Current additional flow: **signed HTTP body → bounded raw-byte capture → signature check → JSON object check → validation-only acknowledgment → discard**. The product website and the PawMart fixture otherwise retain their existing behavior.
+
+## Part 2 · Phase 2.2 — Authorization and event filtering
+
+Maya's DogWatch website remains informational. A developer can now enable a backend eligibility check with protected App credentials and a trusted policy assigning PawMart's repository, installation, and approved Maya account ID to one tenant. No setup form is available yet.
+
+For a signed opened/labeled PR #42 or an exact newly created `/dogwatch run` PR comment, the API checks the actor and policy first. Ordinary PRs, issue comments, unknown repositories, and unapproved actors are ignored without GitHub lookups. It then checks current App installation status, obtains a repository-restricted read token, and fetches the current PR. A closed PR, fork, or removed testing label is ignored. Maya's comment is normalized with the current API-derived commit SHA, not a payload-supplied tenant or moving branch name.
+
+An eligible request receives `eligible_only`, `queued: false`. It still does not create a run, call a model, open a browser, or post a report. Policies and the PEM key are read into process memory from operator-owned files on startup; installation tokens exist in memory for the lookup and are not logged or persisted. GitHub receives authenticated installation/token/repository/PR requests; unit tests replace that transport with synthetic responses.
+
+The body and decision are discarded after response. Postgres/Redis remain untouched by the endpoint. A replay can still produce the same eligibility result until Phase 2.3 adds durable deduplication. Network/permission failures return a sanitized 503 without claiming acceptance. If only a webhook secret is configured, the route retains its explicit verification-only response.
+
+Current enabled backend flow: **signed event → policy/actor filtering → current installation/repository/PR checks → domain opt-in decision → eligibility-only response → discard**. Maya's actual automated QA experience begins only once later persistence and execution stages are implemented.

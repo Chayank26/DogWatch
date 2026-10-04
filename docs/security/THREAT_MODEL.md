@@ -58,3 +58,7 @@ Fail closed when authority or destination safety is uncertain. Treat unavailable
 - Before production: run the isolation and failure corpus, benchmark findings, review remaining risks, and document operational recovery.
 
 Future architecture reviews must revisit private preview connectivity, model/provider retention, deployment runtime isolation, secret management, deletion/backups, and how installation revocation reaches in-flight jobs. Phase completion here means these risks and obligations are documented; the implementation gates remain ahead.
+
+## Phase 2.2 implementation update
+
+Optional operator-configured authorization now filters signed PR/comment candidates, checks approved actors, validates current installation access, and obtains repository-scoped read credentials for canonical PR lookup. The SDK adapter is tested with a synthetic transport, not a live App. No run persistence, deduplication, local lifecycle state, queue processing, dashboard membership, or artifact access control is implemented. Signature-only mode remains available and clearly returns verification-only status. Protected local configuration is a bootstrap authority store and must be reconciled with database tenant ownership before persistence.

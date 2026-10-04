@@ -115,3 +115,19 @@ Next proposed phase: Part 2, Phase 2.2 — authorization and event filtering. Wa
 ### Phase 2.1 verification
 
 All 16 tests passed: five webhook groups, three fixture groups, and eight domain tests. The official-vector test initially caught a mistyped expected digest; correcting it against GitHub's published value made the independent test pass. All workspace type checks, API compilation, lint, formatting, whitespace checks, and local documentation links passed. No dependencies changed, so unrelated application builds were not repeated. No live GitHub App registration, public endpoint, or GitHub-originated delivery was performed; those require real account/endpoint configuration.
+
+## Part 2 · Phase 2.2 — Authorization and event filtering
+
+- Connected signed events to the shared domain gate through a typed adapter rather than trusting webhook tenant IDs or duplicating opt-in rules. Current head SHA and PR state come from an installation-authorized API lookup, especially for issue-comment commands that contain no trustworthy PR head context.
+- Used an operator-owned local policy file as a temporary authority store. Persistent policy onboarding is an alternative but requires schema/membership work beyond this phase. Partial configuration fails startup; signature-only development mode remains explicitly marked.
+- Required approved human actor IDs, exact commands, matching scope, open PRs, and current labels for label triggers. Denied fork heads by default so they cannot inherit credential grants. Dynamic collaborator/team checks and explicit fork previews can be designed later.
+- Recheck installation state and mint a read-only repository-restricted token per candidate. Merely reading public repository metadata could conceal missing installation access, so token scoping must succeed first. Remote failures do not become eligible decisions.
+- Ignored unsupported events/actions and ordinary issues before API calls. Lifecycle events have no local state handler yet; current authority is verified on each candidate, and cancellation/revocation propagation stays with orchestration.
+- Return `eligible_only` with `queued: false`, rather than implying a durable accepted run. Delivery deduplication, run/outbox persistence, dispatcher, and QA remain future phases.
+- Handle SDK numeric/bigint IDs through safe conversion; reject values not representable by current numeric contracts rather than rounding. SDK requests have timeouts and retries disabled; overall latency/concurrency guarantees still need later tests.
+
+Next proposed phase: Part 2, Phase 2.3 — delivery deduplication and transactional outbox. Wait for approval before implementation.
+
+### Phase 2.2 verification
+
+All 23 tests passed (12 API, three fixture, eight domain). New coverage checks normalized policy decisions, signed HTTP integration, current context/fork/revocation rejection, and actual Octokit request/auth behavior through an injected synthetic transport. All workspace type checks/builds, lint, formatting, local documentation links, and whitespace checks passed. A fresh offline lockfile install succeeded; its cached audit output is not a new online security assessment. Existing advisory documentation remains in place. No live App registration, installation, external credential use, database write, or queue dispatch occurred.

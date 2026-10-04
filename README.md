@@ -42,3 +42,5 @@ The [CI guide](docs/development/CI.md) explains the automated checks and local e
 ## GitHub webhook foundation
 
 The API now exposes a validation-only `/webhooks/github` endpoint. See [App setup and endpoint behavior](docs/github/APP_SETUP.md). No live App is registered, and verified deliveries do not yet create QA runs.
+
+Authorization/event filtering can now be enabled separately with protected local policy and App credential files. See the [authorization guide](docs/github/AUTHORIZATION.md). Eligible decisions remain unqueued and unpersisted.

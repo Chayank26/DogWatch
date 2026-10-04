@@ -1,12 +1,18 @@
 /**
  * Importable API factory: tests supply a secret explicitly without starting the
- * production listener. No webhook data is persisted or queued in Phase 2.1.
+ * production listener. No webhook data is persisted or queued in Phase 2.2.
  */
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import { verifyGitHubSignature } from './webhook.js';
+import { authorizeDelivery } from './authorization.js';
+import type { AuthorizationDependencies } from './authorization.js';
+import { ZodError } from 'zod';
 
-export function createApiApp(webhookSecret?: string) {
+export function createApiApp(
+  webhookSecret?: string,
+  authorization?: AuthorizationDependencies,
+) {
   const app = express();
   app.disable('x-powered-by');
   app.get('/health', (_request, response) =>
@@ -17,7 +23,7 @@ export function createApiApp(webhookSecret?: string) {
     // Capture bounded raw bytes before any JSON parser. Refuse compression so
     // decompression cannot silently change the bytes that GitHub signed.
     express.raw({ type: 'application/json', limit: '1mb', inflate: false }),
-    (request, response) => {
+    async (request, response) => {
       // An unset secret disables this endpoint while retaining local health checks.
       if (!webhookSecret) {
         response.status(503).json({ error: 'Webhook not configured' });
@@ -54,9 +60,39 @@ export function createApiApp(webhookSecret?: string) {
         response.status(400).json({ error: 'Expected a JSON object' });
         return;
       }
-      // Authentication alone grants no tenant permission. Returning 200 here only
-      // acknowledges this validation-only milestone; it does NOT accept a QA run.
-      response.json({ status: 'verified_only', queued: false });
+      // Default startup remains verification-only until all auth inputs are supplied.
+      if (!authorization) {
+        response.json({ status: 'verified_only', queued: false });
+        return;
+      }
+      try {
+        const result = await authorizeDelivery(
+          request.get('x-github-event'),
+          request.get('x-github-delivery'),
+          payload,
+          authorization,
+        );
+        // Never expose normalized tenant context or policy contents to the caller.
+        response.json(
+          result.status === 'eligible_only'
+            ? { status: result.status, queued: false, trigger: result.trigger }
+            : result,
+        );
+      } catch (error) {
+        if (
+          error instanceof ZodError ||
+          (error instanceof Error &&
+            ['Invalid delivery ID', 'Missing added label'].includes(
+              error.message,
+            ))
+        ) {
+          response.status(400).json({ error: 'Invalid event payload' });
+        } else {
+          // Unknown upstream failures cannot become eligible decisions. Returning
+          // 503 lets GitHub/operator retry; no acceptance is durably recorded yet.
+          response.status(503).json({ error: 'Authorization unavailable' });
+        }
+      }
     },
   );
   const handleError: ErrorRequestHandler = (

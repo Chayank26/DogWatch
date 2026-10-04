@@ -14,3 +14,13 @@
 | Git and `.gitignore`                | Prepare local version tracking and exclude dependencies, builds, and secret files. | No commit or remote was created.                                                                                                                                         |
 
 No database, Redis, browser automation, model API, authentication, or GitHub integration is installed in this phase. Those enter when a phase implements their first real use. Exact dependency versions are recorded in `package-lock.json`.
+
+## Part 1 · Phase 1.2 — Domain contracts and opt-in policies
+
+| Technology                | What it does in this phase                                                                                                   | Why selected / alternatives                                                                                                                                                  |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Zod                       | Validates repository policy, normalized trigger events, budgets, run requests, and findings; derives their TypeScript types. | TypeScript alone cannot validate incoming JSON. Ajv fits OpenAPI/schema validation later, but Zod keeps application types and validation together with less duplication now. |
+| Shared TypeScript package | Gives future API and worker consumers one vocabulary and a pure opt-in evaluator.                                            | Duplicating definitions in each app risks disagreements. It is not yet wired into either app.                                                                                |
+| Node test runner with tsx | Runs behavior tests for opt-in authorization, scope, commands, and contract validation.                                      | These synchronous unit tests do not need Vitest-specific mocking or a browser environment. Vitest remains an option when application testing needs justify it.               |
+
+JSON cannot contain comments, so package and compiler configuration is explained in `packages/README.md`. New source and test files include detailed comments. Generated JavaScript is build output, not a second source to edit manually.

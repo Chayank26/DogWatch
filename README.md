@@ -1,6 +1,6 @@
 # DogWatch
 
-Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the Phase 1.1 project scaffold, not a working QA service.
+Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the Phase 1.2 foundation and shared contracts, not a working QA service.
 
 ## Local setup
 
@@ -16,6 +16,7 @@ Open http://127.0.0.1:3000 for the website. The API health endpoint is http://12
 ## Verification
 
 ```sh
+npm test
 npm run typecheck
 npm run lint
 npm run format:check

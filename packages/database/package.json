@@ -16,7 +16,12 @@
     "migration:status": "prisma migrate status",
     "build": "npm run generate && tsc -p tsconfig.json",
     "typecheck": "npm run generate && tsc --noEmit",
-    "verify": "tsx src/verify.ts"
+    "verify": "tsx src/verify.ts",
+    "verify:acceptance": "tsx src/verify-acceptance.ts",
+    "prebuild": "npm run build -w @dogwatch/contracts",
+    "pretypecheck": "npm run build -w @dogwatch/contracts",
+    "preverify": "npm run build -w @dogwatch/contracts",
+    "preverify:acceptance": "npm run build -w @dogwatch/contracts"
   },
   "devDependencies": {
     "prisma": "^7.10.0"
@@ -25,6 +30,7 @@
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "dotenv": "^17.4.2",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "@dogwatch/contracts": "0.1.0"
   }
 }

@@ -47,3 +47,7 @@ Prisma configuration and PostgreSQL adapter setup follow the [official Prisma Cl
 The Prisma 7.10.0 development CLI dependency tree currently has four high-severity npm audit entries. They concern `deepmerge-ts` recursive merging and `mysql2` protocol behavior, propagated through Prisma configuration/CLI packages. This project does not use MySQL or accept remote input into CLI configuration. Do not expose the migration CLI as a service or apply `npm audit fix --force` blindly: its suggested Prisma major downgrade conflicts with this configuration. Reassess compatible dependency patches before deployment.
 
 The same advisories appear with `npm audit --omit=dev` through npm's workspace/peer dependency graph; this is not a clean production audit. Runtime image dependency isolation must be verified in the deployment phase, even though the client factory does not invoke the CLI.
+
+## Phase 2.3 update
+
+The additive receipt migration enables `acceptDelivery` and database-enforced delivery/body deduplication. See [durable acceptance](../../docs/github/DURABLE_ACCEPTANCE.md) for setup, transaction semantics, and limitations. `npm run db:verify:acceptance` tests actual committed operations and cleans up only exact random fixture tenants; it is separate from the original rollback-only check. Package lifecycle hooks build contracts before consumers run.

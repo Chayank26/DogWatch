@@ -105,3 +105,17 @@ An eligible request receives `eligible_only`, `queued: false`. It still does not
 The body and decision are discarded after response. Postgres/Redis remain untouched by the endpoint. A replay can still produce the same eligibility result until Phase 2.3 adds durable deduplication. Network/permission failures return a sanitized 503 without claiming acceptance. If only a webhook secret is configured, the route retains its explicit verification-only response.
 
 Current enabled backend flow: **signed event → policy/actor filtering → current installation/repository/PR checks → domain opt-in decision → eligibility-only response → discard**. Maya's actual automated QA experience begins only once later persistence and execution stages are implemented.
+
+## Part 2 · Phase 2.3 — Delivery deduplication and transactional outbox
+
+Maya's website still shows the informational shell. With complete operator authorization, registered ownership records, and DATABASE_URL configured, her eligible PawMart PR #42 now creates persistent backend work.
+
+After signature and current GitHub authorization checks, DogWatch checks PawMart's tenant/installation ownership in Postgres. It stores a received run containing the exact commit and effective testing policy, a receipt containing the delivery ID and body fingerprint, and a dispatch instruction—all in one transaction. Only after commit does it return accepted with a run ID and `queued: false`.
+
+A repeated delivery returns the original run instead of creating a second one. Changing the unsigned delivery ID while replaying the same body also returns the original. Conflicting reuse is rejected; a failed write leaves no partially accepted run/outbox. The original snapshot is retained if a later lookup observes newer code.
+
+These records survive API restart. They include approved actor IDs and redacted policy/budgets, not raw comments, tokens, private keys, or screenshots. Redis still receives no jobs; Maya gets no QA report yet. Outbox records wait for Phase 2.4. Unknown or unauthorized events remain ignored without stored receipts. No user-facing run history page exists yet.
+
+The new database verification briefly commits random synthetic tenants/runs, checks behavior, and deletes only those fixtures. Real accepted records are not deleted by the verification command. Signature-only or eligibility-only operation is still possible when durable persistence is not enabled.
+
+Current durable flow: **signed request → current authority checks → locked ownership check → atomic receipt/run/outbox commit → acceptance response**. Execution comes next.

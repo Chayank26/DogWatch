@@ -12,3 +12,11 @@ export function createDatabase(connectionString: string): PrismaClient {
   const adapter = new PrismaPg({ connectionString, max: 5 });
   return new PrismaClient({ adapter });
 }
+
+// Public persistence boundary and typed errors for the ingress adapter.
+export {
+  acceptDelivery,
+  DeliveryConflictError,
+  OwnershipMismatchError,
+} from './acceptance.js';
+export type { AcceptanceInput, AcceptanceResult } from './acceptance.js';

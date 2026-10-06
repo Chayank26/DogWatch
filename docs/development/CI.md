@@ -26,3 +26,5 @@ npm run db:verify
 Verify Redis with `docker compose exec -T redis redis-cli ping`; expect PONG. Use `npm run infra:down` when finished. Ordinary shutdown preserves volumes. GitHub-hosted jobs have disposable runner storage; local volumes are not automatically deleted.
 
 Workflow choices follow the official [setup-node documentation](https://github.com/actions/setup-node) and [GitHub container service guidance](https://docs.github.com/en/actions/tutorials/use-containerized-services). Exact hosted execution must still be confirmed after pushing.
+
+Phase 2.3 adds `npm run db:verify:acceptance` to the data-services job. It tests committed concurrent requests, body fingerprints, conflicts, ownership, and rollback, cleaning only random fixture records afterward. The API lifecycle also builds the database/contracts packages before type checks, tests, builds, and dev startup.

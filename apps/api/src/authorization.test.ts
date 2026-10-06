@@ -229,8 +229,57 @@ test('signed HTTP requests report eligibility only; lookup failures return 503 w
     const failed = await post(opened);
     assert.equal(failed.status, 503);
     assert.deepEqual(await failed.json(), {
-      error: 'Authorization unavailable',
+      error: 'Authorization or storage unavailable',
     });
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+/** Injecting the durable boundary tests response ordering without a real DB in unit CI. */
+test('HTTP acceptance waits for persistence and sanitizes storage failures', async () => {
+  const secret = 'synthetic-webhook-secret-for-tests-only';
+  let failure = false;
+  let calls = 0;
+  const server = createApiApp(secret, dependencies, async (input) => {
+    calls++;
+    assert.equal(input.event.tenantId, policies[0].tenantId);
+    assert.match(input.payloadSha256, /^[a-f0-9]{64}$/);
+    if (failure) throw new Error('private database details');
+    return { status: 'accepted', runId: 'synthetic-run-id', queued: false };
+  }).listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+  try {
+    const body = JSON.stringify(opened);
+    const send = () =>
+      fetch(`http://127.0.0.1:${address.port}/webhooks/github`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-github-event': 'pull_request',
+          'x-github-delivery': 'delivery-42',
+          'x-hub-signature-256': `sha256=${createHmac('sha256', secret).update(body).digest('hex')}`,
+        },
+        body,
+      });
+    const accepted = await send();
+    assert.equal(accepted.status, 202);
+    assert.deepEqual(await accepted.json(), {
+      status: 'accepted',
+      runId: 'synthetic-run-id',
+      queued: false,
+    });
+    failure = true;
+    const failed = await send();
+    assert.equal(failed.status, 503);
+    assert.deepEqual(await failed.json(), {
+      error: 'Authorization or storage unavailable',
+    });
+    assert.equal(calls, 2);
   } finally {
     await new Promise<void>((resolve, reject) =>
       server.close((error) => (error ? reject(error) : resolve())),

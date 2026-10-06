@@ -3,6 +3,7 @@ import { createApiApp } from './app.js';
 import { readFileSync } from 'node:fs';
 import { parsePolicies } from './authorization.js';
 import { createGitHubResolver } from './github.js';
+import { createDatabase, acceptDelivery } from '@dogwatch/database';
 
 const port = Number(process.env.API_PORT ?? 4000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -35,7 +36,18 @@ if (policyFile || keyFile || appIdText) {
     ),
   };
 }
-const server = createApiApp(secret, authorization).listen(
+// DATABASE_URL explicitly opts authorized ingress into durable acceptance.
+// No fallback database URL is used for customer event writes.
+if (process.env.DATABASE_URL && !authorization)
+  throw new Error('Persistence requires GitHub authorization configuration');
+const database = process.env.DATABASE_URL
+  ? createDatabase(process.env.DATABASE_URL)
+  : undefined;
+const persist = database
+  ? (input: Parameters<typeof acceptDelivery>[1]) =>
+      acceptDelivery(database, input)
+  : undefined;
+const server = createApiApp(secret, authorization, persist).listen(
   port,
   '127.0.0.1',
   () => {
@@ -47,7 +59,9 @@ const server = createApiApp(secret, authorization).listen(
 // Graceful shutdown stops new requests and releases keep-alive connections.
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
-    server.close();
+    server.close(() => {
+      void database?.$disconnect();
+    });
     server.closeIdleConnections();
   });
 }

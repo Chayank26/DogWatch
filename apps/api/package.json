@@ -9,16 +9,17 @@
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test src/*.test.ts",
-    "predev": "npm run build -w @dogwatch/contracts",
-    "prebuild": "npm run build -w @dogwatch/contracts",
-    "pretypecheck": "npm run build -w @dogwatch/contracts",
-    "pretest": "npm run build -w @dogwatch/contracts"
+    "predev": "npm run build -w @dogwatch/contracts && npm run build -w @dogwatch/database",
+    "prebuild": "npm run build -w @dogwatch/contracts && npm run build -w @dogwatch/database",
+    "pretypecheck": "npm run build -w @dogwatch/contracts && npm run build -w @dogwatch/database",
+    "pretest": "npm run build -w @dogwatch/contracts && npm run build -w @dogwatch/database"
   },
   "dependencies": {
     "@octokit/auth-app": "^8.3.1",
     "express": "^5.2.1",
     "octokit": "^5.0.5",
     "zod": "^4.6.5",
-    "@dogwatch/contracts": "0.1.0"
+    "@dogwatch/contracts": "0.1.0",
+    "@dogwatch/database": "0.1.0"
   }
 }

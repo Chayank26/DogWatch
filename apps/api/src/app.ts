@@ -1,6 +1,7 @@
 /**
  * Importable API factory: tests supply a secret explicitly without starting the
- * production listener. No webhook data is persisted or queued in Phase 2.2.
+ * production listener. Optional persistence commits authorized runs in Phase 2.3;
+ * queue dispatch remains a later phase.
  */
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
@@ -8,10 +9,17 @@ import { verifyGitHubSignature } from './webhook.js';
 import { authorizeDelivery } from './authorization.js';
 import type { AuthorizationDependencies } from './authorization.js';
 import { ZodError } from 'zod';
+import { createHash } from 'node:crypto';
+import {
+  DeliveryConflictError,
+  OwnershipMismatchError,
+} from '@dogwatch/database';
+import type { AcceptanceInput, AcceptanceResult } from '@dogwatch/database';
 
 export function createApiApp(
   webhookSecret?: string,
   authorization?: AuthorizationDependencies,
+  persist?: (input: AcceptanceInput) => Promise<AcceptanceResult>,
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -72,6 +80,20 @@ export function createApiApp(
           payload,
           authorization,
         );
+        if (result.status === 'eligible_only' && persist) {
+          // Hash the authenticated original bytes, not reserialized JSON or unsigned
+          // headers. Successful HTTP acceptance happens only after the transaction.
+          const saved = await persist({
+            event: result.event,
+            policy: result.policy,
+            eventName: request.get('x-github-event')!,
+            payloadSha256: createHash('sha256')
+              .update(request.body)
+              .digest('hex'),
+          });
+          response.status(saved.status === 'accepted' ? 202 : 200).json(saved);
+          return;
+        }
         // Never expose normalized tenant context or policy contents to the caller.
         response.json(
           result.status === 'eligible_only'
@@ -79,7 +101,11 @@ export function createApiApp(
             : result,
         );
       } catch (error) {
-        if (
+        if (error instanceof DeliveryConflictError) {
+          response.status(409).json({ error: 'Delivery identity conflict' });
+        } else if (error instanceof OwnershipMismatchError) {
+          response.status(403).json({ error: 'Repository ownership mismatch' });
+        } else if (
           error instanceof ZodError ||
           (error instanceof Error &&
             ['Invalid delivery ID', 'Missing added label'].includes(
@@ -89,8 +115,11 @@ export function createApiApp(
           response.status(400).json({ error: 'Invalid event payload' });
         } else {
           // Unknown upstream failures cannot become eligible decisions. Returning
-          // 503 lets GitHub/operator retry; no acceptance is durably recorded yet.
-          response.status(503).json({ error: 'Authorization unavailable' });
+          // 503 signals failed handling; an operator can explicitly redeliver. A response
+          // loss after commit is reconciled as a duplicate on retry.
+          response
+            .status(503)
+            .json({ error: 'Authorization or storage unavailable' });
         }
       }
     },

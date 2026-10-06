@@ -48,3 +48,7 @@ Tests cover opened/labeled/comment triggers, trusted tenant/SHA resolution, unau
 `authorization.ts` handles GitHub-to-domain normalization; `github.ts` implements remote verification; `index.ts` loads operator files; `app.ts` composes the signed webhook route. API pre-dev/build/typecheck/test hooks build `@dogwatch/contracts` so a clean checkout need not already contain ignored package output. JSON cannot have comments; this guide explains its fields and scripts.
 
 Implementation follows [GitHub installation authentication](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/authenticating-as-a-github-app-installation), [App installation endpoints](https://docs.github.com/en/rest/apps/apps), and [PR lookup endpoints](https://docs.github.com/en/rest/pulls/pulls). Real App permissions, owner setup, and live behavior must be confirmed when credentials and a reachable endpoint exist.
+
+## Phase 2.3 update
+
+The eligibility-only behavior remains when persistence is absent. With explicit DATABASE_URL and matching registered ownership, [durable acceptance](DURABLE_ACCEPTANCE.md) saves authorized work before acknowledgment and reconciles duplicate deliveries. Queue execution is still not implemented.

@@ -57,6 +57,7 @@ jobs:
       - run: npm run db:migrate
       - run: npm run db:status
       - run: npm run db:verify
+      - run: npm run db:verify:acceptance
       - name: Verify Redis connectivity
         run: test "$(docker compose exec -T redis redis-cli ping)" = PONG
       # Capture failures while the services still exist, then stop without deleting volumes.

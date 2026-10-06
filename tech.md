@@ -78,3 +78,14 @@ No new dependencies were installed. The API uses a shell-provided webhook secret
 | Injected resolver/transport and Node tests | Exercise authorization and real SDK request behavior without credentials or external calls.                               | Live GitHub tests require account setup and can be brittle; mocks here assert scope and permission behavior, while live validation remains pending.                |
 
 All new code includes detailed comments; example JSON is explained in the authorization guide. Real private keys and local policy files are ignored by Git. [GitHub's installation authentication documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/authenticating-as-a-github-app-installation) describes the underlying credential flow.
+
+## Part 2 · Phase 2.3 — Delivery deduplication and transactional outbox
+
+| Technology                           | Current role                                                                      | Why chosen / alternative                                                                                                                                                    |
+| ------------------------------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Postgres transactions/unique indexes | Commit a receipt, run, and outbox together; arbitrate concurrent delivery copies. | In-memory locks fail across processes/restarts. Redis-only deduplication would not share an atomic transaction with persistent run records.                                 |
+| Prisma with parameterized SQL        | Provide typed writes and a shared repository-row lock for ownership consistency.  | Existing ORM avoids duplicate access code; a tagged SQL query handles the explicit lock that ordinary reads do not provide.                                                 |
+| Node SHA-256                         | Fingerprint authenticated raw bytes independently of unsigned delivery headers.   | Delivery-ID uniqueness alone allows changing a header to replay a captured body. Exact-body hashing is conservative and does not replace HMAC or semantic request identity. |
+| Database integration verification    | Test real concurrency, rollback, conflicts, ownership, and replay behavior.       | Unit mocks alone cannot establish Postgres uniqueness/transaction behavior. HTTP tests separately verify the acknowledgment boundary.                                       |
+
+No third-party runtime package was added. API now consumes the database workspace, whose lifecycle scripts build shared contract output. The additive SQL migration and new source files carry comments. Redis remains unused by ingress until dispatch is implemented.

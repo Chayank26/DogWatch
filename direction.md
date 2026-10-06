@@ -131,3 +131,19 @@ Next proposed phase: Part 2, Phase 2.3 — delivery deduplication and transactio
 ### Phase 2.2 verification
 
 All 23 tests passed (12 API, three fixture, eight domain). New coverage checks normalized policy decisions, signed HTTP integration, current context/fork/revocation rejection, and actual Octokit request/auth behavior through an injected synthetic transport. All workspace type checks/builds, lint, formatting, local documentation links, and whitespace checks passed. A fresh offline lockfile install succeeded; its cached audit output is not a new online security assessment. Existing advisory documentation remains in place. No live App registration, installation, external credential use, database write, or queue dispatch occurred.
+
+## Part 2 · Phase 2.3 — Delivery deduplication and transactional outbox
+
+- Added an accepted-delivery receipt table rather than retaining whole webhook bodies. Fingerprints and metadata suffice for delivery reconciliation; raw comments/tokens would add needless storage and exposure.
+- Used one transaction for receipt/run/outbox and awaited commit before acceptance. Do not label a queued event until the future dispatcher actually enqueues it.
+- Combined delivery-ID and signed-body fingerprint uniqueness. Exact byte-identical legitimate notifications collapse while retained; this conservative tradeoff is documented. Semantic request deduplication and retention are distinct future choices.
+- Reconcile concurrent uniqueness failures after rollback against committed records, preserving original SHA and policy. Changed bytes under an existing delivery ID are conflicts rather than updates to the old run.
+- Revalidated policy and checked durable tenant/repository/installation relationships under a shared row lock. Operator registration is explicit; auto-creating ownership from webhook/local-file claims would obscure authority mismatches.
+- DATABASE_URL explicitly enables persistence only with complete App authorization. Signature-only and eligibility-only local modes remain available; failed storage cannot silently downgrade an intended durable request.
+- Expanded verification to real committed transactions with exact random-fixture cleanup, plus HTTP boundary tests. Hosted CI and real App delivery remain pending. No dispatcher, run state machine, row-level authorization, or onboarding UI was added.
+
+Next proposed phase: Part 2, Phase 2.4 — queue dispatch and retries. Wait for approval before implementation.
+
+### Phase 2.3 verification
+
+The additive receipt migration applied successfully, and repeated deployment reported no pending migrations. Real Postgres verification passed for concurrent copies, changed-header fingerprint replay, immutable snapshots, conflicts, ownership mismatch, failure rollback, and exact fixture cleanup, including a rerun after adding the shared ownership lock. The previous database verification still passes. All 24 unit/HTTP tests, workspace type checks/builds, lint, formatting, local documentation links, and whitespace checks passed. Prisma initially required a schema uniqueness correction and workspace-relative migration path correction; both were resolved before applying the migration. No live GitHub App delivery or hosted CI run was performed. Queue dispatch is intentionally absent.

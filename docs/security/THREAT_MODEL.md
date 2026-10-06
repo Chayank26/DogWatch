@@ -4,7 +4,7 @@
 
 ## What exists today
 
-There is an informational local website, an API health endpoint, a worker scaffold, shared runtime contracts with tested pure opt-in rules, and local Postgres/Redis services. The initial migration enforces tenant-consistent foreign keys and run/outbox identity constraints. The database factory and rollback verification are available, but no application endpoint persists user data. A raw-body signature-verifying webhook endpoint now exists (Phase 2.1), but it only acknowledges and discards valid objects. There is no installation/user authorization, event filtering, queue consumer, browser agent, secret store, artifact service, or database row-level read policy. Runtime shape validation and foreign keys are not read authorization.
+There is an informational local website, an API health endpoint, a worker scaffold, shared runtime contracts with tested pure opt-in rules, and local Postgres/Redis services. The initial migration enforces tenant-consistent foreign keys and run/outbox identity constraints. The database factory and rollback verification are available, and optionally configured ingress now persists authorized run/receipt/outbox records (Phase 2.3). A raw-body signature-verifying webhook endpoint now exists (Phase 2.1), but it only acknowledges and discards valid objects. Optional App installation/actor authorization and event filtering exist; there is no dashboard user authorization or queue consumer, browser agent, secret store, artifact service, or database row-level read policy. Runtime shape validation and foreign keys are not read authorization.
 
 ## Assets and actors
 
@@ -62,3 +62,7 @@ Future architecture reviews must revisit private preview connectivity, model/pro
 ## Phase 2.2 implementation update
 
 Optional operator-configured authorization now filters signed PR/comment candidates, checks approved actors, validates current installation access, and obtains repository-scoped read credentials for canonical PR lookup. The SDK adapter is tested with a synthetic transport, not a live App. No run persistence, deduplication, local lifecycle state, queue processing, dashboard membership, or artifact access control is implemented. Signature-only mode remains available and clearly returns verification-only status. Protected local configuration is a bootstrap authority store and must be reconciled with database tenant ownership before persistence.
+
+## Phase 2.3 implementation update
+
+Explicit database-backed acceptance now validates registered ownership, atomically saves run/receipt/outbox, and deduplicates delivery IDs and exact signed-body fingerprints. It retains approved actor IDs and policy metadata without raw bodies or credentials. Queue dispatch, membership/RLS, artifact storage, receipt retention, and cancellation remain future controls. A duplicate is still subject to current authorization before storage reconciliation. Real GitHub end-to-end behavior remains unverified.

@@ -69,6 +69,7 @@ model Run {
   createdAt           DateTime     @default(now()) @db.Timestamptz(3)
   repository          Repository   @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
   outboxEvents        OutboxEvent[]
+  webhookDelivery     WebhookDelivery?
 
   @@unique([tenantId, id])
   @@index([tenantId, repositoryId, createdAt])
@@ -86,4 +87,19 @@ model OutboxEvent {
 
   @@unique([runId, kind])
   @@index([publishedAt, createdAt])
+}
+
+// Only authorized, accepted deliveries are retained. Raw bodies/secrets are not stored.
+// A body fingerprint also prevents changing the unsigned delivery header to replay it.
+model WebhookDelivery {
+  deliveryId    String   @id
+  payloadSha256 String   @unique @db.VarChar(64)
+  eventName     String
+  tenantId      String   @db.Uuid
+  runId         String   @unique @db.Uuid
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+  run           Run      @relation(fields: [tenantId, runId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, runId])
+  @@index([tenantId, createdAt])
 }

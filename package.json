@@ -26,7 +26,8 @@
     "db:status": "npm run migration:status -w @dogwatch/database",
     "db:verify": "npm run verify -w @dogwatch/database",
     "fixture:dev": "npm run dev -w @dogwatch/fixture",
-    "fixture:start": "npm run start -w @dogwatch/fixture"
+    "fixture:start": "npm run start -w @dogwatch/fixture",
+    "db:verify:acceptance": "npm run verify:acceptance -w @dogwatch/database"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

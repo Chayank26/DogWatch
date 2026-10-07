@@ -70,3 +70,7 @@ Explicit database-backed acceptance now validates registered ownership, atomical
 ## Phase 2.4 implementation update
 
 The configured runner dispatches locked committed outbox work with durable backoff/attempt limits into retained BullMQ jobs containing UUID references only. Global queue concurrency is two; synthetic worker callbacks verify retries but no production QA consumer is launched. Worker authority revalidation, per-tenant limits, leases, cancellation, isolation, and retention/lost-Redis reconciliation remain future requirements. Queue schema validation is not execution authorization.
+
+### Phase 2.6 implementation update
+
+Readiness probes now enforce exact approved origins, forbid redirects/URL credentials/query parameters, reject private/special IPv4 and IPv6, and pin DNS-checked addresses in the HTTPS socket lookup. No response body or secret is stored. Loopback permission exists only as an explicit fixture harness code option. This controls only the readiness HTTP path; container/Playwright egress isolation remains Phase 2.7 work. An operator binding attests deployment SHA; health status alone cannot prove deployed code identity.

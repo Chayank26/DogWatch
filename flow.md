@@ -139,3 +139,13 @@ Maya has requested QA for commit A. She posts `/dogwatch cancel` on the PR. DogW
 If Maya instead pushes commit B, GitHub sends a synchronize notification. DogWatch fetches the current SHA and marks unfinished runs for other SHAs `superseded`. It keeps their original snapshots and delivery records. A push does not start new testing: Maya can post the configured run command to request QA for B. An accepted new-head request also supersedes unfinished older-head runs atomically. Completed history remains unchanged.
 
 A stopped run still waiting in Postgres never reaches Redis. A run already handed to Redis stays recorded, but its database state says it must not execute. Actual QA workers and their abort/cleanup behavior arrive later; this phase does not claim that browser testing is running. The website is still the setup shell. Pushes by actors outside the configured allowlist do not modify runs, and future execution must independently confirm current-head freshness.
+
+## Part 2 · Phase 2.6 — Maya's preview becomes available
+
+Maya requests QA for PawMart PR #42 at commit A. Her existing deployment pipeline creates a preview. An operator-approved binding says which URL and deployment belong to that tenant, repository, PR, and exact commit. DogWatch does not deploy her application or guess a branch URL.
+
+When the preparation stage is explicitly invoked, a queued run becomes `waiting_for_preview`. DogWatch checks that it still represents the current GitHub head, probes the final approved health endpoint, and retries temporary failures within its setup limits. A 503 while deployment starts can later become a 200. Setup records the deployment binding, readiness timestamp, and number of probes. It does not claim that checkout passed.
+
+A missing binding, forbidden destination, redirect, exhausted request/time budget, or unavailable current-head context produces a setup failure. A cancellation or new commit prevents late readiness from reviving the old run. Original SHA and budget snapshots stay unchanged, and raw responses/secrets are not saved.
+
+This phase adds and verifies that preparation capability; normal worker startup still dispatches only. The website remains the setup shell, and no customer preview is automatically polled before isolated consumption is built in Phase 2.7. A ready run stays `waiting_for_preview` until that executor safely starts real QA.

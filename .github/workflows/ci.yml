@@ -59,6 +59,8 @@ jobs:
       - run: npm run db:verify
       - run: npm run db:verify:acceptance
       - run: npm run queue:verify
+      # Isolated random-tenant HTTP/DB readiness checks; no customer preview access.
+      - run: npm run preview:verify
       - name: Verify Redis connectivity
         run: test "$(docker compose exec -T redis redis-cli ping)" = PONG
       # Capture failures while the services still exist, then stop without deleting volumes.

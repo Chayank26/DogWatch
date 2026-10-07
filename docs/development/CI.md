@@ -30,3 +30,5 @@ Workflow choices follow the official [setup-node documentation](https://github.c
 Phase 2.3 adds `npm run db:verify:acceptance` to the data-services job. It tests committed concurrent requests, body fingerprints, conflicts, ownership, and rollback, cleaning only random fixture records afterward. The API lifecycle also builds the database/contracts packages before type checks, tests, builds, and dev startup.
 
 Phase 2.4 adds `npm run queue:verify` to the data-services job. A random queue/tenant isolates real Redis/Postgres retry and crash-window tests; cleanup never drains the production queue. Production QA processing remains disabled.
+
+Phase 2.6 adds `npm run preview:verify` after migrations in the data-services job. It uses a random tenant and an ephemeral loopback readiness server; normal production readiness forbids private addresses. Unit readiness policy/budget tests run with `npm test`. Hosted CI execution is separate from local verification.

@@ -177,3 +177,18 @@ Next proposed phase: Part 2, Phase 2.6 — preview readiness. Stop for approval 
 ### Phase 2.5 verification
 
 All 25 unit/HTTP tests, workspace type checks/builds, lint, formatting, and whitespace checks passed. Real PostgreSQL verification covers new-head supersession, unauthorized stop rejection, repeated cancellation, tenant-scoped execution eligibility, stopped dispatch, and receipt replay without resurrection. The existing real Redis queue checks also passed. Initial verification found a synchronize classification error and an obsolete unsupported-action expectation; both were corrected. No live GitHub delivery, hosted CI, or production execution/abort was tested.
+
+## Part 2 · Phase 2.6 — Preview readiness
+
+- Chose explicit immutable deployment bindings rather than guessing preview URLs from branch names. Matching tenant, repository, PR, SHA, and deployment identity prevents mixing preview evidence across requests. A provider adapter could resolve deployment metadata automatically but needs provider-specific trust rules. The operator currently attests deployed source identity.
+- Kept production consumption disabled until isolation. Added callable preparation orchestration and disposable integration verification rather than a consumer that could accidentally run unrestricted QA. Successful readiness remains `waiting_for_preview` with a timestamp; it never marks QA running or passed.
+- Used a conditional queued-state claim and conditional finish to preserve cancellation/supersession during setup. Added current-head checks around probes. Future execution must add leases/crash recovery, whole-run accounting, abort propagation, and guarded stage/publication transitions; readiness checks are not those mechanisms.
+- Denied redirects, query-bearing URLs, credential-bearing URLs, private/special IPv4, and IPv6. DNS addresses are checked and pinned before connection; HTTPS keeps the configured hostname for TLS. Following approved redirects or supporting IPv6 is possible later with equivalent checks, but is unnecessary for explicit final health endpoints.
+- Capped polling by setup duration, per-request timeout, request count, and run-budget ceilings. Stored probe counts for future budget deduction. A healthy status is a setup observation; application assertions belong in smoke/API/browser tiers.
+- Added only nullable additive setup fields to existing runs. Fixed failure codes avoid persisting raw errors or response data. No authentication, deployment service, or web controls were added.
+
+Next proposed phase: Part 2, Phase 2.7 — worker isolation. Stop for approval before implementation.
+
+### Phase 2.6 verification
+
+The additive preview migration applied successfully. All 31 unit/HTTP tests, workspace type checks/builds, and real PostgreSQL/Redis acceptance/queue checks passed. Readiness integration passed for a temporary 503 followed by success, exact-SHA binding, persisted readiness evidence, repeat-claim prevention, redirects, stale heads, and cancellation before success recording. Local fixture data and its HTTP server were removed. Lint, formatting, and whitespace checks passed. No live customer preview, deployment provider, hosted CI run, or isolated production consumer was started.

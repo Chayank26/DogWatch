@@ -65,6 +65,10 @@ model Run {
   headSha             String       @db.VarChar(40)
   state               RunState     @default(received)
   policySnapshot      Json
+  // Readiness records an operator-approved immutable deployment binding, not credentials.
+  previewSnapshot     Json?
+  previewReadyAt      DateTime? @db.Timestamptz(3)
+  setupFailureCode    String?
   budgetSnapshot      Json
   createdAt           DateTime     @default(now()) @db.Timestamptz(3)
   repository          Repository   @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)

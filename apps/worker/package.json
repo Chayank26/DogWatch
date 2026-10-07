@@ -12,10 +12,15 @@
     "prebuild": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
     "pretypecheck": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
     "preverify:queue": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
-    "verify:queue": "node --import tsx src/verify-queue.ts"
+    "verify:queue": "node --import tsx src/verify-queue.ts",
+    "test": "node --import tsx --test src/preview.test.ts",
+    "verify:preview": "node --import tsx src/verify-preview.ts",
+    "preverify:preview": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue"
   },
   "dependencies": {
     "@dogwatch/database": "0.1.0",
-    "@dogwatch/queue": "0.1.0"
+    "@dogwatch/queue": "0.1.0",
+    "@dogwatch/contracts": "0.1.0",
+    "zod": "^4.3.6"
   }
 }

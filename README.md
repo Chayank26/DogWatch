@@ -54,3 +54,7 @@ With both DATABASE_URL and REDIS_URL exported, the runner now dispatches accepte
 ## Stop unfinished runs
 
 With the authorized durable API configured, an allowed human actor can post `/dogwatch cancel` on a PR to cancel unfinished runs for its current SHA. Authorized `pull_request.synchronize` notifications supersede unfinished older heads without creating a new run. Redis jobs/history remain retained; production QA execution and abort propagation are future phases. See [current user flow](flow.md) and [decisions](direction.md) for scope and freshness limits.
+
+## Preview readiness
+
+An explicitly callable preparation stage now validates exact-SHA deployment bindings, polls bounded health checks, and saves readiness evidence while respecting stop signals. Normal startup still dispatches only; isolated QA consumption comes next. See [worker guide](apps/worker/README.md). Run `npm run preview:verify` against local Postgres to verify the disposable HTTP fixture.

@@ -75,17 +75,37 @@ export async function acceptDelivery(
       async (transaction) => {
         // Bind file-backed policy to durable ownership. Never auto-create/transfer a
         // tenant or installation because a signed body or local file claims one.
-        // Hold a shared row lock so operator reassignment cannot race this check.
+        // Hold an exclusive row lock so operator reassignment cannot race this check.
         // Tagged query parameters are bound values, never SQL string interpolation.
         const repositories = await transaction.$queryRaw<{ id: bigint }[]>`
           SELECT "id" FROM "Repository"
           WHERE "id" = ${BigInt(event.repositoryId)}
             AND "tenantId" = ${event.tenantId}::uuid
             AND "installationId" = ${BigInt(event.installationId)}
-          FOR SHARE
+          FOR UPDATE
         `;
         if (!repositories.length)
           throw new OwnershipMismatchError('Repository ownership mismatch');
+        // Accepting a newer authorized snapshot makes unfinished older heads obsolete.
+        // Receipt conflicts roll this back too, so redelivery cannot supersede work.
+        await transaction.run.updateMany({
+          where: {
+            tenantId: event.tenantId,
+            repositoryId: BigInt(event.repositoryId),
+            pullRequestNumber: event.pullRequestNumber,
+            headSha: { not: event.headSha },
+            state: {
+              in: [
+                'received',
+                'queued',
+                'waiting_for_preview',
+                'running',
+                'reporting',
+              ],
+            },
+          },
+          data: { state: 'superseded' },
+        });
         const run = await transaction.run.create({
           data: {
             tenantId: event.tenantId,

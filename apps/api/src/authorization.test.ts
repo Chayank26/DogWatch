@@ -90,7 +90,7 @@ test('ordinary, unsupported, unknown, disabled and unauthorized requests do not 
   };
   const cases = [
     ['push', opened],
-    ['pull_request', { ...opened, action: 'synchronize' }],
+    ['pull_request', { ...opened, action: 'edited' }],
     ['pull_request', { ...opened, pull_request: { number: 42, labels: [] } }],
     ['pull_request', { ...opened, sender: { id: 999, type: 'User' } }],
     ['pull_request', { ...opened, installation: { id: 999 } }],
@@ -284,5 +284,44 @@ test('HTTP acceptance waits for persistence and sanitizes storage failures', asy
     await new Promise<void>((resolve, reject) =>
       server.close((error) => (error ? reject(error) : resolve())),
     );
+  }
+});
+
+// Stop commands use current remote context, and never create an opt-in run request.
+test('synchronize and cancellation authorize stop-only operations', async () => {
+  for (const [name, payload, operation] of [
+    [
+      'pull_request',
+      {
+        ...opened,
+        action: 'synchronize',
+        pull_request: { ...opened.pull_request, labels: [] },
+      },
+      'supersede',
+    ],
+    [
+      'issue_comment',
+      { ...comment, comment: { ...comment.comment, body: '/dogwatch cancel' } },
+      'cancel',
+    ],
+  ] as const) {
+    const result = await authorizeDelivery(
+      name,
+      'stop-delivery',
+      payload,
+      dependencies,
+    );
+    assert.equal(result.status, 'stop_requested');
+    if (result.status === 'stop_requested') {
+      assert.equal(result.headSha, current.headSha);
+      assert.equal(result.operation, operation);
+    }
+    const denied = await authorizeDelivery(
+      name,
+      'stop-delivery',
+      { ...payload, sender: { id: 999, type: 'User' } },
+      dependencies,
+    );
+    assert.equal(denied.status, 'ignored');
   }
 });

@@ -51,3 +51,7 @@ The same advisories appear with `npm audit --omit=dev` through npm's workspace/p
 ## Phase 2.3 update
 
 The additive receipt migration enables `acceptDelivery` and database-enforced delivery/body deduplication. See [durable acceptance](../../docs/github/DURABLE_ACCEPTANCE.md) for setup, transaction semantics, and limitations. `npm run db:verify:acceptance` tests actual committed operations and cleans up only exact random fixture tenants; it is separate from the original rollback-only check. Package lifecycle hooks build contracts before consumers run.
+
+## Run stop signals
+
+`stopRuns` validates trusted policy and actor context, locks the owned repository, and conditionally stops unfinished matching runs. `canExecuteRun` checks tenant ownership and an executable state; future executors must call it and use guarded state transitions/abort cleanup. These functions do not authenticate a browser caller, create execution leases, or delete queue evidence. The acceptance verification now checks supersession, cancellation, repeated stops, ownership rejection, and stopped dispatch.

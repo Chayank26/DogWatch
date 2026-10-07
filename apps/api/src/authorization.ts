@@ -55,6 +55,14 @@ export interface AuthorizationDependencies {
 }
 export type AuthorizationResult =
   | {
+      status: 'stop_requested';
+      policy: RepositoryPolicy;
+      actorId: number;
+      pullRequestNumber: number;
+      headSha: string;
+      operation: 'cancel' | 'supersede';
+    }
+  | {
       status: 'eligible_only';
       queued: false;
       event: OptInEvent;
@@ -104,7 +112,10 @@ export async function authorizeDelivery(
   if (actorType && actorType !== 'User')
     return ignore('unsupported_actor_type');
   const action = z.object({ action: z.string() }).parse(payload).action;
-  if (eventName === 'pull_request' && !['opened', 'labeled'].includes(action))
+  if (
+    eventName === 'pull_request' &&
+    !['opened', 'labeled', 'synchronize'].includes(action)
+  )
     return ignore('unsupported_action');
   if (eventName === 'issue_comment' && action !== 'created')
     return ignore('unsupported_action');
@@ -128,7 +139,7 @@ export async function authorizeDelivery(
     ({ id: actorId } = parsed.sender);
     number = parsed.number;
     labels = parsed.pull_request.labels.map((label) => label.name);
-    kind = action === 'opened' ? 'pr_opened' : 'pr_labeled';
+    kind = action === 'labeled' ? 'pr_labeled' : 'pr_opened';
     if (kind === 'pr_labeled' && !parsed.label)
       throw new Error('Missing added label');
     addedLabel = parsed.label?.name ?? '';
@@ -155,9 +166,12 @@ export async function authorizeDelivery(
   if (!policy.authorizedActorIds.includes(actorId))
     return ignore('unauthorized_actor');
   if (
-    (kind === 'pr_opened' && !labels.includes(policy.label)) ||
+    (action !== 'synchronize' &&
+      kind === 'pr_opened' &&
+      !labels.includes(policy.label)) ||
     (kind === 'pr_labeled' && addedLabel !== policy.label) ||
-    (kind === 'pr_comment' && body.trim() !== policy.command)
+    (kind === 'pr_comment' &&
+      ![policy.command, '/dogwatch cancel'].includes(body.trim()))
   )
     return ignore('no_opt_in');
 
@@ -178,6 +192,24 @@ export async function authorizeDelivery(
   // Forks cannot inherit preview credentials automatically; default-deny for MVP.
   if (context.headRepositoryId !== repositoryId)
     return ignore('fork_not_allowed');
+  // Stop-only events never opt a PR into QA. Resolve current GitHub state even if
+  // an old synchronize payload arrives late; its embedded SHA is never trusted.
+  if (
+    action === 'synchronize' ||
+    (kind === 'pr_comment' && body.trim() === '/dogwatch cancel')
+  ) {
+    return {
+      status: 'stop_requested',
+      policy,
+      actorId,
+      pullRequestNumber: number,
+      headSha: z
+        .string()
+        .regex(/^[a-f0-9]{40}$/)
+        .parse(context.headSha),
+      operation: action === 'synchronize' ? 'supersede' : 'cancel',
+    };
+  }
   if (kind !== 'pr_comment' && !context.labels.includes(policy.label))
     return ignore('label_removed');
   const base = {

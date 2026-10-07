@@ -100,3 +100,9 @@ No third-party runtime package was added. API now consumes the database workspac
 | Integration verification           | Exercise actual Redis/Postgres crash-window handoff, retries, and concurrency.              | Pure mocks cannot establish queue identity, locks, and delayed retry behavior.                                                                                                          |
 
 New code and SQL contain detailed comments. Queue defaults follow [BullMQ connection](https://docs.bullmq.io/guide/connections) and [retry documentation](https://docs.bullmq.io/guide/retrying-failing-jobs). Production execution remains disabled; only dispatch now runs when configured.
+
+## Part 2 · Phase 2.5 — Cancellation and supersession
+
+Postgres stores the stop signal in the existing RunState enum. Prisma conditional updates restrict stopping to unfinished states and the owning repository, PR, and SHA. Repository row locks serialize acceptance with stop operations; Redis-only cancellation would lose this authority on queue recovery. No schema migration or new dependency is needed. Zod validates direct service callers as well as webhook inputs. Signed GitHub comments supply cancellation until authenticated dashboard controls exist; a browser button without membership authentication would be premature.
+
+The API fetches current GitHub context for synchronize notifications rather than trusting the SHA in a delayed webhook. Synchronize is a stop-only operation and does not add a new opt-in trigger. The worker integration verifies that stopped outbox records are not enqueued. Queued records remain retained; a future executor must check durable state before stages and poll it to abort ongoing browser/HTTP operations.

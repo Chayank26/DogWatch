@@ -163,3 +163,17 @@ Next proposed phase: Part 2, Phase 2.5 — cancellation and stale-head supersess
 ### Phase 2.4 verification
 
 The additive outbox retry migration applied successfully. Real Postgres/Redis verification passed for the enqueue-before-commit crash window, concurrent dispatchers, bounded handoff retries, permanent identity conflicts, processor retry success/exhaustion, the concurrency ceiling, and invalid jobs. All 24 unit/HTTP tests, workspace type checks/builds, and lint passed. The first queue check exposed BullMQ's optional Redis driver requirement; adding ioredis explicitly resolved it and the integration check then passed. No production QA processor or hosted CI run was started.
+
+## Part 2 · Phase 2.5 — Cancellation and stale-head supersession
+
+- Added an authorized `/dogwatch cancel` comment for unfinished runs on the resolved current SHA. Repeated cancellation is harmless. Cancelling historical heads individually and dashboard controls wait for authenticated membership and run history.
+- Treat synchronize notifications as stop-only requests. Pushing a commit invalidates unfinished older-head work without silently starting another QA run; users explicitly request a new run. The existing human actor allowlist, installation scope, enabled policy, and fork checks apply. Pushes from other actors are ignored under the current policy; execution must independently check current GitHub head before work/report publication in later phases.
+- Acceptance of a different authorized SHA also supersedes unfinished older runs in the same transaction. Receipt conflicts roll back those changes so replay cannot revive cancelled work. Exclusive repository locks serialize database stop/create operations; dispatcher run locks serialize handoff with stopping.
+- Preserve terminal outcomes and immutable snapshots. Kept queue jobs/outbox records instead of deleting evidence or treating Redis removal as cancellation. A job enqueued just before a stop is safe only when its eventual executor observes the database state. No production executor exists yet.
+- Added a tenant-scoped execution eligibility check for future stage entry. It is not an execution lease or an atomic publication guard. GitHub can change after a lookup and before transaction commit; later execution/reporting must revalidate the head and use guarded transitions. Abort propagation, audit history, and completed-verdict freshness belong with those later stages.
+
+Next proposed phase: Part 2, Phase 2.6 — preview readiness. Stop for approval before implementation.
+
+### Phase 2.5 verification
+
+All 25 unit/HTTP tests, workspace type checks/builds, lint, formatting, and whitespace checks passed. Real PostgreSQL verification covers new-head supersession, unauthorized stop rejection, repeated cancellation, tenant-scoped execution eligibility, stopped dispatch, and receipt replay without resurrection. The existing real Redis queue checks also passed. Initial verification found a synchronize classification error and an obsolete unsupported-action expectation; both were corrected. No live GitHub delivery, hosted CI, or production execution/abort was tested.

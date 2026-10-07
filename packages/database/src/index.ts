@@ -23,3 +23,7 @@ export type { AcceptanceInput, AcceptanceResult } from './acceptance.js';
 
 // Dispatcher API is separate from ingress acceptance; neither starts itself on import.
 export { dispatchNext, dispatchAttemptLimit } from './dispatch.js';
+
+// Stop signals are durable; callers must obtain policy/actor context through authorization.
+export { stopRuns, canExecuteRun } from './lifecycle.js';
+export type { StopInput } from './lifecycle.js';

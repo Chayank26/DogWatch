@@ -131,3 +131,11 @@ If Redis handoff fails, Postgres records a fixed failure code and schedules a bo
 The synthetic verifier starts temporary processors to demonstrate retry and concurrency behavior. Those processors do not test PawMart or mark product QA completed. Their random queue and tenant records are deleted after verification. Real production QA jobs remain waiting for later preview readiness and isolated execution.
 
 Current background flow: **received run/outbox → locked due selection → stable Redis job → published outbox/queued run**. Failure branch: **handoff error → persisted next attempt → bounded retry or terminal failure**. Only UUID references are newly stored in Redis; screenshots and model prompts still do not exist.
+
+## Part 2 · Phase 2.5 — Maya stops obsolete work
+
+Maya has requested QA for commit A. She posts `/dogwatch cancel` on the PR. DogWatch verifies the signature, checks that Maya is an authorized actor for the repository, and asks GitHub for the current PR and SHA. Unfinished runs for that SHA become `cancelled`. Posting the command twice has no extra effect. There is no dashboard cancellation button yet.
+
+If Maya instead pushes commit B, GitHub sends a synchronize notification. DogWatch fetches the current SHA and marks unfinished runs for other SHAs `superseded`. It keeps their original snapshots and delivery records. A push does not start new testing: Maya can post the configured run command to request QA for B. An accepted new-head request also supersedes unfinished older-head runs atomically. Completed history remains unchanged.
+
+A stopped run still waiting in Postgres never reaches Redis. A run already handed to Redis stays recorded, but its database state says it must not execute. Actual QA workers and their abort/cleanup behavior arrive later; this phase does not claim that browser testing is running. The website is still the setup shell. Pushes by actors outside the configured allowlist do not modify runs, and future execution must independently confirm current-head freshness.

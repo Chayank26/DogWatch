@@ -1,7 +1,7 @@
 /**
  * Importable API factory: tests supply a secret explicitly without starting the
  * production listener. Optional persistence commits authorized runs in Phase 2.3;
- * queue dispatch remains a later phase.
+ * queue dispatch occurs in the separate worker process.
  */
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
@@ -14,12 +14,17 @@ import {
   DeliveryConflictError,
   OwnershipMismatchError,
 } from '@dogwatch/database';
-import type { AcceptanceInput, AcceptanceResult } from '@dogwatch/database';
+import type {
+  AcceptanceInput,
+  AcceptanceResult,
+  StopInput,
+} from '@dogwatch/database';
 
 export function createApiApp(
   webhookSecret?: string,
   authorization?: AuthorizationDependencies,
   persist?: (input: AcceptanceInput) => Promise<AcceptanceResult>,
+  stop?: (input: StopInput) => Promise<number>,
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -80,6 +85,17 @@ export function createApiApp(
           payload,
           authorization,
         );
+        if (result.status === 'stop_requested') {
+          // Never return trusted policy or tenant context in HTTP responses.
+          const affected = stop ? await stop(result) : undefined;
+          response.json({
+            status: stop ? 'stopped' : 'stop_eligible_only',
+            operation: result.operation,
+            affected,
+            queued: false,
+          });
+          return;
+        }
         if (result.status === 'eligible_only' && persist) {
           // Hash the authenticated original bytes, not reserialized JSON or unsigned
           // headers. Successful HTTP acceptance happens only after the transaction.

@@ -50,3 +50,7 @@ Durable acceptance is now available with explicit database configuration. See [d
 ## Queue dispatcher
 
 With both DATABASE_URL and REDIS_URL exported, the runner now dispatches accepted outbox work to BullMQ. See the [queue guide](packages/queue/README.md). Real QA consumption remains disabled. Run `npm run queue:verify` to exercise the isolated local queue/database integration.
+
+## Stop unfinished runs
+
+With the authorized durable API configured, an allowed human actor can post `/dogwatch cancel` on a PR to cancel unfinished runs for its current SHA. Authorized `pull_request.synchronize` notifications supersede unfinished older heads without creating a new run. Redis jobs/history remain retained; production QA execution and abort propagation are future phases. See [current user flow](flow.md) and [decisions](direction.md) for scope and freshness limits.

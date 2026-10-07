@@ -13,6 +13,9 @@ import {
   acceptDelivery,
   DeliveryConflictError,
   OwnershipMismatchError,
+  stopRuns,
+  canExecuteRun,
+  dispatchNext,
 } from './index.js';
 import type { AcceptanceInput } from './acceptance.js';
 
@@ -128,8 +131,59 @@ try {
   assert.equal(await db.run.count({ where: { tenantId } }), 1);
   assert.equal(await db.webhookDelivery.count({ where: { tenantId } }), 1);
   assert.equal(await db.outboxEvent.count({ where: { tenantId } }), 1);
+  // A new head obsoletes active earlier work while preserving its immutable SHA.
+  const newer = await acceptDelivery(db, {
+    ...input,
+    payloadSha256: createHash('sha256').update(randomUUID()).digest('hex'),
+    event: {
+      ...input.event,
+      deliveryId: randomUUID(),
+      headSha: 'b'.repeat(40),
+    },
+  });
+  assert.equal(
+    (await db.run.findUniqueOrThrow({ where: { id: replay.runId } })).state,
+    'superseded',
+  );
+  await db.run.update({
+    where: { id: newer.runId },
+    data: { state: 'queued' },
+  });
+  assert.equal(await canExecuteRun(db, tenantId, newer.runId), true);
+  assert.equal(await canExecuteRun(db, outsiderId, newer.runId), false);
+  const stop = {
+    policy,
+    actorId: 30,
+    pullRequestNumber: 42,
+    headSha: 'b'.repeat(40),
+    operation: 'cancel' as const,
+  };
+  await assert.rejects(
+    stopRuns(db, { ...stop, actorId: 999 }),
+    OwnershipMismatchError,
+  );
+  assert.equal(await stopRuns(db, stop), 1);
+  assert.equal(await stopRuns(db, stop), 0);
+  assert.equal(await canExecuteRun(db, tenantId, newer.runId), false);
+  // No stopped outbox is passed to the queue, even when its due time has arrived.
+  assert.equal(
+    await dispatchNext(
+      db,
+      async () => {
+        throw new Error('Stopped job dispatched');
+      },
+      tenantId,
+    ),
+    'idle',
+  );
+  // Receipt replay cannot resurrect or supersede a cancelled run.
+  assert.equal((await acceptDelivery(db, input)).status, 'duplicate');
+  assert.equal(
+    (await db.run.findUniqueOrThrow({ where: { id: newer.runId } })).state,
+    'cancelled',
+  );
   process.stdout.write(
-    'Acceptance verified: concurrent deduplication, fingerprint replay, immutable snapshot, conflicts, ownership, rollback.\n',
+    'Acceptance verified: concurrent deduplication, fingerprint replay, immutable snapshot, conflicts, ownership, rollback, supersession, cancellation, stopped dispatch.\n',
   );
 } finally {
   // This is not a database reset: exact random fixture ownership bounds every delete.

@@ -52,3 +52,7 @@ Implementation follows [GitHub installation authentication](https://docs.github.
 ## Phase 2.3 update
 
 The eligibility-only behavior remains when persistence is absent. With explicit DATABASE_URL and matching registered ownership, [durable acceptance](DURABLE_ACCEPTANCE.md) saves authorized work before acknowledgment and reconciles duplicate deliveries. Queue execution is still not implemented.
+
+## Phase 2.5 stop-only events
+
+The same enabled repository policy and human actor allowlist authorize `/dogwatch cancel` comments and `pull_request.synchronize` events. Cancellation stops unfinished current-SHA runs; synchronize supersedes unfinished different-SHA runs. Both fetch canonical GitHub scope and SHA and retain the existing installation/fork checks. They never create a run. Subscribe the App to pull requests and issue comments. With no database stop handler configured, responses explicitly say `stop_eligible_only`; durable mode returns `stopped` with an affected count. No tenant policy is returned.

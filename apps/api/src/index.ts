@@ -3,7 +3,7 @@ import { createApiApp } from './app.js';
 import { readFileSync } from 'node:fs';
 import { parsePolicies } from './authorization.js';
 import { createGitHubResolver } from './github.js';
-import { createDatabase, acceptDelivery } from '@dogwatch/database';
+import { createDatabase, acceptDelivery, stopRuns } from '@dogwatch/database';
 
 const port = Number(process.env.API_PORT ?? 4000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -47,15 +47,14 @@ const persist = database
   ? (input: Parameters<typeof acceptDelivery>[1]) =>
       acceptDelivery(database, input)
   : undefined;
-const server = createApiApp(secret, authorization, persist).listen(
-  port,
-  '127.0.0.1',
-  () => {
-    process.stdout.write(
-      `DogWatch API listening on http://127.0.0.1:${port}\n`,
-    );
-  },
-);
+const server = createApiApp(
+  secret,
+  authorization,
+  persist,
+  database ? (input) => stopRuns(database, input) : undefined,
+).listen(port, '127.0.0.1', () => {
+  process.stdout.write(`DogWatch API listening on http://127.0.0.1:${port}\n`);
+});
 // Graceful shutdown stops new requests and releases keep-alive connections.
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {

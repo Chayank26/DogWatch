@@ -66,3 +66,7 @@ Optional operator-configured authorization now filters signed PR/comment candida
 ## Phase 2.3 implementation update
 
 Explicit database-backed acceptance now validates registered ownership, atomically saves run/receipt/outbox, and deduplicates delivery IDs and exact signed-body fingerprints. It retains approved actor IDs and policy metadata without raw bodies or credentials. Queue dispatch, membership/RLS, artifact storage, receipt retention, and cancellation remain future controls. A duplicate is still subject to current authorization before storage reconciliation. Real GitHub end-to-end behavior remains unverified.
+
+## Phase 2.4 implementation update
+
+The configured runner dispatches locked committed outbox work with durable backoff/attempt limits into retained BullMQ jobs containing UUID references only. Global queue concurrency is two; synthetic worker callbacks verify retries but no production QA consumer is launched. Worker authority revalidation, per-tenant limits, leases, cancellation, isolation, and retention/lost-Redis reconciliation remain future requirements. Queue schema validation is not execution authorization.

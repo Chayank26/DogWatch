@@ -15,3 +15,7 @@ Database, analysis, and reporting packages will be created when their first cons
 ## Database — Phase 1.4
 
 See [database setup](database/README.md) for local Postgres/Redis, schema ownership, migrations, generated files, and verification. The package is available to future consumers but is not wired into the application shells.
+
+## Queue — Phase 2.4
+
+The [queue package](queue/README.md) provides Redis job identity, payload validation, retry defaults, and an injected worker harness. Configured runner startup dispatches committed database outbox records; it does not execute QA tiers yet.

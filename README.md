@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:3000 for the website. The API health endpoint is http://127.0.0.1:4000/health. The worker prints its scaffold status; it does not consume jobs yet. The website/API scaffold still needs no credentials or data services. Local Postgres/Redis and migration tools are now available separately; follow [database setup](packages/database/README.md). API/worker environment-file loading is not implemented yet.
+Open http://127.0.0.1:3000 for the website. The API health endpoint is http://127.0.0.1:4000/health. The worker dispatches saved runs to Redis when both service URLs are configured; otherwise it reports that dispatch is disabled. It does not execute QA jobs yet. The website/API scaffold still needs no credentials or data services. Local Postgres/Redis and migration tools are now available separately; follow [database setup](packages/database/README.md). API/worker environment-file loading is not implemented yet.
 
 ## Verification
 
@@ -45,4 +45,8 @@ The API now exposes a validation-only `/webhooks/github` endpoint. See [App setu
 
 Authorization/event filtering can now be enabled separately with protected local policy and App credential files. See the [authorization guide](docs/github/AUTHORIZATION.md). Eligible decisions remain unqueued and unpersisted.
 
-Durable acceptance is now available with explicit database configuration. See [deduplication and outbox setup](docs/github/DURABLE_ACCEPTANCE.md). Accepted runs are saved but remain unqueued until the dispatcher phase.
+Durable acceptance is now available with explicit database configuration. See [deduplication and outbox setup](docs/github/DURABLE_ACCEPTANCE.md). Accepted runs are saved and can be queued by the configured background dispatcher.
+
+## Queue dispatcher
+
+With both DATABASE_URL and REDIS_URL exported, the runner now dispatches accepted outbox work to BullMQ. See the [queue guide](packages/queue/README.md). Real QA consumption remains disabled. Run `npm run queue:verify` to exercise the isolated local queue/database integration.

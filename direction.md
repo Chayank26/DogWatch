@@ -147,3 +147,19 @@ Next proposed phase: Part 2, Phase 2.4 — queue dispatch and retries. Wait for 
 ### Phase 2.3 verification
 
 The additive receipt migration applied successfully, and repeated deployment reported no pending migrations. Real Postgres verification passed for concurrent copies, changed-header fingerprint replay, immutable snapshots, conflicts, ownership mismatch, failure rollback, and exact fixture cleanup, including a rerun after adding the shared ownership lock. The previous database verification still passes. All 24 unit/HTTP tests, workspace type checks/builds, lint, formatting, local documentation links, and whitespace checks passed. Prisma initially required a schema uniqueness correction and workspace-relative migration path correction; both were resolved before applying the migration. No live GitHub App delivery or hosted CI run was performed. Queue dispatch is intentionally absent.
+
+## Part 2 · Phase 2.4 — Queue dispatch and retries
+
+- Added durable dispatcher attempt/due/error metadata rather than an in-memory retry counter. Outbox failure and publication updates survive restart.
+- Selected one locked due row at a time and used SKIP LOCKED for multiple dispatcher processes. A lease protocol could avoid holding locks during network work but would add recovery state before throughput evidence requires it.
+- Used run UUIDs as BullMQ job IDs and retained completed/failed jobs. Tested the crash window where Redis already contains a job but the outbox remains pending; cleanup/Redis data-loss reconciliation remains an explicit production obligation.
+- Stored only tenant/run references in Redis, not snapshots or credentials. A future processor must revalidate database ownership and use idempotent stage operations rather than trusting those references as authority.
+- Separated five dispatcher attempts from three processor attempts. Permanent identity conflicts and malformed jobs fail without burning transient retry budgets. Global concurrency is two; tenant limits/fairness remain future execution policy work.
+- Replaced the runner scaffold with an optional dispatcher loop, while keeping production QA consumption disabled until preview readiness/isolation. A no-op real QA consumer would incorrectly signal completed testing, so only injected synthetic processors are used now.
+- Scoped integration verification to a random queue/tenant, including dispatch selection; tests never pick up another tenant's pending work. The runner/database/queue lifecycle scripts build prerequisite packages on a clean checkout.
+
+Next proposed phase: Part 2, Phase 2.5 — cancellation and stale-head supersession. Stop for approval before implementing it.
+
+### Phase 2.4 verification
+
+The additive outbox retry migration applied successfully. Real Postgres/Redis verification passed for the enqueue-before-commit crash window, concurrent dispatchers, bounded handoff retries, permanent identity conflicts, processor retry success/exhaustion, the concurrency ceiling, and invalid jobs. All 24 unit/HTTP tests, workspace type checks/builds, and lint passed. The first queue check exposed BullMQ's optional Redis driver requirement; adding ioredis explicitly resolved it and the integration check then passed. No production QA processor or hosted CI run was started.

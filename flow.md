@@ -119,3 +119,15 @@ These records survive API restart. They include approved actor IDs and redacted 
 The new database verification briefly commits random synthetic tenants/runs, checks behavior, and deletes only those fixtures. Real accepted records are not deleted by the verification command. Signature-only or eligibility-only operation is still possible when durable persistence is not enabled.
 
 Current durable flow: **signed request → current authority checks → locked ownership check → atomic receipt/run/outbox commit → acceptance response**. Execution comes next.
+
+## Part 2 · Phase 2.4 — Queue dispatch and retries
+
+Maya's website is still informational. When her configured backend accepts PawMart PR #42, Postgres first stores its received run and instruction exactly as before. A separately configured dispatcher now picks up that instruction and adds a Redis job containing only the tenant and run UUIDs.
+
+Once Redis accepts the job, the dispatcher records the publication time and moves the run to queued. The API's original response still says queued:false because it acknowledges storage before this background handoff. Maya cannot inspect queued runs in a dashboard yet, and no browser/model testing or GitHub report starts in this phase.
+
+If Redis handoff fails, Postgres records a fixed failure code and schedules a bounded exponential retry. Five failed attempts make the run failed; a permanent identity conflict fails immediately. If the process crashes after Redis add, a retry uses the same job ID and avoids a second job. Ordinary stop/start preserves database attempt history and Redis jobs.
+
+The synthetic verifier starts temporary processors to demonstrate retry and concurrency behavior. Those processors do not test PawMart or mark product QA completed. Their random queue and tenant records are deleted after verification. Real production QA jobs remain waiting for later preview readiness and isolated execution.
+
+Current background flow: **received run/outbox → locked due selection → stable Redis job → published outbox/queued run**. Failure branch: **handoff error → persisted next attempt → bounded retry or terminal failure**. Only UUID references are newly stored in Redis; screenshots and model prompts still do not exist.

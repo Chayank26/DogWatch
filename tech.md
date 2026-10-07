@@ -89,3 +89,14 @@ All new code includes detailed comments; example JSON is explained in the author
 | Database integration verification    | Test real concurrency, rollback, conflicts, ownership, and replay behavior.       | Unit mocks alone cannot establish Postgres uniqueness/transaction behavior. HTTP tests separately verify the acknowledgment boundary.                                       |
 
 No third-party runtime package was added. API now consumes the database workspace, whose lifecycle scripts build shared contract output. The additive SQL migration and new source files carry comments. Redis remains unused by ingress until dispatch is implemented.
+
+## Part 2 · Phase 2.4 — Queue dispatch and retries
+
+| Technology                         | Current role                                                                                | Why selected / alternatives                                                                                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BullMQ and ioredis                 | Store stable run jobs in Redis with processor backoff, retention, and concurrency controls. | Matches the master specification; a custom Redis queue would duplicate scheduling/lock/retry logic. The installed BullMQ requires its optional ioredis driver explicitly.               |
+| PostgreSQL locked outbox selection | Divide due work across dispatchers and persist success/attempt metadata.                    | SKIP LOCKED avoids an in-memory leader. Holding a bounded network call inside the transaction is simpler initially than a lease/reclaim protocol, with throughput tradeoffs documented. |
+| Zod UUID reference schema          | Limit queue data to tenant/run identity and reject malformed jobs.                          | Credentials/source in job data would widen exposure; valid IDs still require future authoritative worker checks.                                                                        |
+| Integration verification           | Exercise actual Redis/Postgres crash-window handoff, retries, and concurrency.              | Pure mocks cannot establish queue identity, locks, and delayed retry behavior.                                                                                                          |
+
+New code and SQL contain detailed comments. Queue defaults follow [BullMQ connection](https://docs.bullmq.io/guide/connections) and [retry documentation](https://docs.bullmq.io/guide/retrying-failing-jobs). Production execution remains disabled; only dispatch now runs when configured.

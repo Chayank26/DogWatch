@@ -20,3 +20,6 @@ export {
   OwnershipMismatchError,
 } from './acceptance.js';
 export type { AcceptanceInput, AcceptanceResult } from './acceptance.js';
+
+// Dispatcher API is separate from ingress acceptance; neither starts itself on import.
+export { dispatchNext, dispatchAttemptLimit } from './dispatch.js';

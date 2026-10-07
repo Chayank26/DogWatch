@@ -53,3 +53,7 @@ Exact-body deduplication is deliberately conservative: byte-identical legitimate
 HTTP unit tests inject the persistence boundary and verify 202 responses happen after it resolves and storage failures return sanitized 503. CI's data-services job runs the real database verification. Live GitHub delivery and hosted CI remain unverified.
 
 Outbox records remain unpublished and runs remain received. No Redis job, browser/model request, or GitHub report is created. Phase 2.4 will implement dispatch/retries; budgets, lifecycle cancellation, run leases, and preview identity are later work. Under-10-second acceptance latency is not yet validated under load.
+
+## Phase 2.4 update
+
+Accepted records can now be dispatched by a separately configured runner. The API response still reflects the storage boundary, while the background dispatcher records publication and queued state. See the [queue guide](../../packages/queue/README.md) for retry behavior and the still-disabled production QA consumer.

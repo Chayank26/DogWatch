@@ -1,6 +1,6 @@
 # ADR 002 — Persist accepted work before dispatching it
 
-**Status:** Accepted design; local schema/migration and authorized run/receipt/outbox persistence implemented through Phase 2.3; dispatch remains planned.
+**Status:** Accepted design; local schema/migration and authorized run/receipt/outbox persistence implemented through Phase 2.4, including retry metadata and BullMQ dispatch. Production execution, cancellation, and publication remain planned.
 
 **Phase:** Part 1, Phase 1.3.
 

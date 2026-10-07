@@ -42,3 +42,31 @@ The state claim prevents simultaneous setup, but is not an execution lease: a pr
 `npm test` includes synthetic readiness tests without external requests. `npm run preview:verify` needs local Postgres and opens an ephemeral loopback HTTP readiness fixture. It tests real polling, exact SHA matching, persisted evidence, repeat claims, redirects, stale heads, and cancellation races; it removes only its random tenant and ephemeral server. `npm run queue:verify` separately verifies dispatch. CI runs both integration checks after migrations.
 
 New worker scripts are JSON because npm requires that format: `test` runs Node's test runner through tsx; `preverify:preview` builds dependency exports before `verify:preview`; root `preview:verify` delegates to that workspace. Contracts and Zod are declared dependencies because preparation validates run budgets and deployment JSON at runtime. No new deployment provider or browser runtime is installed here.
+
+## Phase 2.7 — Offline execution sandbox
+
+Build with `npm run sandbox:build` and verify with `npm run isolation:verify`. Docker must be running. The build context is only `apps/worker/sandbox`; its allowlist excludes the workspace, local secrets, and customer source. The Node base image is digest-pinned. The launcher resolves the trusted local image tag to a content ID before creation; it never pulls a customer-selected image.
+
+`runIsolatedProbe` is a trusted host-side supervisor for fixed diagnostic tasks. It uses `execFile` argument arrays rather than shell commands. Task JSON accepts only tenant/run UUID references and the `probe` or `timeout_probe` diagnostic kind. It does not accept commands, images, environment variables, source paths, or mounts, and is not an authorization endpoint. A future product executor must validate tenant ownership, current head, and durable cancellation before calling sandbox operations.
+
+Every invocation creates a unique container with these enforced settings:
+
+| Boundary             | Setting and purpose                                                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| User                 | UID/GID 10001, independent of the host user                                                                                              |
+| Privileges           | All Linux capabilities dropped; no-new-privileges; Docker's default seccomp remains enabled                                              |
+| Root filesystem      | Read-only; no repository or host volume mounts                                                                                           |
+| Scratch data         | Fresh 16 MiB tmpfs at `/tmp`, noexec/nosuid/nodev; removed with the container                                                            |
+| CPU/memory/processes | 0.5 CPU, 128 MiB memory with no extra swap, 32 processes, bounded file descriptors and no core dumps                                     |
+| Network              | `none`: no preview, database, Redis, provider, or metadata connectivity                                                                  |
+| Secrets              | No host environment injection, stdin credentials, or Docker socket                                                                       |
+| Output               | 16 KiB attachment ceiling, validated boolean diagnostic evidence, fixed failure codes; Docker log storage disabled                       |
+| Lifetime             | At most 60 seconds, including image lookup/create/attach; separate bounded forced cleanup after success, error, timeout, or cancellation |
+
+The host supervisor needs a trusted Docker daemon. The container never receives the daemon socket. Containers share the daemon's kernel: these controls are an MVP isolation foundation, not a hardened hostile-code or production tenant certification. A process/host crash or daemon outage can prevent cleanup; `sandbox_cleanup_failed` must stop orchestration and an operator must reconcile orphaned `dogwatch.managed=sandbox` containers by identity before production recovery. Automatic orphan sweeping/leases and container escape testing are future operational work.
+
+This phase intentionally permits no outbound network at all. Readiness remains the separately restricted host HTTP stage. The sandbox does not yet run API probes or Playwright; those stages need an external enforced destination gateway and equivalent browser egress controls before network access can be introduced. It also does not install or run repository scripts, inject synthetic-account credentials, create artifacts, or mark product runs running/completed. Future short-lived credentials must be granted only to the required stage; this current diagnostic needs none.
+
+The real Docker verifier inspects engine resource/mount/security settings, tests non-root/capability/root-write/socket/metadata boundaries inside the container, checks that host canaries are absent, runs two fresh workspaces, and proves forced removal after timeout/cancellation. It creates only random diagnostic containers and no database runs. Unit tests reject extra task fields and unsafe image/name arguments. CI builds the same trusted context and runs the same verifier. The Docker controls follow the [official container runtime documentation](https://docs.docker.com/engine/containers/run/).
+
+The new npm scripts delegate the small image build and explicit verification to the worker workspace; ordinary development startup remains dispatch-only. No Docker daemon access is added to the API, website, Postgres, or Redis services.

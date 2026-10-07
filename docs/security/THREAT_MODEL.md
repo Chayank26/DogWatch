@@ -74,3 +74,7 @@ The configured runner dispatches locked committed outbox work with durable backo
 ### Phase 2.6 implementation update
 
 Readiness probes now enforce exact approved origins, forbid redirects/URL credentials/query parameters, reject private/special IPv4 and IPv6, and pin DNS-checked addresses in the HTTPS socket lookup. No response body or secret is stored. Loopback permission exists only as an explicit fixture harness code option. This controls only the readiness HTTP path; container/Playwright egress isolation remains Phase 2.7 work. An operator binding attests deployment SHA; health status alone cannot prove deployed code identity.
+
+### Phase 2.7 implementation update
+
+A trusted host supervisor can now create an offline, non-root, read-only Docker diagnostic container with dropped capabilities, no-new-privileges, default seccomp, bounded tmpfs/CPU/memory/processes, no mounts/socket/env-secret injection, and no network. The image build context is a strict small allowlist with a digest-pinned base. Actual engine/runtime controls, host-secret absence, and timeout/cancellation removal are verified locally. No arbitrary source scripts, browser/API outbound traffic, customer authentication secrets, or QA verdicts are enabled. An enforced egress gateway, execution authority/leases, credential grants, orphan recovery, and production escape/failure testing remain obligations before those workloads are introduced.

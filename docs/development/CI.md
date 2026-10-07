@@ -32,3 +32,5 @@ Phase 2.3 adds `npm run db:verify:acceptance` to the data-services job. It tests
 Phase 2.4 adds `npm run queue:verify` to the data-services job. A random queue/tenant isolates real Redis/Postgres retry and crash-window tests; cleanup never drains the production queue. Production QA processing remains disabled.
 
 Phase 2.6 adds `npm run preview:verify` after migrations in the data-services job. It uses a random tenant and an ephemeral loopback readiness server; normal production readiness forbids private addresses. Unit readiness policy/budget tests run with `npm test`. Hosted CI execution is separate from local verification.
+
+Phase 2.7 adds `sandbox:build` and `isolation:verify` to the data-services job. Only `apps/worker/sandbox` is sent as the image build context. The verifier uses random short-lived offline containers, tests actual engine restrictions and cleanup, and writes no customer data. Unit isolation policy checks are included in the normal worker tests.

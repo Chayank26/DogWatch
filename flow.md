@@ -149,3 +149,11 @@ When the preparation stage is explicitly invoked, a queued run becomes `waiting_
 A missing binding, forbidden destination, redirect, exhausted request/time budget, or unavailable current-head context produces a setup failure. A cancellation or new commit prevents late readiness from reviving the old run. Original SHA and budget snapshots stay unchanged, and raw responses/secrets are not saved.
 
 This phase adds and verifies that preparation capability; normal worker startup still dispatches only. The website remains the setup shell, and no customer preview is automatically polled before isolated consumption is built in Phase 2.7. A ready run stays `waiting_for_preview` until that executor safely starts real QA.
+
+## Part 2 · Phase 2.7 — A separate room for future QA work
+
+Think of Maya's future test run as work in a temporary room. The trusted DogWatch supervisor creates a new Docker container for each diagnostic invocation. It gives that room a small memory-backed scratch area and fixed CPU, memory, process, and time limits. The room has no keys to DogWatch's database, Redis, GitHub secrets, host files, or Docker controls, and currently has no network connection.
+
+The diagnostic checks that these restrictions actually work. Its temporary data disappears when the container is removed. If it runs too long or receives cancellation, the supervisor forcibly removes that exact container. It returns only verified restriction booleans or a fixed infrastructure failure code, not secrets, source files, or raw error output. These diagnostic IDs do not create customer runs or findings.
+
+Maya's normal request still follows verified acceptance and queue dispatch; preview preparation remains explicitly callable. The website is still the setup shell. This phase builds and verifies the isolated room rather than starting QA inside it. Actual source analysis comes next, and network-based API/browser testing needs an enforced outbound gateway before it can use this room. A diagnostic success means the isolation controls worked, not that Maya's checkout passed.

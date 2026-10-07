@@ -192,3 +192,18 @@ Next proposed phase: Part 2, Phase 2.7 — worker isolation. Stop for approval b
 ### Phase 2.6 verification
 
 The additive preview migration applied successfully. All 31 unit/HTTP tests, workspace type checks/builds, and real PostgreSQL/Redis acceptance/queue checks passed. Readiness integration passed for a temporary 503 followed by success, exact-SHA binding, persisted readiness evidence, repeat-claim prevention, redirects, stale heads, and cancellation before success recording. Local fixture data and its HTTP server were removed. Lint, formatting, and whitespace checks passed. No live customer preview, deployment provider, hosted CI run, or isolated production consumer was started.
+
+## Part 2 · Phase 2.7 — Worker isolation
+
+- Built a tiny trusted diagnostic image with a pinned Node base, not customer repository Dockerfiles or dependency installation. Resolved its local tag to an immutable image ID before each launch. This verifies an isolation foundation without exposing repository scripts to host credentials.
+- Kept the control plane outside the sandbox. The trusted host uses Docker CLI argument arrays; the container receives only tenant/run references and a fixed diagnostic kind. No socket, mounts, credentials, customer-selected image, or shell command can be supplied by task JSON. A Docker API SDK was an alternative but would add a dependency without improving the fixed local supervisor scope.
+- Chose zero egress with network=none. Readiness remains a separate restricted HTTP stage. An allowlisted egress gateway will be needed for real API/browser execution; a browser proxy flag alone would not prevent direct sockets or alternative protocols. No unrestricted consumer was connected.
+- Enforced non-root, read-only root, fresh bounded tmpfs, dropped capabilities, default seccomp, no-new-privileges, CPU/memory/process/file-descriptor limits, and no core dumps. Stronger kernel separation can be evaluated before hostile-code production use.
+- Bound execution and diagnostic output, disabled persistent Docker logs, and returned fixed codes/validated booleans. A timeout kills the attachment then removes the exact random container; killing only the client would leave the workload running. Cleanup has its own bounded deadline.
+- Verified actual Docker settings and in-container boundaries, host-secret absence, fresh workspaces, timeout/cancellation, and container absence afterward. Host/daemon failure can still leave an orphan; lease-based recovery and identity-scoped operational reconciliation remain future work. No product run is marked tested by this diagnostic.
+
+Next proposed phase: Part 3, Phase 3.1 — immutable diff retrieval. Stop for approval before implementation.
+
+### Phase 2.7 verification
+
+The small sandbox image built successfully, then rebuilt successfully with its verified base digest pinned. Real Docker verification passed twice, including engine CPU/memory/process/mount/security settings, non-root/capability/read-only/socket/metadata restrictions, host-canary absence, fresh workspaces, bounded timeout/cancellation, and removal of all four exact diagnostic containers. All 35 unit/HTTP tests, workspace type checks/builds, lint, formatting, and whitespace checks passed. Initial lint identified Node globals in the standalone runtime; explicit imports resolved it. No customer runs, source execution, external preview access, production QA consumer, or hosted CI run was performed.

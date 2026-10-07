@@ -61,6 +61,9 @@ jobs:
       - run: npm run queue:verify
       # Isolated random-tenant HTTP/DB readiness checks; no customer preview access.
       - run: npm run preview:verify
+      # Build only the small trusted sandbox context, then verify real engine controls.
+      - run: npm run sandbox:build
+      - run: npm run isolation:verify
       - name: Verify Redis connectivity
         run: test "$(docker compose exec -T redis redis-cli ping)" = PONG
       # Capture failures while the services still exist, then stop without deleting volumes.

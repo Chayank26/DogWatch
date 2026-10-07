@@ -58,3 +58,7 @@ With the authorized durable API configured, an allowed human actor can post `/do
 ## Preview readiness
 
 An explicitly callable preparation stage now validates exact-SHA deployment bindings, polls bounded health checks, and saves readiness evidence while respecting stop signals. Normal startup still dispatches only; isolated QA consumption comes next. See [worker guide](apps/worker/README.md). Run `npm run preview:verify` against local Postgres to verify the disposable HTTP fixture.
+
+## Worker isolation
+
+`npm run sandbox:build` builds the trusted, digest-pinned offline diagnostic image. `npm run isolation:verify` checks actual Docker resource/security settings, restricted filesystem/network access, secret absence, and deadline/cancellation cleanup. See [worker guide](apps/worker/README.md). Production QA consumption remains disabled; this sandbox accepts no repository scripts or customer commands.

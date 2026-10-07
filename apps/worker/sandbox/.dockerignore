@@ -1,0 +1,4 @@
+# This image needs only its trusted diagnostic entry point and Dockerfile.
+**
+!Dockerfile
+!sandbox.mjs

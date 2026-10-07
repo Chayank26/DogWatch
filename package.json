@@ -29,7 +29,9 @@
     "fixture:start": "npm run start -w @dogwatch/fixture",
     "db:verify:acceptance": "npm run verify:acceptance -w @dogwatch/database",
     "queue:verify": "npm run verify:queue -w @dogwatch/worker",
-    "preview:verify": "npm run verify:preview -w @dogwatch/worker"
+    "preview:verify": "npm run verify:preview -w @dogwatch/worker",
+    "sandbox:build": "npm run sandbox:build -w @dogwatch/worker",
+    "isolation:verify": "npm run verify:isolation -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

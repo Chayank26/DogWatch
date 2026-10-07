@@ -13,9 +13,11 @@
     "pretypecheck": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
     "preverify:queue": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
     "verify:queue": "node --import tsx src/verify-queue.ts",
-    "test": "node --import tsx --test src/preview.test.ts",
+    "test": "node --import tsx --test src/*.test.ts",
     "verify:preview": "node --import tsx src/verify-preview.ts",
-    "preverify:preview": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue"
+    "preverify:preview": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
+    "sandbox:build": "docker build --tag dogwatch-sandbox:phase-2.7 sandbox",
+    "verify:isolation": "node --import tsx src/verify-isolation.ts"
   },
   "dependencies": {
     "@dogwatch/database": "0.1.0",

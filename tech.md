@@ -130,3 +130,7 @@ The customer dashboard stays unchanged. Readiness is an explicitly callable work
 | Docker inspection plus runtime probes | Verify actual engine settings, restricted writes, metadata denial, secret absence, and timeout/cancellation cleanup               | Merely checking the argument array would not prove the daemon applied the controls.                                                                                                    |
 
 The website stays unchanged. This sandbox is offline and runs diagnostics only; no QA consumer, Playwright network access, repository scripts, or secret injection is enabled. The host has Docker authority; the container has no socket. Outbound API/browser stages require a future enforced destination gateway rather than broad network access. See [worker guide](apps/worker/README.md) for limits and recovery obligations.
+
+## Part 3 · Phase 3.1 — Immutable diff retrieval
+
+Uses native fetch and Zod for a fixed GitHub API origin, immutable SHA parameters, strict change metadata, a five-second deadline and a 2 MiB streaming ceiling. A git clone would add checkout/script and disk scope; the existing token-minting authority remains with trusted callers. No new dependency is needed. GitHub comparison limits are exposed rather than interpreted as complete coverage.

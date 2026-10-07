@@ -207,3 +207,11 @@ Next proposed phase: Part 3, Phase 3.1 — immutable diff retrieval. Stop for ap
 ### Phase 2.7 verification
 
 The small sandbox image built successfully, then rebuilt successfully with its verified base digest pinned. Real Docker verification passed twice, including engine CPU/memory/process/mount/security settings, non-root/capability/read-only/socket/metadata restrictions, host-canary absence, fresh workspaces, bounded timeout/cancellation, and removal of all four exact diagnostic containers. All 35 unit/HTTP tests, workspace type checks/builds, lint, formatting, and whitespace checks passed. Initial lint identified Node globals in the standalone runtime; explicit imports resolved it. No customer runs, source execution, external preview access, production QA consumer, or hosted CI run was performed.
+
+## Part 3 · Phase 3.1 — Immutable diff retrieval
+
+Added a callable comparison adapter accepting independently resolved base/head commits and a currently authorized repository-scoped token. No public route or auto-consumer was added. Preserve rename/deletion metadata and merge-base context; drop patch bodies from returned metadata to minimize source retention. Pagination ceilings produce coverage gaps. Token minting, tenant/current-head checks and durable orchestration remain caller responsibilities; import/symbol parsing and source retrieval belong to Phase 3.2. Next phase: Part 3, Phase 3.2 — import and symbol graph. Stop for approval.
+
+### Phase 3.1 verification
+
+All 38 unit/HTTP tests, workspace type checks/builds, lint, formatting, and whitespace checks passed. Synthetic GitHub transport tests verify immutable endpoints, redirects disabled, rename metadata, incorrect heads, unsafe paths, oversized responses, authorization failures, and explicit provider-limit gaps. No live GitHub credentials, customer source, durable comparison persistence, or automated QA consumer was used.

@@ -157,3 +157,7 @@ Think of Maya's future test run as work in a temporary room. The trusted DogWatc
 The diagnostic checks that these restrictions actually work. Its temporary data disappears when the container is removed. If it runs too long or receives cancellation, the supervisor forcibly removes that exact container. It returns only verified restriction booleans or a fixed infrastructure failure code, not secrets, source files, or raw error output. These diagnostic IDs do not create customer runs or findings.
 
 Maya's normal request still follows verified acceptance and queue dispatch; preview preparation remains explicitly callable. The website is still the setup shell. This phase builds and verifies the isolated room rather than starting QA inside it. Actual source analysis comes next, and network-based API/browser testing needs an enforced outbound gateway before it can use this room. A diagnostic success means the isolation controls worked, not that Maya's checkout passed.
+
+## Part 3 · Phase 3.1 — Immutable diff retrieval
+
+When the trusted executor invokes this adapter for Maya’s PR, it asks GitHub to compare two exact commits rather than moving branch names. It receives changed paths, rename/deletion status and line counts. Limits are explicit coverage gaps; this is not a QA verdict. Tokens stay request-only and patch contents are not returned or saved. The website and dispatch-only startup remain unchanged; automatic customer retrieval is not enabled.

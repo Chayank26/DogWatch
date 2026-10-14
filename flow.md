@@ -167,3 +167,9 @@ When the trusted executor invokes this adapter for Maya’s PR, it asks GitHub t
 For Maya's future PR analysis, a trusted caller supplies source snapshots for the merge base and tested head. DogWatch reads syntax without running the application. A change to an order helper can include the importing checkout module and its consumers in the affected set. Old dependencies preserve consumers when a helper is renamed or deleted.
 
 Unresolved aliases, ambiguous imports, unsupported constructs or incomplete snapshots widen the selection to all supplied modules and retain coverage gaps. This is guidance for future test selection, not proof that checkout passes. Source retrieval and isolated parser orchestration are not connected yet; startup still dispatches only and the website remains informational. Route mapping comes next.
+
+## Part 3 · Phase 3.3 — Select relevant test targets
+
+Maya's trusted repository configuration associates checkout and the order API with their source modules, and marks login as a critical journey. When the order helper changes, DogWatch uses the dependency graph to select affected checkout/API targets while retaining login in the baseline. Each selection explains the matched modules and the snapshot it belongs to.
+
+Old routes remain labeled as base targets when renamed or removed; they are not issued as requests to the head preview. Missing mapping coverage widens selection to every supplied target and reports the uncertainty. This phase creates a test-selection plan only. Actual smoke execution, parameter substitution, network authorization and reports remain future work; startup and the website are unchanged.

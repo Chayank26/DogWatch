@@ -229,3 +229,17 @@ Next proposed phase: Part 3, Phase 3.3 — route impact mapping. Stop for approv
 ### Phase 3.2 verification
 
 All 46 unit/HTTP tests, workspace type checks and production builds, lint, formatting and whitespace checks passed. Eight graph tests exercise immutable synthetic snapshots without executing source. No live GitHub source retrieval, hostile-source container parsing, database migration or production consumer was performed.
+
+## Part 3 · Phase 3.3 — Route impact mapping
+
+- Chose explicit operator-owned mappings rather than framework route discovery. Maps route paths, API operations and named journeys to module dependencies at each immutable snapshot. Configuration completeness is caller-attested; unknown frameworks and missing targets cannot be inferred automatically.
+- Reused conservative module impact and independently validated mapping tenant/repository/SHA identity. Duplicate IDs and unsafe paths are rejected. Critical targets remain selected even when their modules are unaffected.
+- Preserve base and head selections separately so removed or renamed routes remain comparison context rather than silently becoming runnable head URLs. Every selected target includes reasons and directly matched modules.
+- Incomplete graph/comparison/mapping coverage, unknown mapped modules or unmapped affected modules widen to all supplied targets. Missing targets remain a coverage limitation; widening is not proof of complete application coverage. Operators should map relevant dependencies as well as entry modules to avoid unnecessary fallback.
+- Added fixture tests for transitive impact, critical journeys, conservative fallback, old/new target labels, scope mismatches and unsafe configuration. No public route, automatic consumer, framework loader, network request or QA verdict was added.
+
+Next proposed phase: Part 3, Phase 3.4 — smoke journeys. Stop for approval before implementation.
+
+### Phase 3.3 verification
+
+All 51 unit/HTTP tests and the full workspace production build passed. Worker type checking passed. Initial lint flagged a control-character regex; equivalent character-code validation fixed it. Final lint, focused impact regression tests and the worker build passed. Formatting and whitespace checks passed. No customer requests, source retrieval, database changes or production QA execution were performed.

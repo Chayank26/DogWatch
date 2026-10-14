@@ -62,3 +62,7 @@ An explicitly callable preparation stage now validates exact-SHA deployment bind
 ## Worker isolation
 
 `npm run sandbox:build` builds the trusted, digest-pinned offline diagnostic image. `npm run isolation:verify` checks actual Docker resource/security settings, restricted filesystem/network access, secret absence, and deadline/cancellation cleanup. See [worker guide](apps/worker/README.md). Production QA consumption remains disabled; this sandbox accepts no repository scripts or customer commands.
+
+## Import and symbol analysis
+
+Part 3.2 adds callable, bounded JS/TS snapshot analysis with symbols, module dependencies and conservative affected-module selection across merge-base/head commits. Unsupported or incomplete analysis produces explicit coverage gaps. See the [worker guide](apps/worker/README.md) for limits and caller responsibilities. Immutable source retrieval and isolated parsing orchestration remain pending; normal startup does not fetch or analyze customer source.

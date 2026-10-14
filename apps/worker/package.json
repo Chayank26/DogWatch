@@ -23,6 +23,7 @@
     "@dogwatch/database": "0.1.0",
     "@dogwatch/queue": "0.1.0",
     "@dogwatch/contracts": "0.1.0",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "typescript": "^6.0.3"
   }
 }

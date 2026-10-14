@@ -134,3 +134,9 @@ The website stays unchanged. This sandbox is offline and runs diagnostics only; 
 ## Part 3 · Phase 3.1 — Immutable diff retrieval
 
 Uses native fetch and Zod for a fixed GitHub API origin, immutable SHA parameters, strict change metadata, a five-second deadline and a 2 MiB streaming ceiling. A git clone would add checkout/script and disk scope; the existing token-minting authority remains with trusted callers. No new dependency is needed. GitHub comparison limits are exposed rather than interpreted as complete coverage.
+
+## Part 3 · Phase 3.2 — Import and symbol graph
+
+Uses the TypeScript compiler parser as a worker runtime dependency to analyze supplied immutable JS/TS snapshots without executing source, reading repository configuration, or installing dependencies. Extracts top-level symbols, export names, relative import/re-export edges, and reverse dependency impact across merge-base and head snapshots. Zod validates tenant/repository/SHA scope, paths and input budgets. Node tests cover transitive consumers, barrels, cycles, renamed/deleted modules, merge-base identity, ambiguity, syntax gaps and unsafe inputs.
+
+Limits: 100 files, 256 KiB per file, 2 MiB total source, and 50,000 visited AST nodes per file. Unsupported languages, aliases/external imports, dynamic/CommonJS dependencies, namespaces, generated files and incomplete snapshots produce explicit gaps and widen impact to all supplied modules. This is a syntactic module approximation, not a semantic call graph. Source retrieval, process-level parser isolation, persistence and execution orchestration remain pending; no customer source is automatically fetched or parsed.

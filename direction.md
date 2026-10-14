@@ -215,3 +215,17 @@ Added a callable comparison adapter accepting independently resolved base/head c
 ### Phase 3.1 verification
 
 All 38 unit/HTTP tests, workspace type checks/builds, lint, formatting, and whitespace checks passed. Synthetic GitHub transport tests verify immutable endpoints, redirects disabled, rename metadata, incorrect heads, unsafe paths, oversized responses, authorization failures, and explicit provider-limit gaps. No live GitHub credentials, customer source, durable comparison persistence, or automated QA consumer was used.
+
+## Part 3 · Phase 3.2 — Import and symbol graph
+
+- Completed the pending in-memory graph implementation using the existing TypeScript parser. No compiler host, customer tsconfig, plugins, package installation or source execution is used. TypeScript is a runtime worker dependency because the built worker imports its parser.
+- Bound analysis to tenant/repository and immutable commits. Base analysis must represent the comparison merge base. Reverse edges from both snapshots preserve consumers of renamed/deleted modules and terminate safely through cycles.
+- Prefer explicit ambiguity/gaps over guessing resolution. Incomplete graphs widen to every supplied module; absent repository files remain unknown. This supports conservative prioritization without claiming complete repository-wide coverage or QA success.
+- Corrected namespace re-export names, duplicate default exports and namespace coverage reporting during review. Added focused regression cases alongside the existing graph tests.
+- This phase accepts caller-supplied source snapshots. An authenticated immutable source retrieval adapter, enforced process/container limits around the parser, durable orchestration and automatic consumption remain pending integration work. The AST traversal limit does not bound the parser itself; production callers must not parse hostile source in the control-plane process.
+
+Next proposed phase: Part 3, Phase 3.3 — route impact mapping. Stop for approval before implementation.
+
+### Phase 3.2 verification
+
+All 46 unit/HTTP tests, workspace type checks and production builds, lint, formatting and whitespace checks passed. Eight graph tests exercise immutable synthetic snapshots without executing source. No live GitHub source retrieval, hostile-source container parsing, database migration or production consumer was performed.

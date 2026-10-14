@@ -161,3 +161,9 @@ Maya's normal request still follows verified acceptance and queue dispatch; prev
 ## Part 3 · Phase 3.1 — Immutable diff retrieval
 
 When the trusted executor invokes this adapter for Maya’s PR, it asks GitHub to compare two exact commits rather than moving branch names. It receives changed paths, rename/deletion status and line counts. Limits are explicit coverage gaps; this is not a QA verdict. Tokens stay request-only and patch contents are not returned or saved. The website and dispatch-only startup remain unchanged; automatic customer retrieval is not enabled.
+
+## Part 3 · Phase 3.2 — Trace changed modules to their consumers
+
+For Maya's future PR analysis, a trusted caller supplies source snapshots for the merge base and tested head. DogWatch reads syntax without running the application. A change to an order helper can include the importing checkout module and its consumers in the affected set. Old dependencies preserve consumers when a helper is renamed or deleted.
+
+Unresolved aliases, ambiguous imports, unsupported constructs or incomplete snapshots widen the selection to all supplied modules and retain coverage gaps. This is guidance for future test selection, not proof that checkout passes. Source retrieval and isolated parser orchestration are not connected yet; startup still dispatches only and the website remains informational. Route mapping comes next.

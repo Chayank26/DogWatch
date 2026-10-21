@@ -124,3 +124,7 @@ Bundles have a 2 MiB read/write ceiling, a 50-artifact per-run ceiling and a sev
 ### Verification
 
 Run `npm run baseline:verify` after installing Chromium. It creates paired disposable loopback pages with a labeled render assertion, confirms new/pre-existing/unavailable/incompatible-base classifications, verifies that different synthetic field values yield identical masked screenshots, persists/reloads records and compares their artifact references. It removes its exact temporary evidence directory and closes browsers/servers. The separate `smoke:verify` retains the real PawMart checkout and seeded API/UI defect checks. CI runs both. Unit tests cover scope/SHA/role mismatches, changed plans, expiry, corruption, symlinks, permission checks, byte/count limits, capture failure and conservative attribution.
+
+## Phase 4.1 — Contract validation
+
+`validateApiContract(context, text)` validates the supported OpenAPI 3.0 JSON/YAML profile and normalizes operation, parameter, JSON schema and security metadata. Unsupported or invalid inputs return no operations and fixed diagnostics. It resolves local components only and never uses contract server URLs, loads external refs or sends requests. See the [contract guide](CONTRACTS.md) for supported constructs, limits and caller responsibilities. Case generation comes next; customer execution remains disabled.

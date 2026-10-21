@@ -42,3 +42,7 @@ The data-services job installs Playwright Chromium with Linux dependencies and r
 ## Base comparison and evidence fixture
 
 After Chromium installation, the data-services job also runs `npm run baseline:verify`. The verifier compares compatible base/head render checks, validates masked field screenshots, saves private evidence into a random temporary directory, reloads it and compares stored artifact references. It removes that directory and closes its loopback servers and browsers. Unit tests verify artifact scope, expiry, permissions, symlink rejection, corruption and resource ceilings without a browser or database. This fixture does not validate a hosted preview deployment or cloud object store.
+
+## OpenAPI ingestion fixtures
+
+`npm test` now includes the worker's contract-validation suite. It reads PawMart's versioned YAML document and tests supported JSON schemas, inheritance, security alternatives, unsafe references, malformed YAML and resource bounds entirely offline. This phase needs no additional service, browser, credential or CI job. Dependency installation includes YAML, Ajv draft-04 support and the bundled OpenAPI document schema.

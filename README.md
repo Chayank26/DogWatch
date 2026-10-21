@@ -74,3 +74,7 @@ Part 3.4 adds a bounded callable smoke runner and real Chromium verification aga
 ## Base comparison and evidence
 
 Part 3.5 compares compatible exact-SHA smoke records and persists private, scope-bound local evidence with sanitized traces and optional masked fixture screenshots. Run `npm run baseline:verify` after Chromium setup to verify new/pre-existing attribution and durable artifact readback. Missing or incompatible baselines remain explicit. See the [worker guide](apps/worker/README.md) for access, retention and production limitations.
+
+## API contract validation
+
+Part 4.1 adds callable validation of a bounded OpenAPI 3.0 JSON/YAML profile, including local schema references, operation parameters, JSON bodies/responses and security requirements. Unsupported contracts return explicit diagnostics and no operation inventory. The [contract guide](apps/worker/CONTRACTS.md) explains supported features and limits. Case generation and API execution follow in later phases; no customer requests are sent yet.

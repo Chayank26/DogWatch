@@ -38,3 +38,7 @@ Phase 2.7 adds `sandbox:build` and `isolation:verify` to the data-services job. 
 ## Browser smoke fixture
 
 The data-services job installs Playwright Chromium with Linux dependencies and runs `npm run smoke:verify`. This builds the disposable fixture and tests healthy/seeded checkout behavior through real Chromium on ephemeral loopback ports; no customer destination or credentials are used. Local setup: `npx playwright install chromium`, then `npm run smoke:verify`. Browser setup is outside each smoke run's 20-second execution budget. Unit tests do not require a browser installation.
+
+## Base comparison and evidence fixture
+
+After Chromium installation, the data-services job also runs `npm run baseline:verify`. The verifier compares compatible base/head render checks, validates masked field screenshots, saves private evidence into a random temporary directory, reloads it and compares stored artifact references. It removes that directory and closes its loopback servers and browsers. Unit tests verify artifact scope, expiry, permissions, symlink rejection, corruption and resource ceilings without a browser or database. This fixture does not validate a hosted preview deployment or cloud object store.

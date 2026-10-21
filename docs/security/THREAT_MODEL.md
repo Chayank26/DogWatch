@@ -78,3 +78,11 @@ Readiness probes now enforce exact approved origins, forbid redirects/URL creden
 ### Phase 2.7 implementation update
 
 A trusted host supervisor can now create an offline, non-root, read-only Docker diagnostic container with dropped capabilities, no-new-privileges, default seccomp, bounded tmpfs/CPU/memory/processes, no mounts/socket/env-secret injection, and no network. The image build context is a strict small allowlist with a digest-pinned base. Actual engine/runtime controls, host-secret absence, and timeout/cancellation removal are verified locally. No arbitrary source scripts, browser/API outbound traffic, customer authentication secrets, or QA verdicts are enabled. An enforced egress gateway, execution authority/leases, credential grants, orphan recovery, and production escape/failure testing remain obligations before those workloads are introduced.
+
+### Phase 3.5 implementation update
+
+Callable base comparison requires exact tenant/run/repository/SHA/role identity and compatible versioned journey/scenario context. Operator attestation still owns deployment source identity and comparable environment/account/data settings. Missing, expired, stopped or incompatible baselines do not imply new regressions; aggregate diagnostic counters cannot identify matching browser defects. No report is published or database verdict mutated.
+
+Local evidence has private POSIX directory/file modes, fixed schema/byte/count ceilings, integrity hashes, atomic complete-file publication, scoped lookup, expiry denial and explicit scoped pruning. Its root's parent and OS user are trusted; this is not adversarial same-user storage or hosted multi-user authorization. Callers must independently authorize scopes. Crashed writers may leave locks/temporary files for operator reconciliation. No public route, signed links, hosted storage or retention daemon exists.
+
+Only trusted synthetic fixtures capture masked screenshots. Masking form controls cannot remove arbitrary echoed secrets elsewhere. Raw Playwright traces, headers, bodies, DOM and console messages are not persisted. Final screenshots remain sensitive after masking. Customer previews, live credentials and hostile content must not use the fixture adapter; production capture needs isolated execution, enforced egress, account-safe redaction and artifact authorization.

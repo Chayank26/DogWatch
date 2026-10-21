@@ -1,12 +1,13 @@
 /** Trusted local fixture adapter only. Never use it for customer previews. */
 import { chromium, errors } from 'playwright';
 import { SmokeStepError } from './smoke.js';
-import type { SmokeDriver, SmokeEvents, SmokeStep } from './smoke.js';
+import type { SmokeEvents, SmokeStep } from './smoke.js';
+import type { EvidenceSmokeDriver } from './smoke-evidence.js';
 
 export async function createFixtureSmokeDriver(
   originInput: string,
   values: Record<string, string>,
-): Promise<SmokeDriver> {
+): Promise<EvidenceSmokeDriver> {
   const origin = new URL(originInput);
   if (
     origin.protocol !== 'http:' ||
@@ -85,6 +86,15 @@ export async function createFixtureSmokeDriver(
       void download.cancel();
     });
     return {
+      captureScreenshot: () =>
+        page.screenshot({
+          type: 'png',
+          timeout: 500,
+          animations: 'disabled',
+          mask: [
+            page.locator('input, textarea, select, [data-dogwatch-secret]'),
+          ],
+        }),
       events: () => ({ ...events }),
       close: () => browser.close(),
       async execute(step: SmokeStep, timeoutMs: number) {

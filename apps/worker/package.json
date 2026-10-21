@@ -19,7 +19,9 @@
     "sandbox:build": "docker build --tag dogwatch-sandbox:phase-2.7 sandbox",
     "verify:isolation": "node --import tsx src/verify-isolation.ts",
     "preverify:smoke": "npm run build -w @dogwatch/fixture",
-    "verify:smoke": "node --import tsx src/verify-smoke.ts"
+    "verify:smoke": "node --import tsx src/verify-smoke.ts",
+    "preverify:baseline": "npm run build -w @dogwatch/fixture",
+    "verify:baseline": "node --import tsx src/verify-baseline.ts"
   },
   "dependencies": {
     "@dogwatch/contracts": "0.1.0",

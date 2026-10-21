@@ -1,6 +1,6 @@
 # DogWatch
 
-Autonomous AI QA for opted-in GitHub pull requests. This repository currently contains the completed Part 1 foundation, shared contracts, local data services, CI, and a synthetic QA fixture, not a working QA service.
+Autonomous AI QA for opted-in GitHub pull requests. This repository contains GitHub ingress, durable queue dispatch and callable Tier 0 analysis, smoke checks, base comparison and local evidence storage. Production customer QA execution is not enabled yet.
 
 ## Local setup
 
@@ -70,3 +70,7 @@ Part 3.2 adds callable, bounded JS/TS snapshot analysis with symbols, module dep
 ## Smoke journeys
 
 Part 3.4 adds a bounded callable smoke runner and real Chromium verification against the disposable PawMart fixture. After `npx playwright install chromium`, run `npm run smoke:verify`. Healthy checkout and seeded failures are checked with a maximum 20-second execution budget. See the [worker guide](apps/worker/README.md) for outcomes and boundaries. Production customer-browser execution remains disabled; base comparison and durable artifact evidence come next.
+
+## Base comparison and evidence
+
+Part 3.5 compares compatible exact-SHA smoke records and persists private, scope-bound local evidence with sanitized traces and optional masked fixture screenshots. Run `npm run baseline:verify` after Chromium setup to verify new/pre-existing attribution and durable artifact readback. Missing or incompatible baselines remain explicit. See the [worker guide](apps/worker/README.md) for access, retention and production limitations.

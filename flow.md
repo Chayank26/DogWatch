@@ -173,3 +173,9 @@ Unresolved aliases, ambiguous imports, unsupported constructs or incomplete snap
 Maya's trusted repository configuration associates checkout and the order API with their source modules, and marks login as a critical journey. When the order helper changes, DogWatch uses the dependency graph to select affected checkout/API targets while retaining login in the baseline. Each selection explains the matched modules and the snapshot it belongs to.
 
 Old routes remain labeled as base targets when renamed or removed; they are not issued as requests to the head preview. Missing mapping coverage widens selection to every supplied target and reports the uncertainty. This phase creates a test-selection plan only. Actual smoke execution, parameter substitution, network authorization and reports remain future work; startup and the website are unchanged.
+
+## Part 3 · Phase 3.4 — Try configured smoke journeys
+
+The callable smoke runner now visits configured pages, selects synthetic identity data, fills fields, clicks controls and checks expected visible behavior. Each run has a maximum 20-second execution window after preview/browser setup. Blocking navigation or a failed prerequisite skips dependent journeys. Browser errors and application failures are recorded separately from unavailable context, cancellation or exhausted budgets.
+
+Real Chromium verification against disposable PawMart confirms healthy checkout passes, a seeded server 500 fails and the seeded stuck checkout fails its assertion. Evidence currently consists of fixed codes, step counts and error counters returned with the exact run/SHA; it does not include persisted screenshots or traces. Without matching base evidence the result says baseline unavailable, not new regression. Customer execution is still disabled until the isolated browser and enforced outbound gateway exist. The website and normal dispatch startup are unchanged.

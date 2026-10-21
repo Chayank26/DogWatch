@@ -66,3 +66,7 @@ An explicitly callable preparation stage now validates exact-SHA deployment bind
 ## Import and symbol analysis
 
 Part 3.2 adds callable, bounded JS/TS snapshot analysis with symbols, module dependencies and conservative affected-module selection across merge-base/head commits. Unsupported or incomplete analysis produces explicit coverage gaps. See the [worker guide](apps/worker/README.md) for limits and caller responsibilities. Immutable source retrieval and isolated parsing orchestration remain pending; normal startup does not fetch or analyze customer source.
+
+## Smoke journeys
+
+Part 3.4 adds a bounded callable smoke runner and real Chromium verification against the disposable PawMart fixture. After `npx playwright install chromium`, run `npm run smoke:verify`. Healthy checkout and seeded failures are checked with a maximum 20-second execution budget. See the [worker guide](apps/worker/README.md) for outcomes and boundaries. Production customer-browser execution remains disabled; base comparison and durable artifact evidence come next.

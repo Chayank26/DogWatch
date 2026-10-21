@@ -34,3 +34,7 @@ Phase 2.4 adds `npm run queue:verify` to the data-services job. A random queue/t
 Phase 2.6 adds `npm run preview:verify` after migrations in the data-services job. It uses a random tenant and an ephemeral loopback readiness server; normal production readiness forbids private addresses. Unit readiness policy/budget tests run with `npm test`. Hosted CI execution is separate from local verification.
 
 Phase 2.7 adds `sandbox:build` and `isolation:verify` to the data-services job. Only `apps/worker/sandbox` is sent as the image build context. The verifier uses random short-lived offline containers, tests actual engine restrictions and cleanup, and writes no customer data. Unit isolation policy checks are included in the normal worker tests.
+
+## Browser smoke fixture
+
+The data-services job installs Playwright Chromium with Linux dependencies and runs `npm run smoke:verify`. This builds the disposable fixture and tests healthy/seeded checkout behavior through real Chromium on ephemeral loopback ports; no customer destination or credentials are used. Local setup: `npx playwright install chromium`, then `npm run smoke:verify`. Browser setup is outside each smoke run's 20-second execution budget. Unit tests do not require a browser installation.

@@ -243,3 +243,20 @@ Next proposed phase: Part 3, Phase 3.4 — smoke journeys. Stop for approval bef
 ### Phase 3.3 verification
 
 All 51 unit/HTTP tests and the full workspace production build passed. Worker type checking passed. Initial lint flagged a control-character regex; equivalent character-code validation fixed it. Final lint, focused impact regression tests and the worker build passed. Formatting and whitespace checks passed. No customer requests, source retrieval, database changes or production QA execution were performed.
+
+## Part 3 · Phase 3.4 — Smoke journeys
+
+- Added a strict callable journey runner with navigation, synthetic account value references, core interactions and assertions. Bounds execution at 20 seconds separately from setup; enforces a total step count and checks caller-supplied current authority before actions and after journeys. Cleanup is separately bounded and cannot silently turn failure into success.
+- Classifies application observations separately from context failure, stale authority, cancellation and budget exhaustion. Dependent journeys skip after non-passing prerequisites. Metadata evidence includes immutable context, fixed codes, step counts and console/page/server/network counters, without raw diagnostics or credentials.
+- Added an explicit Playwright adapter for trusted disposable loopback fixtures. It uses fresh browser state and denies redirects, other origins, service workers, WebSockets, popups and downloads. Browser interception is not sufficient for untrusted preview isolation, so normal startup stays dispatch-only and the Docker sandbox remains offline. Customer/hostile content must not use this adapter.
+- Chose a trusted driver interface so the bounded orchestration can later use an isolated executor without embedding browser or network authority in customer plan JSON. The future caller must enforce ownership, deployment identity, remaining whole-run budgets, network request ceilings and killable process cleanup. The current runner is not a production consumer or execution lease.
+- Verified synthetic identity selection, checkout and seeded defects using real Chromium. This is not a live authentication-provider test. Base attribution stays unavailable; matching base checks and durable screenshot/trace evidence belong to Phase 3.5. No claim that an observed defect was introduced by the PR is made.
+- Dependency audit reports existing Prisma/config/deepmerge/mysql2 and concurrently/shell-quote findings (four high, two critical); neither added Playwright package appears in that audit. Left unrelated dependency migrations unchanged.
+
+Next proposed phase: Part 3, Phase 3.5 — base comparison and evidence. Stop for approval before implementation.
+
+### Phase 3.4 verification
+
+All 57 unit/HTTP tests, workspace type checks and production builds, lint, formatting and whitespace checks passed. Real Chromium verification passed for healthy PawMart checkout, seeded server 500 and stuck-checkout failures, console/page errors, missing navigation, redirect denial and dependent skips; each smoke execution stayed within 20 seconds. Unit tests cover deadline, cancellation, stale/unavailable authority, step budgets, cleanup failure and unsafe plans. Initial checks found missing DOM typing in the browser callback and lint issues; these were corrected. Local servers and browsers were closed. No customer preview, real authentication provider, production isolated consumer, durable evidence upload or hosted CI run was exercised.
+
+The additional redirect regression initially exposed that browser routing alone did not intercept the redirect chain. The fixture adapter now fetches each approved response with `maxRedirects: 0`, rejects 3xx before browser fulfillment, and disposes fetched responses. The complete real-browser verifier then passed, including redirect denial. The worker was rebuilt and lint passed after this correction.

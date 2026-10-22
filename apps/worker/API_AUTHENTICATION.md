@@ -46,7 +46,7 @@ After a passing control:
 | Redirect or 429                                     | Stop the stage, inconclusive                                                            |
 | Failed response schema for the configured rejection | Response contract failure or explicit unknown-constraint gap                            |
 
-Acceptance establishes a mismatch with the configured bearer requirement, not proof of data exfiltration, unauthorized mutation, role bypass or IDOR. A rejection does not prove an endpoint has no other authentication defects. Base/PR regression attribution and durable findings are unavailable here. Role and ownership comparisons belong to Phase 4.5.
+Acceptance establishes a mismatch with the configured bearer requirement, not proof of data exfiltration, unauthorized mutation, role bypass or IDOR. A rejection does not prove an endpoint has no other authentication defects. Base/PR regression attribution and durable findings are unavailable here. Phase 4.5 supplies a separate [read-access role/ownership stage](API_AUTHORIZATION.md).
 
 ## Budgets, metadata and production boundary
 

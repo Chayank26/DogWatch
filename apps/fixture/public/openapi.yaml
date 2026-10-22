@@ -78,7 +78,7 @@ components:
           type: string
         owner:
           type: string
-          enum: [alice, bob]
+          enum: [alice, bob, admin]
         address:
           type: string
         quantity:

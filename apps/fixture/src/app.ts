@@ -14,6 +14,8 @@ export const fixtureModes = [
   'missing-address-500',
   'checkout-stuck',
   'authentication-bypass',
+  'ownership-bypass',
+  'role-bypass',
 ] as const;
 export type FixtureMode = (typeof fixtureModes)[number];
 export function parseFixtureMode(value: string = 'healthy'): FixtureMode {
@@ -63,6 +65,7 @@ export function createFixtureApp(mode: FixtureMode = 'healthy') {
       {
         'Bearer fixture-alice': 'alice',
         'Bearer fixture-bob': 'bob',
+        'Bearer fixture-admin': 'admin',
       }[request.get('authorization') ?? ''];
     if (!user) {
       response.status(401).json({ error: 'Authentication required' });
@@ -71,13 +74,27 @@ export function createFixtureApp(mode: FixtureMode = 'healthy') {
     response.locals.user = user;
     next();
   });
+  // Independent identity control for role/ownership verification.
+  app.get('/api/identity', (_request, response) => {
+    response.json({
+      subjectId: response.locals.user,
+      role: response.locals.user === 'admin' ? 'admin' : 'customer',
+    });
+  });
+  app.get('/api/admin/report', (_request, response) => {
+    if (response.locals.user !== 'admin' && mode !== 'role-bypass') {
+      response.status(403).json({ error: 'Administrator required' });
+      return;
+    }
+    response.json({ report: 'synthetic-admin-report', scope: 'admin' });
+  });
   app.get('/api/orders/:id', (request, response) => {
     const order = orders.get(request.params.id);
     if (!order) {
       response.status(404).json({ error: 'Order not found' });
       return;
     }
-    if (order.owner !== response.locals.user) {
+    if (order.owner !== response.locals.user && mode !== 'ownership-bypass') {
       response.status(403).json({ error: 'Order belongs to another user' });
       return;
     }

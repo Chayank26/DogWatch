@@ -65,6 +65,7 @@ const optionsSchema = z.strictObject({
     .max(200)
     .default([]),
 });
+export { optionsSchema as boundaryOptionsSchema };
 export type BoundaryOptions = z.input<typeof optionsSchema>;
 export interface LogicalRequest {
   parameters: {

@@ -1,0 +1,71 @@
+# Read-access authorization endpoints, separate from the boundary/authentication corpus.
+openapi: 3.0.3
+info:
+  title: PawMart synthetic authorization API
+  version: 1.0.0
+security:
+  - fixtureBearer: []
+paths:
+  /api/identity:
+    get:
+      responses:
+        '200':
+          description: Current synthetic subject and role
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subjectId, role]
+                properties:
+                  subjectId: { type: string }
+                  role: { type: string, enum: [customer, admin] }
+        '401':
+          description: Authentication required
+  /api/orders/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Order owned by the synthetic caller
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, owner, address, quantity]
+                properties:
+                  id: { type: string }
+                  owner: { type: string }
+                  address: { type: string }
+                  quantity: { type: integer, minimum: 1, maximum: 10 }
+        '401':
+          description: Authentication required
+        '403':
+          description: Another subject owns this order
+        '404':
+          description: Order does not exist
+  /api/admin/report:
+    get:
+      responses:
+        '200':
+          description: Protected synthetic report
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [report, scope]
+                properties:
+                  report: { type: string }
+                  scope: { type: string }
+        '401':
+          description: Authentication required
+        '403':
+          description: Administrator required
+components:
+  securitySchemes:
+    fixtureBearer:
+      type: http
+      scheme: bearer

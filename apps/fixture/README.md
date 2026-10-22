@@ -18,6 +18,8 @@ The fixture runs separately from `npm run dev`, keeping synthetic targets out of
 FIXTURE_MODE=missing-address-500 npm run fixture:dev
 FIXTURE_MODE=checkout-stuck npm run fixture:dev
 FIXTURE_MODE=authentication-bypass npm run fixture:dev
+FIXTURE_MODE=ownership-bypass npm run fixture:dev
+FIXTURE_MODE=role-bypass npm run fixture:dev
 ```
 
 Run one mode at a time. The default is `healthy`; unknown modes fail startup.
@@ -50,3 +52,9 @@ Loopback is intentional for trusted local fixtures. This does not override the p
 - `tsconfig.json`: strict shared settings, Node ESM, DOM types for browser source, and `dist` output; test files are executed separately and excluded from production builds.
 
 TypeScript emits this browser file as ESM; HTML loads it as a module, which defers execution until the document is parsed. Generated `dist` files are ignored and should not be edited manually.
+
+## Authorization corpus
+
+`fixture-admin` is a public synthetic administrator token. `/api/identity` returns the current subject and role; Alice/Bob are customers, and the administrator has role `admin`. `/api/admin/report` is restricted to that administrator in healthy mode. `ownership-bypass` deliberately permits reading another subject's order, while `role-bypass` permits customers to read the protected report. These modes are independent of the existing authentication-bypass mode.
+
+`/authorization-openapi.yaml` describes this separate read-access corpus. `npm run authorization:verify` verifies healthy and faulty targets using independently scoped identity controls and known resource/report evidence. Each target is fresh and disposable; this is not an external identity-provider test. The original `openapi.yaml` retains its boundary/authentication endpoints; its order-owner response enum now also includes `admin`.

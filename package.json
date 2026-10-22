@@ -35,7 +35,8 @@
     "smoke:verify": "npm run verify:smoke -w @dogwatch/worker",
     "baseline:verify": "npm run verify:baseline -w @dogwatch/worker",
     "api:verify": "npm run verify:api -w @dogwatch/worker",
-    "authentication:verify": "npm run verify:authentication -w @dogwatch/worker"
+    "authentication:verify": "npm run verify:authentication -w @dogwatch/worker",
+    "authorization:verify": "npm run verify:authorization -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

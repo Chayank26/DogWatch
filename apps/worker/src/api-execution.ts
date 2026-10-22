@@ -1,7 +1,8 @@
 /** Callable API stage. No consumer, credential minting, publication or source execution. */
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
-import { setTimeout as pause } from 'node:timers/promises';
+import { ApiRuntime, bounded } from './api-runtime.js';
+import { authorizationPolicySchema } from './api-authorization-plan.js';
 import { generateBoundaryCases } from './boundary-cases.js';
 import type { BoundaryOptions, BoundaryCase } from './boundary-cases.js';
 import { validateApiContract } from './openapi.js';
@@ -13,10 +14,10 @@ import {
   ForbiddenPreviewError,
 } from './preview.js';
 import type { PreviewBinding } from './preview.js';
-import { ApiGap, serializeApiCase, sendApiRequest } from './api-transport.js';
+import { ApiGap, serializeApiCase } from './api-transport.js';
 import type { ApiResponse } from './api-transport.js';
 
-const scopeSchema = z.strictObject({
+export const scopeSchema = z.strictObject({
   tenantId: z.uuid(),
   runId: z.uuid(),
   repositoryId: z.number().int().positive().safe(),
@@ -24,10 +25,11 @@ const scopeSchema = z.strictObject({
   headSha: z.string().regex(/^[a-f0-9]{40}$/),
 });
 export type ApiScope = z.infer<typeof scopeSchema>;
-const grantSchema = scopeSchema.extend({
+export const grantSchema = scopeSchema.extend({
   deploymentId: z.string().min(1).max(200),
   origin: z.string().url().max(2048),
   disposableData: z.boolean().default(false),
+  authorization: authorizationPolicySchema.optional(),
   operations: z
     .array(
       z.strictObject({
@@ -60,7 +62,7 @@ const grantSchema = scopeSchema.extend({
 });
 export type AuthenticationProbe = 'control' | 'missing' | 'invalid_bearer';
 export type ApiGrant = z.input<typeof grantSchema>;
-const limitsSchema = z.strictObject({
+export const limitsSchema = z.strictObject({
   maxRequests: z.number().int().min(0).max(1000).default(100),
   maxRetries: z.number().int().min(0).max(2).default(0),
   minIntervalMs: z.number().int().min(50).max(10000).default(100),
@@ -71,6 +73,7 @@ const limitsSchema = z.strictObject({
   maxTotalRequestBytes: z.number().int().min(1).max(1048576).default(262144),
   maxTotalResponseBytes: z.number().int().min(1).max(4194304).default(1048576),
 });
+export type ApiLimits = z.infer<typeof limitsSchema>;
 export interface ApiCaseResult {
   caseId: string;
   operationKey: string;
@@ -91,21 +94,7 @@ export interface ApiExecution extends ApiScope {
   results: ApiCaseResult[];
   coverageGaps: { code: string; operationKey?: string }[];
 }
-/** Bound even a trusted callback which ignores cancellation. */
-async function bounded<T>(
-  promise: Promise<T>,
-  signal: AbortSignal,
-): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const abort = () => reject(signal.reason);
-    if (signal.aborted) reject(signal.reason);
-    else signal.addEventListener('abort', abort, { once: true });
-    promise
-      .then(resolve, reject)
-      .finally(() => signal.removeEventListener('abort', abort));
-  });
-}
-function assess(
+export function assessApiResponse(
   test: BoundaryCase,
   operation: ContractOperation,
   response: ApiResponse,
@@ -167,10 +156,34 @@ function assess(
   };
 }
 
-/**
- * grant/binding/callbacks are independently resolved operator authority, never contract data.
+/** Verify independently resolved execution authority before any credential or HTTP access.
  * Production callers still need an isolated supervisor, durable lease and whole-run reservation.
  */
+export function validateApiExecutionContext(
+  scope: ApiScope,
+  binding: PreviewBinding,
+  grant: z.infer<typeof grantSchema>,
+  fixture = false,
+): URL {
+  const origin = new URL(grant.origin);
+  if (origin.origin !== grant.origin || origin.pathname !== '/')
+    throw new ApiGap('context_forbidden');
+  validatePreviewUrl(origin, binding, fixture);
+  if (
+    new URL(binding.url).origin !== origin.origin ||
+    grant.deploymentId !== binding.deploymentId ||
+    Object.entries(scope).some(
+      ([key, value]) => grant[key as keyof typeof scope] !== value,
+    ) ||
+    ['tenantId', 'repositoryId', 'pullRequestNumber', 'headSha'].some(
+      (key) =>
+        binding[key as keyof PreviewBinding] !== scope[key as keyof ApiScope],
+    )
+  )
+    throw new ApiGap('context_forbidden');
+  return origin;
+}
+
 export interface ApiExecutionInput {
   scope: ApiScope;
   binding: PreviewBinding;
@@ -287,33 +300,19 @@ async function execute(
       ...probeMetadata.get(test.id),
       ...(httpStatus === undefined ? {} : { httpStatus }),
     });
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), limits.maxExecutionMs);
-  const signal = options.signal
-    ? AbortSignal.any([options.signal, controller.signal])
-    : controller.signal;
+  const runtime = new ApiRuntime(limits, options, output);
+  const { signal } = runtime;
   let stop: string | undefined;
-  let lastStart = -Infinity;
   const blocked = new Set<string>();
   const controls = new Set<string>();
   const controlTokens = new Map<string, string>();
   try {
-    const origin = new URL(grant.origin);
-    if (origin.origin !== grant.origin || origin.pathname !== '/')
-      throw new ApiGap('context_forbidden');
-    validatePreviewUrl(origin, binding, options.fixture);
-    if (
-      new URL(binding.url).origin !== origin.origin ||
-      grant.deploymentId !== binding.deploymentId ||
-      Object.entries(scope).some(
-        ([key, value]) => grant[key as keyof typeof scope] !== value,
-      ) ||
-      ['tenantId', 'repositoryId', 'pullRequestNumber', 'headSha'].some(
-        (key) =>
-          binding[key as keyof PreviewBinding] !== scope[key as keyof ApiScope],
-      )
-    )
-      throw new ApiGap('context_forbidden');
+    const origin = validateApiExecutionContext(
+      scope,
+      binding,
+      grant,
+      options.fixture,
+    );
     if (contract.status !== 'supported' || !plan.cases.length)
       throw new ApiGap('cases_unavailable');
     if (
@@ -329,17 +328,7 @@ async function execute(
       )
     )
       throw new ApiGap('operation_forbidden');
-    const current = async () => {
-      signal.throwIfAborted();
-      let allowed: boolean;
-      try {
-        allowed = await bounded(options.isCurrent(), signal);
-      } catch {
-        throw new ApiGap('context_unavailable');
-      }
-      if (!allowed) throw new ApiGap('stopped');
-      signal.throwIfAborted();
-    };
+    const current = () => runtime.current();
     for (const test of cases) {
       if (stop) {
         add(test, 'skipped', stop);
@@ -479,107 +468,53 @@ async function execute(
         const wire = serializeApiCase(test, operation, origin.origin, token);
         if (wire.bytes > limits.maxRequestBytes)
           throw new ApiGap('request_bytes');
-        for (let retry = 0; ; retry++) {
-          const delay = limits.minIntervalMs - (performance.now() - lastStart);
-          if (delay > 0) await pause(delay, undefined, { signal });
-          await current();
-          if (output.requests >= limits.maxRequests)
-            throw new ApiGap('request_budget');
-          if (output.requestBytes + wire.bytes > limits.maxTotalRequestBytes)
-            throw new ApiGap('total_request_bytes');
-          if (output.responseBytes >= limits.maxTotalResponseBytes)
-            throw new ApiGap('total_response_bytes');
-          output.requests++;
-          output.requestBytes += wire.bytes;
-          lastStart = performance.now();
-          let response: ApiResponse;
-          try {
-            response = await sendApiRequest(
-              wire,
-              AbortSignal.any([
-                signal,
-                AbortSignal.timeout(limits.maxRequestMs),
-              ]),
-              Math.min(
-                limits.maxResponseBytes,
-                limits.maxTotalResponseBytes - output.responseBytes,
-              ),
-              (bytes) => {
-                output.responseBytes += bytes;
-              },
-              options.fixture,
-            );
-          } catch (error) {
+        const response = await runtime.send(wire);
+        let result = assessApiResponse(test, operation, response);
+        if (authentication && expectation) {
+          if (probe === 'control') {
             if (
-              !signal.aborted &&
-              !(error instanceof ApiGap) &&
-              !(error instanceof ForbiddenPreviewError) &&
-              ['GET', 'HEAD', 'OPTIONS'].includes(test.method) &&
-              retry < limits.maxRetries
-            )
-              continue;
-            throw error;
-          } finally {
-            // Conservative spacing after completion also bounds starts when DNS is slow.
-            lastStart = performance.now();
-          }
-          await current();
-          let result = assess(test, operation, response);
-          if (authentication && expectation) {
-            if (probe === 'control') {
-              if (
-                result.status === 'passed' &&
-                expectation.successStatuses.includes(response.status)
-              ) {
-                controls.add(test.operationKey);
-                result = {
-                  status: 'passed',
-                  code: 'authentication_control_passed',
-                };
-              } else {
-                blocked.add(test.operationKey);
-                result = {
-                  status: 'inconclusive',
-                  code: 'authentication_control_unavailable',
-                };
-              }
-            } else if (response.status === expectation.rejectionStatus) {
-              result = assess(test, operation, response, true);
-            } else if (response.status >= 200 && response.status < 300)
-              result = { status: 'failed', code: 'authentication_accepted' };
-            else if (response.status === 401 || response.status === 403)
+              result.status === 'passed' &&
+              expectation.successStatuses.includes(response.status)
+            ) {
+              controls.add(test.operationKey);
               result = {
-                status: 'failed',
-                code: 'authentication_rejection_mismatch',
+                status: 'passed',
+                code: 'authentication_control_passed',
               };
-            else if (response.status >= 500)
-              result = { status: 'failed', code: 'server_error' };
-            else if (
-              !['redirect_forbidden', 'rate_limited'].includes(result.code)
-            )
+            } else {
+              blocked.add(test.operationKey);
               result = {
                 status: 'inconclusive',
-                code: 'authentication_rejection_unproven',
+                code: 'authentication_control_unavailable',
               };
-          }
-          add(test, result.status, result.code, response.status);
-          if (result.code === 'credentials_unavailable')
-            blocked.add(test.operationKey);
-          if (response.status >= 300 && response.status < 400)
-            stop = 'redirect_forbidden';
-          if (response.status === 429) stop = 'rate_limited';
-          break;
+            }
+          } else if (response.status === expectation.rejectionStatus) {
+            result = assessApiResponse(test, operation, response, true);
+          } else if (response.status >= 200 && response.status < 300)
+            result = { status: 'failed', code: 'authentication_accepted' };
+          else if (response.status === 401 || response.status === 403)
+            result = {
+              status: 'failed',
+              code: 'authentication_rejection_mismatch',
+            };
+          else if (response.status >= 500)
+            result = { status: 'failed', code: 'server_error' };
+          else if (
+            !['redirect_forbidden', 'rate_limited'].includes(result.code)
+          )
+            result = {
+              status: 'inconclusive',
+              code: 'authentication_rejection_unproven',
+            };
         }
+        add(test, result.status, result.code, response.status);
+        if (result.code === 'credentials_unavailable')
+          blocked.add(test.operationKey);
+        if (response.status >= 300 && response.status < 400)
+          stop = 'redirect_forbidden';
+        if (response.status === 429) stop = 'rate_limited';
       } catch (error) {
-        const code = signal.aborted
-          ? options.signal?.aborted
-            ? 'stopped'
-            : 'execution_timeout'
-          : error instanceof ApiGap
-            ? error.code
-            : error instanceof ForbiddenPreviewError
-              ? 'destination_forbidden'
-              : 'transport_unavailable';
+        const code = runtime.code(error);
         add(test, 'inconclusive', code);
         if (code === 'credentials_unavailable') blocked.add(test.operationKey);
         if (
@@ -618,7 +553,7 @@ async function execute(
           : 'context_unavailable';
   } finally {
     controlTokens.clear();
-    clearTimeout(timer);
+    runtime.close();
   }
   return output;
 }

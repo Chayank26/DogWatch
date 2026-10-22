@@ -191,3 +191,9 @@ Each evidence bundle links the run and tested SHA to a sanitized action trace an
 A trusted caller can now supply Maya's selected OpenAPI contract at the tested code version. DogWatch validates the supported JSON/YAML profile and identifies operations such as createOrder/getOrder, required fields, response schemas and synthetic bearer requirements. The fixture's local server address is not permission to call it.
 
 Malformed or unsupported contracts produce a fixed setup diagnostic and no runnable operation list. External/cyclic refs and unsupported constructs cannot be silently dropped. This phase makes no API requests or pass/fail claim about the application. Deterministic test cases come next; approved destinations, credentials, request limits and actual execution remain later steps. The website and normal dispatch startup stay unchanged.
+
+## Part 4 · Phase 4.2 — Prepare reproducible API cases
+
+After reading Maya's contract, a trusted caller can now prioritize selected API operations and generate a finite reproducible plan. For PawMart, the plan includes a valid synthetic order body, missing address/quantity, wrong types, nulls, malformed JSON, address lengths and quantity values around documented limits. Optional fixtures can preserve known disposable resource IDs.
+
+Every case says whether its logical input satisfies the modeled contract. Allowed extra fields and valid boundaries are not mislabeled as failures. Unknown constraints, unusable baselines and budget-limited coverage stay explicit. Case IDs bind the tested code, contract, seed and request data for replay. This phase sends no cases to PawMart or customer APIs and creates no findings; authorized request execution and response interpretation come next. Normal startup and the website remain unchanged.

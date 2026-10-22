@@ -128,3 +128,7 @@ Run `npm run baseline:verify` after installing Chromium. It creates paired dispo
 ## Phase 4.1 — Contract validation
 
 `validateApiContract(context, text)` validates the supported OpenAPI 3.0 JSON/YAML profile and normalizes operation, parameter, JSON schema and security metadata. Unsupported or invalid inputs return no operations and fixed diagnostics. It resolves local components only and never uses contract server URLs, loads external refs or sends requests. See the [contract guide](CONTRACTS.md) for supported constructs, limits and caller responsibilities. Case generation comes next; customer execution remains disabled.
+
+## Phase 4.2 — Deterministic boundary cases
+
+`generateBoundaryCases(context, contractText, options)` produces reproducible, bounded logical cases after contract validation. It supports scoped operation priority/allowlists, optional synthetic fixtures, valid baselines, invalid-input families, nested boundaries and explicit coverage gaps. Cases preserve valid versus invalid input semantics without predicting API success or sending requests. See the [boundary case guide](BOUNDARY_CASES.md) for limits, replay identity, supported patterns and the boundary between planning and execution. No new dependency or startup consumer is added.

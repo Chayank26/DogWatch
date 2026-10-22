@@ -78,3 +78,7 @@ Part 3.5 compares compatible exact-SHA smoke records and persists private, scope
 ## API contract validation
 
 Part 4.1 adds callable validation of a bounded OpenAPI 3.0 JSON/YAML profile, including local schema references, operation parameters, JSON bodies/responses and security requirements. Unsupported contracts return explicit diagnostics and no operation inventory. The [contract guide](apps/worker/CONTRACTS.md) explains supported features and limits. Case generation and API execution follow in later phases; no customer requests are sent yet.
+
+## Deterministic API cases
+
+Part 4.2 adds seeded logical boundary-case plans with optional synthetic fixtures, operation priority/allowlists, deduplication and explicit count/payload limits. Valid and invalid inputs stay distinct; cases are not API verdicts or execution permission. See the [boundary case guide](apps/worker/BOUNDARY_CASES.md). Authorized request execution comes in Phase 4.3.

@@ -181,3 +181,15 @@ The comparator uses operator-attested scenario compatibility and the normalized 
 | Node unit tests              | Verify the real PawMart contract and malformed/unsupported synthetic documents without a server, browser, database or credentials.                                                                                                           |
 
 Added strict all-or-nothing normalization for operations, parameter inheritance, local refs, JSON request/response schemas and supported security requirements. Schema/operation expansion has explicit bounds. Servers/examples/defaults/descriptions are omitted; fixed diagnostics never return raw source/errors. Regex syntax is checked without executing matches. This profile does not imply complete OpenAPI conformance or schema satisfiability. Case generation, ranking, request/response execution, credentials and isolated hostile-document processing remain later work. See [contract guide](apps/worker/CONTRACTS.md).
+
+## Part 4 · Phase 4.2 — Deterministic boundary cases
+
+| Tool/technique                              | Purpose and choice                                                                                                                                                     |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Existing OpenAPI validator                  | Revalidate immutable source text and obtain a supported inventory before generating cases; no unchecked public inventory input is accepted.                            |
+| Bounded value interpreter                   | Check modeled JSON constraints without compiling customer schemas or running arbitrary regexes. Unknown semantics produce coverage gaps instead of guessed validity.   |
+| Canonical JSON and SHA-256                  | Deterministic seeded values, per-operation request deduplication and context/contract-bound case IDs. Each emitted request is detached from shared baseline data.      |
+| BigInt decimal arithmetic / adjacent floats | Check JSON-number multiples exactly and generate numeric boundaries without epsilon-based false-valid labels.                                                          |
+| Existing Zod and Node tests                 | Validate policy/fixture options and test the actual PawMart contract, including independent trusted-fixture Ajv checks. No new runtime package or service is required. |
+
+Added baseline-first, round-robin case planning for scoped priority/allowlisted operations. Covers omitted required input, types, nulls, malformed JSON, extra properties, enums, lengths, numeric boundaries and bounded array cases. Count/work/payload ceilings are explicit, including skipped oversized boundaries. Plans carry no execution authority; actual wire encoding, response checks, credentials, rate/request limits and cleanup remain later phases. See [boundary case guide](apps/worker/BOUNDARY_CASES.md).

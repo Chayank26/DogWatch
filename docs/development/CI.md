@@ -46,3 +46,7 @@ After Chromium installation, the data-services job also runs `npm run baseline:v
 ## OpenAPI ingestion fixtures
 
 `npm test` now includes the worker's contract-validation suite. It reads PawMart's versioned YAML document and tests supported JSON schemas, inheritance, security alternatives, unsafe references, malformed YAML and resource bounds entirely offline. This phase needs no additional service, browser, credential or CI job. Dependency installation includes YAML, Ajv draft-04 support and the bundled OpenAPI document schema.
+
+## Boundary-case planning fixtures
+
+The worker's regular `npm test` suite generates deterministic plans from PawMart's actual OpenAPI contract and independently validates its body-case labels with Ajv against the trusted fixture schema. Additional tests cover count/payload limits, priority scope, synthetic seeds, decimal/Unicode behavior and conservative unmodeled-constraint handling. No generated API case is executed, and no new browser/service or CI command is required for Phase 4.2.

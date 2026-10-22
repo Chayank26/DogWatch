@@ -545,3 +545,21 @@ test('omitting optional parameters is valid and parameter cases retain independe
     (baseline.value as Record<string, JsonValue>).value = 'changed';
   assert.equal(stable(omission.request), before);
 });
+
+test('baseline-only planning preserves deterministic baseline IDs without generating mutation gaps', () => {
+  const regular = generateBoundaryCases(context, fixture, settings);
+  const baselines = generateBoundaryCases(context, fixture, {
+    ...settings,
+    baselineOnly: true,
+  });
+  assert.deepEqual(
+    baselines.cases,
+    regular.cases.filter((row) => row.kind === 'baseline'),
+  );
+  assert.equal(baselines.status, 'generated');
+  assert.deepEqual(baselines.coverageGaps, []);
+  assert.equal(
+    baselines.totalPayloadBytes,
+    baselines.cases.reduce((sum, row) => sum + row.payloadBytes, 0),
+  );
+});

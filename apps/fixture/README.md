@@ -17,15 +17,17 @@ The fixture runs separately from `npm run dev`, keeping synthetic targets out of
 ```sh
 FIXTURE_MODE=missing-address-500 npm run fixture:dev
 FIXTURE_MODE=checkout-stuck npm run fixture:dev
+FIXTURE_MODE=authentication-bypass npm run fixture:dev
 ```
 
 Run one mode at a time. The default is `healthy`; unknown modes fail startup.
 
-| Mode                | Scenario             | Expected observation                                       |
-| ------------------- | -------------------- | ---------------------------------------------------------- |
-| healthy             | Submit blank address | API 400, UI shows validation message.                      |
-| missing-address-500 | Submit blank address | API 500 violates the healthy contract; UI shows the error. |
-| checkout-stuck      | Submit blank address | API correctly returns 400, but UI stays on Processing.     |
+| Mode                  | Scenario                 | Expected observation                                            |
+| --------------------- | ------------------------ | --------------------------------------------------------------- |
+| healthy               | Submit blank address     | API 400, UI shows validation message.                           |
+| missing-address-500   | Submit blank address     | API 500 violates the healthy contract; UI shows the error.      |
+| checkout-stuck        | Submit blank address     | API correctly returns 400, but UI stays on Processing.          |
+| authentication-bypass | Missing or invalid token | API incorrectly acts as Alice and accepts protected operations. |
 
 The form deliberately skips native browser validation so server-side edge cases can be exercised. Future Playwright phases will verify client behavior in a real browser; current automated tests exercise HTTP behavior and fault configuration only.
 
@@ -33,7 +35,7 @@ The form deliberately skips native browser validation so server-side edge cases 
 
 The public tokens `fixture-alice` and `fixture-bob` correspond to the browser's identity selector. Send them as `Authorization: Bearer fixture-alice` (or Bob). These are intentional fixture credentials, not production authentication.
 
-`GET /api/orders/order-alice` is allowed for Alice; Bob receives 403. `order-bob` behaves symmetrically. Missing/invalid tokens receive 401. A valid POST to `/api/orders` creates an in-memory order. No delete/reset endpoint is exposed; restart for a clean baseline. The healthy contract is served at `/openapi.yaml`, health at `/health`, and process mode at `/fixture-config`.
+`GET /api/orders/order-alice` is allowed for Alice; Bob receives 403. `order-bob` behaves symmetrically. Missing/invalid tokens receive 401 in healthy mode. The deliberate `authentication-bypass` mode treats every API request as Alice, allowing the probe verifier to detect incorrect acceptance; it remains local and disposable. A valid POST to `/api/orders` creates an in-memory order. No delete/reset endpoint is exposed; restart for a clean baseline. The healthy contract is served at `/openapi.yaml`, health at `/health`, and process mode at `/fixture-config`.
 
 Loopback is intentional for trusted local fixtures. This does not override the planned hosted-worker prohibition on arbitrary loopback destinations. A future isolated QA harness must grant this known fixture through a dedicated controlled test environment.
 

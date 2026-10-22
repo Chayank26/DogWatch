@@ -30,6 +30,7 @@ const scalar = z.union([
   z.null(),
 ]);
 const optionsSchema = z.strictObject({
+  baselineOnly: z.boolean().default(false),
   seed: z.number().int().min(0).max(4294967295).default(0),
   maxCases: z.number().int().min(1).max(200).default(100),
   maxCasesPerOperation: z.number().int().min(1).max(100).default(32),
@@ -476,7 +477,7 @@ export function generateBoundaryCases(
       );
     }
   }
-  while (queues.some((queue) => !queue.done)) {
+  while (!options.baselineOnly && queues.some((queue) => !queue.done)) {
     if (output.cases.length >= options.maxCases) {
       gap('case_budget');
       break;

@@ -1,5 +1,6 @@
 /** Callable API stage. No consumer, credential minting, publication or source execution. */
 import { z } from 'zod';
+import { createHash } from 'node:crypto';
 import { setTimeout as pause } from 'node:timers/promises';
 import { generateBoundaryCases } from './boundary-cases.js';
 import type { BoundaryOptions, BoundaryCase } from './boundary-cases.js';
@@ -41,10 +42,23 @@ const grantSchema = scopeSchema.extend({
         ]),
         path: z.string().min(1).max(1024),
         allowMutation: z.boolean().default(false),
+        authentication: z
+          .strictObject({
+            successStatuses: z
+              .array(z.number().int().min(200).max(299))
+              .min(1)
+              .max(10),
+            rejectionStatus: z
+              .union([z.literal(401), z.literal(403)])
+              .default(401),
+            invalidBearer: z.boolean().default(false),
+          })
+          .optional(),
       }),
     )
     .max(200),
 });
+export type AuthenticationProbe = 'control' | 'missing' | 'invalid_bearer';
 export type ApiGrant = z.input<typeof grantSchema>;
 const limitsSchema = z.strictObject({
   maxRequests: z.number().int().min(0).max(1000).default(100),
@@ -63,6 +77,8 @@ export interface ApiCaseResult {
   status: 'passed' | 'failed' | 'inconclusive' | 'skipped';
   code: string;
   httpStatus?: number;
+  probe?: AuthenticationProbe;
+  baselineCaseId?: string;
 }
 export interface ApiExecution extends ApiScope {
   contractDigest?: string;
@@ -93,11 +109,12 @@ function assess(
   test: BoundaryCase,
   operation: ContractOperation,
   response: ApiResponse,
+  authenticationRejection = false,
 ): Pick<ApiCaseResult, 'status' | 'code'> {
   const status = response.status;
   if (status >= 300 && status < 400)
     return { status: 'inconclusive', code: 'redirect_forbidden' };
-  if (status === 401 || status === 403)
+  if (!authenticationRejection && (status === 401 || status === 403))
     return { status: 'inconclusive', code: 'credentials_unavailable' };
   if (status === 429) return { status: 'inconclusive', code: 'rate_limited' };
   if (status >= 500) return { status: 'failed', code: 'server_error' };
@@ -142,7 +159,11 @@ function assess(
     return { status: 'failed', code: 'invalid_input_accepted' };
   return {
     status: 'passed',
-    code: status >= 400 ? 'documented_rejection' : 'documented_response',
+    code: authenticationRejection
+      ? 'authentication_rejected'
+      : status >= 400
+        ? 'documented_rejection'
+        : 'documented_response',
   };
 }
 
@@ -150,26 +171,45 @@ function assess(
  * grant/binding/callbacks are independently resolved operator authority, never contract data.
  * Production callers still need an isolated supervisor, durable lease and whole-run reservation.
  */
-export async function executeApiCases(
-  input: {
-    scope: ApiScope;
-    binding: PreviewBinding;
-    grant: ApiGrant;
-    contractText: string;
-    generation?: BoundaryOptions;
-    limits?: z.input<typeof limitsSchema>;
-  },
-  options: {
-    isCurrent: () => Promise<boolean>;
-    signal?: AbortSignal;
-    fixture?: boolean;
-    getBearerToken?: (
-      scope: ApiScope,
-      deploymentId: string,
-      origin: string,
-      scheme: string,
-    ) => Promise<string | undefined>;
-  },
+export interface ApiExecutionInput {
+  scope: ApiScope;
+  binding: PreviewBinding;
+  grant: ApiGrant;
+  contractText: string;
+  generation?: BoundaryOptions;
+  limits?: z.input<typeof limitsSchema>;
+}
+export interface ApiExecutionOptions {
+  isCurrent: () => Promise<boolean>;
+  signal?: AbortSignal;
+  fixture?: boolean;
+  getBearerToken?: CredentialProvider;
+  /** Caller attests this credential is invalid for the scoped target, not another user's token. */
+  getInvalidBearerToken?: CredentialProvider;
+}
+type CredentialProvider = (
+  scope: ApiScope,
+  deploymentId: string,
+  origin: string,
+  scheme: string,
+) => Promise<string | undefined>;
+export function executeApiCases(
+  input: ApiExecutionInput,
+  options: ApiExecutionOptions,
+) {
+  return execute(input, options, false);
+}
+/** Baseline controls and negative authentication checks share one stage budget. */
+export function executeApiAuthentication(
+  input: ApiExecutionInput,
+  options: ApiExecutionOptions,
+) {
+  return execute(input, options, true);
+}
+async function execute(
+  input: ApiExecutionInput,
+  options: ApiExecutionOptions,
+  authentication: boolean,
 ): Promise<ApiExecution> {
   const scope = scopeSchema.parse(input.scope);
   const binding = previewBindingSchema.parse(input.binding);
@@ -185,7 +225,9 @@ export async function executeApiCases(
   const plan = generateBoundaryCases(
     context,
     input.contractText,
-    input.generation,
+    authentication
+      ? { ...input.generation, baselineOnly: true }
+      : input.generation,
   );
   const output: ApiExecution = {
     ...scope,
@@ -199,6 +241,38 @@ export async function executeApiCases(
     results: [],
     coverageGaps: plan.coverageGaps,
   };
+  const probeMetadata = new Map<
+    string,
+    { probe: AuthenticationProbe; baselineCaseId: string }
+  >();
+  const cases = authentication
+    ? plan.cases.flatMap((baseline) => {
+        const permission = grant.operations.find(
+          (op) => `${op.method} ${op.path}` === baseline.operationKey,
+        );
+        const probes: AuthenticationProbe[] = permission?.authentication
+          ?.invalidBearer
+          ? ['control', 'missing', 'invalid_bearer']
+          : ['control', 'missing'];
+        return probes.map((probe) => {
+          const id = createHash('sha256')
+            .update(
+              JSON.stringify({
+                version: 1,
+                baseline: baseline.id,
+                scope,
+                deploymentId: grant.deploymentId,
+                origin: grant.origin,
+                expectation: permission?.authentication,
+                probe,
+              }),
+            )
+            .digest('hex');
+          probeMetadata.set(id, { probe, baselineCaseId: baseline.id });
+          return { ...baseline, id };
+        });
+      })
+    : plan.cases;
   const add = (
     test: BoundaryCase,
     status: ApiCaseResult['status'],
@@ -210,6 +284,7 @@ export async function executeApiCases(
       operationKey: test.operationKey,
       status,
       code,
+      ...probeMetadata.get(test.id),
       ...(httpStatus === undefined ? {} : { httpStatus }),
     });
   const controller = new AbortController();
@@ -220,6 +295,8 @@ export async function executeApiCases(
   let stop: string | undefined;
   let lastStart = -Infinity;
   const blocked = new Set<string>();
+  const controls = new Set<string>();
+  const controlTokens = new Map<string, string>();
   try {
     const origin = new URL(grant.origin);
     if (origin.origin !== grant.origin || origin.pathname !== '/')
@@ -263,7 +340,7 @@ export async function executeApiCases(
       if (!allowed) throw new ApiGap('stopped');
       signal.throwIfAborted();
     };
-    for (const test of plan.cases) {
+    for (const test of cases) {
       if (stop) {
         add(test, 'skipped', stop);
         continue;
@@ -280,16 +357,79 @@ export async function executeApiCases(
         continue;
       }
       if (blocked.has(test.operationKey)) {
-        add(test, 'inconclusive', 'credentials_unavailable');
+        add(
+          test,
+          'inconclusive',
+          authentication
+            ? 'authentication_control_unavailable'
+            : 'credentials_unavailable',
+        );
         continue;
       }
       const operation = contract.operations.find(
         (op) => `${op.method} ${op.path}` === test.operationKey,
       )!;
+      const probe = probeMetadata.get(test.id)?.probe;
+      const expectation = permission.authentication;
+      if (authentication) {
+        if (!expectation) {
+          add(test, 'skipped', 'authentication_not_granted');
+          continue;
+        }
+        const schemes = operation.security.map((alternative) =>
+          Object.keys(alternative),
+        );
+        if (!schemes.length || schemes.some((names) => !names.length)) {
+          add(test, 'skipped', 'authentication_not_required');
+          continue;
+        }
+        if (
+          schemes.some((names) => {
+            const definition = contract.securitySchemes[names[0]!];
+            return (
+              names.length !== 1 ||
+              definition?.type !== 'http' ||
+              definition.scheme !== 'bearer'
+            );
+          }) ||
+          new Set(schemes.flat()).size !== 1
+        ) {
+          add(test, 'inconclusive', 'authentication_scheme_unsupported');
+          continue;
+        }
+        if (
+          !Object.hasOwn(
+            operation.responses,
+            String(expectation.rejectionStatus),
+          ) ||
+          expectation.successStatuses.some(
+            (status) => !Object.hasOwn(operation.responses, String(status)),
+          )
+        ) {
+          add(test, 'inconclusive', 'authentication_expectation_undocumented');
+          continue;
+        }
+        // Cookie/header/query parameters may themselves carry session authority unknown to the contract.
+        if (
+          test.request.parameters.some((parameter) => parameter.in !== 'path')
+        ) {
+          add(
+            test,
+            'inconclusive',
+            'authentication_parameter_authority_unknown',
+          );
+          continue;
+        }
+        if (probe !== 'control' && !controls.has(test.operationKey)) {
+          add(test, 'inconclusive', 'authentication_control_unavailable');
+          continue;
+        }
+      }
       try {
         await current();
         let token: string | undefined;
         if (
+          probe !== 'missing' &&
           operation.security.length &&
           !operation.security.some(
             (alternative) => !Object.keys(alternative).length,
@@ -304,10 +444,18 @@ export async function executeApiCases(
               ? names
               : [];
           })[0];
-          if (!scheme || !options.getBearerToken)
-            throw new ApiGap('credentials_unavailable');
+          const credentialProvider =
+            probe === 'invalid_bearer'
+              ? options.getInvalidBearerToken
+              : options.getBearerToken;
+          if (!scheme || !credentialProvider)
+            throw new ApiGap(
+              probe === 'invalid_bearer'
+                ? 'invalid_credentials_unavailable'
+                : 'credentials_unavailable',
+            );
           token = await bounded(
-            options.getBearerToken(
+            credentialProvider(
               scope,
               binding.deploymentId,
               origin.origin,
@@ -315,7 +463,18 @@ export async function executeApiCases(
             ),
             AbortSignal.any([signal, AbortSignal.timeout(limits.maxRequestMs)]),
           );
-          if (!token) throw new ApiGap('credentials_unavailable');
+          if (!token)
+            throw new ApiGap(
+              probe === 'invalid_bearer'
+                ? 'invalid_credentials_unavailable'
+                : 'credentials_unavailable',
+            );
+          if (
+            probe === 'invalid_bearer' &&
+            token === controlTokens.get(test.operationKey)
+          )
+            throw new ApiGap('invalid_credentials_unavailable');
+          if (probe === 'control') controlTokens.set(test.operationKey, token);
         }
         const wire = serializeApiCase(test, operation, origin.origin, token);
         if (wire.bytes > limits.maxRequestBytes)
@@ -365,12 +524,50 @@ export async function executeApiCases(
             lastStart = performance.now();
           }
           await current();
-          const result = assess(test, operation, response);
+          let result = assess(test, operation, response);
+          if (authentication && expectation) {
+            if (probe === 'control') {
+              if (
+                result.status === 'passed' &&
+                expectation.successStatuses.includes(response.status)
+              ) {
+                controls.add(test.operationKey);
+                result = {
+                  status: 'passed',
+                  code: 'authentication_control_passed',
+                };
+              } else {
+                blocked.add(test.operationKey);
+                result = {
+                  status: 'inconclusive',
+                  code: 'authentication_control_unavailable',
+                };
+              }
+            } else if (response.status === expectation.rejectionStatus) {
+              result = assess(test, operation, response, true);
+            } else if (response.status >= 200 && response.status < 300)
+              result = { status: 'failed', code: 'authentication_accepted' };
+            else if (response.status === 401 || response.status === 403)
+              result = {
+                status: 'failed',
+                code: 'authentication_rejection_mismatch',
+              };
+            else if (response.status >= 500)
+              result = { status: 'failed', code: 'server_error' };
+            else if (
+              !['redirect_forbidden', 'rate_limited'].includes(result.code)
+            )
+              result = {
+                status: 'inconclusive',
+                code: 'authentication_rejection_unproven',
+              };
+          }
           add(test, result.status, result.code, response.status);
           if (result.code === 'credentials_unavailable')
             blocked.add(test.operationKey);
-          if (['redirect_forbidden', 'rate_limited'].includes(result.code))
-            stop = result.code;
+          if (response.status >= 300 && response.status < 400)
+            stop = 'redirect_forbidden';
+          if (response.status === 429) stop = 'rate_limited';
           break;
         }
       } catch (error) {
@@ -388,6 +585,7 @@ export async function executeApiCases(
         if (
           ![
             'credentials_unavailable',
+            'invalid_credentials_unavailable',
             'parameter_unrepresentable',
             'body_unrepresentable',
             'header_forbidden',
@@ -419,6 +617,7 @@ export async function executeApiCases(
           ? 'destination_forbidden'
           : 'context_unavailable';
   } finally {
+    controlTokens.clear();
     clearTimeout(timer);
   }
   return output;

@@ -65,3 +65,5 @@ These ceilings bound data and work counts; they do not replace process-level mem
 ## Verification
 
 `npm test` includes deterministic replay, SHA/tenant-bound identities, deduplication and independent snapshots, policy/priority selection, payload/count limits, Unicode strings, decimal multiples, nullable enums, nested/array cases, synthetic fixtures and unmodeled-pattern behavior. It loads PawMart's actual contract and independently checks generated body labels with Ajv against that trusted fixture schema. This compile is test-only; customer schemas are not compiled in the generator. No generated case is executed against an API in this phase.
+
+Phase 4.4 adds an optional `baselineOnly` generator setting. It preserves baseline IDs and all baseline/schema/payload limits while deliberately omitting mutations, without reporting mutation coverage gaps. The authentication executor forces this setting for paired requests; see [authentication probes](API_AUTHENTICATION.md).

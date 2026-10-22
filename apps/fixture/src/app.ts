@@ -8,11 +8,12 @@ import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import { fileURLToPath } from 'node:url';
 
-/** A small labeled corpus: healthy behavior plus two independently observable faults. */
+/** A small labeled corpus: healthy behavior plus explicitly selected observable faults. */
 export const fixtureModes = [
   'healthy',
   'missing-address-500',
   'checkout-stuck',
+  'authentication-bypass',
 ] as const;
 export type FixtureMode = (typeof fixtureModes)[number];
 export function parseFixtureMode(value: string = 'healthy'): FixtureMode {
@@ -57,10 +58,12 @@ export function createFixtureApp(mode: FixtureMode = 'healthy') {
 
   // Hardcoded, public synthetic credentials; intentionally not production auth.
   app.use('/api', (request, response, next) => {
-    const user = {
-      'Bearer fixture-alice': 'alice',
-      'Bearer fixture-bob': 'bob',
-    }[request.get('authorization') ?? ''];
+    const user =
+      (mode === 'authentication-bypass' ? 'alice' : undefined) ??
+      {
+        'Bearer fixture-alice': 'alice',
+        'Bearer fixture-bob': 'bob',
+      }[request.get('authorization') ?? ''];
     if (!user) {
       response.status(401).json({ error: 'Authentication required' });
       return;

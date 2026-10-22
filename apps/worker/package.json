@@ -21,7 +21,10 @@
     "preverify:smoke": "npm run build -w @dogwatch/fixture",
     "verify:smoke": "node --import tsx src/verify-smoke.ts",
     "preverify:baseline": "npm run build -w @dogwatch/fixture",
-    "verify:baseline": "node --import tsx src/verify-baseline.ts"
+    "verify:baseline": "node --import tsx src/verify-baseline.ts",
+    "pretest": "npm run build -w @dogwatch/fixture",
+    "preverify:api": "npm run build -w @dogwatch/fixture",
+    "verify:api": "node --import tsx --test src/api-execution.test.ts"
   },
   "dependencies": {
     "@apidevtools/openapi-schemas": "^2.1.0",

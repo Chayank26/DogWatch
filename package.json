@@ -33,7 +33,8 @@
     "sandbox:build": "npm run sandbox:build -w @dogwatch/worker",
     "isolation:verify": "npm run verify:isolation -w @dogwatch/worker",
     "smoke:verify": "npm run verify:smoke -w @dogwatch/worker",
-    "baseline:verify": "npm run verify:baseline -w @dogwatch/worker"
+    "baseline:verify": "npm run verify:baseline -w @dogwatch/worker",
+    "api:verify": "npm run verify:api -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

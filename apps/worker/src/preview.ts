@@ -115,18 +115,14 @@ export function validatePreviewUrl(
     throw new ForbiddenPreviewError('Destination forbidden');
 }
 
-/**
- * Resolve before connecting and pin the checked IP in the socket lookup callback.
- * Node does not follow redirects here. Every retry performs a fresh checked lookup;
- * DNS rebinding cannot replace the approved address between check and connect.
- */
-export async function probePreview(
+/** Shared checked DNS resolution; callers must separately authorize URL authority. */
+export async function resolvePreviewAddress(
   url: URL,
-  binding: PreviewBinding,
   signal: AbortSignal,
   fixture = false,
-): Promise<number> {
-  validatePreviewUrl(url, binding, fixture);
+): Promise<string> {
+  if (url.hostname.startsWith('['))
+    throw new ForbiddenPreviewError('Resolved address forbidden');
   const addresses = isIP(url.hostname)
     ? [{ address: url.hostname, family: isIP(url.hostname) }]
     : await bounded(lookup(url.hostname, { all: true }), signal);
@@ -144,7 +140,22 @@ export async function probePreview(
     )
   )
     throw new ForbiddenPreviewError('Resolved address forbidden');
-  const address = addresses[0]!.address;
+  return addresses[0]!.address;
+}
+
+/**
+ * Resolve before connecting and pin the checked IP in the socket lookup callback.
+ * Node does not follow redirects here. Every retry performs a fresh checked lookup;
+ * DNS rebinding cannot replace the approved address between check and connect.
+ */
+export async function probePreview(
+  url: URL,
+  binding: PreviewBinding,
+  signal: AbortSignal,
+  fixture = false,
+): Promise<number> {
+  validatePreviewUrl(url, binding, fixture);
+  const address = await resolvePreviewAddress(url, signal, fixture);
   return new Promise((resolve, reject) => {
     const request = (url.protocol === 'https:' ? httpsRequest : httpRequest)(
       url,

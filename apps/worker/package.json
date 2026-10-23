@@ -30,7 +30,8 @@
     "preverify:authorization": "npm run build -w @dogwatch/fixture",
     "verify:authorization": "node --import tsx --test src/api-authorization.test.ts",
     "preverify:lifecycle": "npm run build -w @dogwatch/fixture",
-    "verify:lifecycle": "node --import tsx --test src/api-lifecycle.test.ts"
+    "verify:lifecycle": "node --import tsx --test src/api-lifecycle.test.ts",
+    "verify:observation": "node --import tsx src/verify-observation.ts"
   },
   "dependencies": {
     "@apidevtools/openapi-schemas": "^2.1.0",

@@ -225,3 +225,9 @@ Maya's public UI and normal worker dispatch behavior are unchanged. A developer 
 Cancellation, exhausted request budgets and failed setup still enter compensation. An unverified cleanup keeps the overall result inconclusive and returns the scoped namespace for trusted recovery. The local adapter discards the complete PawMart instance, including newly created orders, without touching another namespace.
 
 A completed observation with verified cleanup returns a private replay capsule containing fingerprints rather than bodies or credentials. A fresh attempt uses the original configuration and fresh credential resolution, checks initial-state compatibility, then reports matching or differing observations. Missing compatibility or incomplete execution remains explicit. No capsule is published, no customer state is deleted, and no automatic production replay runs in this phase.
+
+## Part 5 · Phase 5.1 — Browser observation
+
+The public UI and normal worker dispatch remain unchanged. A trusted developer script creates a restricted synthetic browser, attaches observation before navigation, marks each scripted action with an internal ID, and requests an observation. The observer checks current scope, captures accessibility text and a masked screenshot, checks scope again, then returns private untrusted data with timestamped diagnostic metadata.
+
+A seeded checkout fixture demonstrates console errors, a page exception, failed network access and 404/500 responses. These are observable signals, not automatic findings. Capture failures, oversized data and dropped diagnostics remain explicit. Cancellation or stale authority prevents captured page data from being returned. The script detaches observation and closes the browser and local server in cleanup. No model selects actions, no customer data is observed, and no artifact is published in this phase.

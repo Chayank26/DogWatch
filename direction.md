@@ -364,3 +364,18 @@ Next proposed phase: Part 5, Phase 5.1 — browser observation. Stop before impl
 ### Phase 4.6 verification
 
 All 164 unit/HTTP tests passed, including eleven new lifecycle tests. Verification covers fresh-run replay, incompatible configuration and dataset fingerprints, outcome divergence, real created-order disposal and mutation replay, idempotent cleanup, cross-namespace protection, setup failure/mismatched receipts, cancellation, exhausted request budgets, denied/nonempty/timed-out cleanup and unsettled setup. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Local fixtures were closed. No customer request, live credential, database migration, browser run, production consumer or hosted CI run was performed. No dependency was added.
+
+## Part 5 · Phase 5.1 — Browser observation
+
+- Followed the small-phase table: this increment collects observations; the validated action executor remains Phase 5.2. The larger narrative combines these topics, but does not override the agreed small-phase ordering.
+- Added a scoped callable observer with accessibility-oriented snapshots, masked viewport PNGs, monotonic capture times and diagnostic sequence numbers associated with trusted internal action IDs. Console errors, page exceptions, failed requests and 4xx/5xx responses retain fixed metadata without raw messages or URLs.
+- Bounded capture count, UTF-8/PNG output bytes, diagnostic retention and combined capture deadlines. Missing or oversized captures and dropped events are explicit gaps. Cancellation, stale authority and failed authority checks withhold captures and close observation; concurrent captures are refused.
+- Used the installed Playwright locator snapshot API and added a trusted page instrumentation hook to the existing restricted local smoke driver. No model action, new navigation grant or production consumer was introduced.
+- Captures remain private, untrusted, in-memory synthetic fixture data. Masking is not general redaction; production isolation, durable artifact integration and whole-run budgets remain pending. Action markers show temporal correlation rather than proof of causation.
+- Added unit coverage and real Chromium verification, with an observation verification script and CI integration after the existing browser install.
+
+Next proposed phase: Part 5, Phase 5.2 — validated action executor. Stop before implementation.
+
+### Phase 5.1 verification
+
+All 171 unit/HTTP tests passed, including seven new observer tests. Real Chromium verification passed for accessible snapshots, viewport PNG capture, updated checkout state and action-correlated console errors, page exceptions, failed requests and 404/500 responses. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Initial sandbox runs could not bind local servers; verification succeeded with the required local execution permission. Browser, observer and server cleanup completed. No customer preview, live credential, model call, database migration or hosted CI run was exercised; no dependency was added.

@@ -66,6 +66,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run smoke:verify
       - run: npm run baseline:verify
+      - run: npm run observation:verify
       # Build only the small trusted sandbox context, then verify real engine controls.
       - run: npm run sandbox:build
       - run: npm run isolation:verify

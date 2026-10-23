@@ -217,3 +217,9 @@ Extracted `ApiRuntime` from the existing executor so boundary, authentication an
 Zod validates scoped setup/empty receipts and versioned replay capsules. Node crypto supplies unique attempt namespaces and SHA-256 compatibility/outcome fingerprints. Independent AbortControllers bound setup and compensation, allowing cleanup after cancellation without granting further API execution. The existing stage runtimes retain request limits. Provider methods are bound to preserve class-backed adapters.
 
 A trusted in-process PawMart adapter recreates and discards the complete Express fixture state. This handles unknown created IDs and avoids adding privileged HTTP reset routes. Its bounded ownership receipts make cleanup idempotent and prevent cross-namespace deletion. Hashes bind compiled fixture code and synthetic seed/profile revisions. This is local fixture isolation; durable remote leases, crash recovery and whole-run budgeting are not implemented. See [API lifecycle](apps/worker/API_LIFECYCLE.md).
+
+## Part 5 · Phase 5.1 — Browser observation
+
+The existing Playwright dependency supplies `locator.ariaSnapshot` and masked viewport screenshots. A small source interface separates browser collection from scoped capture limits and authority checks. Zod validates limits, scope and fixed diagnostic metadata; monotonic timestamps and sequence numbers correlate observations with trusted action markers. AbortSignals bound waiting and withhold captures after authority loss. They do not replace a killable browser supervisor.
+
+No new dependency was added. Private observations are returned in memory; persistent artifact storage and model integration are deferred. [Browser observation](apps/worker/BROWSER_OBSERVATION.md) documents data sensitivity, output limits, non-atomic capture and event-correlation limitations.

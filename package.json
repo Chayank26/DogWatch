@@ -37,7 +37,8 @@
     "api:verify": "npm run verify:api -w @dogwatch/worker",
     "authentication:verify": "npm run verify:authentication -w @dogwatch/worker",
     "authorization:verify": "npm run verify:authorization -w @dogwatch/worker",
-    "lifecycle:verify": "npm run verify:lifecycle -w @dogwatch/worker"
+    "lifecycle:verify": "npm run verify:lifecycle -w @dogwatch/worker",
+    "observation:verify": "npm run verify:observation -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

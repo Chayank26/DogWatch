@@ -1,5 +1,6 @@
 /** Trusted local fixture adapter only. Never use it for customer previews. */
 import { chromium, errors } from 'playwright';
+import type { Page } from 'playwright';
 import { SmokeStepError } from './smoke.js';
 import type { SmokeEvents, SmokeStep } from './smoke.js';
 import type { EvidenceSmokeDriver } from './smoke-evidence.js';
@@ -7,6 +8,7 @@ import type { EvidenceSmokeDriver } from './smoke-evidence.js';
 export async function createFixtureSmokeDriver(
   originInput: string,
   values: Record<string, string>,
+  onPage?: (page: Page) => void,
 ): Promise<EvidenceSmokeDriver> {
   const origin = new URL(originInput);
   if (
@@ -85,6 +87,8 @@ export async function createFixtureSmokeDriver(
       increment('blockedRequests');
       void download.cancel();
     });
+    // Trusted observation instrumentation; never provided by a model or page.
+    onPage?.(page);
     return {
       captureScreenshot: () =>
         page.screenshot({

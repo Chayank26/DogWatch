@@ -24,11 +24,13 @@
     "verify:baseline": "node --import tsx src/verify-baseline.ts",
     "pretest": "npm run build -w @dogwatch/fixture",
     "preverify:api": "npm run build -w @dogwatch/fixture",
-    "verify:api": "node --import tsx --test src/api-execution.test.ts src/api-authentication.test.ts src/api-authorization.test.ts",
+    "verify:api": "node --import tsx --test src/api-execution.test.ts src/api-authentication.test.ts src/api-authorization.test.ts src/api-lifecycle.test.ts",
     "preverify:authentication": "npm run build -w @dogwatch/fixture",
     "verify:authentication": "node --import tsx --test src/api-authentication.test.ts",
     "preverify:authorization": "npm run build -w @dogwatch/fixture",
-    "verify:authorization": "node --import tsx --test src/api-authorization.test.ts"
+    "verify:authorization": "node --import tsx --test src/api-authorization.test.ts",
+    "preverify:lifecycle": "npm run build -w @dogwatch/fixture",
+    "verify:lifecycle": "node --import tsx --test src/api-lifecycle.test.ts"
   },
   "dependencies": {
     "@apidevtools/openapi-schemas": "^2.1.0",

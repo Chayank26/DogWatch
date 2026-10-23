@@ -217,3 +217,11 @@ Maya's website is unchanged. A developer can run `npm run authorization:verify` 
 For ownership, Alice reads her order and Bob reads his own order before Bob requests Alice's order. The healthy target rejects Bob; the defective target returns the matching Alice order and produces an observed ownership-access failure. For roles, the synthetic administrator receives a protected report before a customer attempts the same request. Generic success responses without the configured protected evidence remain inconclusive. A denial response that includes the known protected object is still a disclosure observation.
 
 All steps share the existing budgets and current-authority checks. Results retain fixed metadata and evidence-match booleans while credentials and response contents stay out of returned records. Fixture servers and their in-memory state are discarded. Customer orchestration, mutation verification and durable finding publication remain pending integration work.
+
+## Part 4 · Phase 4.6 — Cleanup and reproducibility
+
+Maya's public UI and normal worker dispatch behavior are unchanged. A developer can now wrap one callable API stage in `runApiLifecycle`: validate scope and replay compatibility → allocate a disposable namespace → prepare and attest state → execute within stage limits → independently authorize cleanup → remove state and verify emptiness.
+
+Cancellation, exhausted request budgets and failed setup still enter compensation. An unverified cleanup keeps the overall result inconclusive and returns the scoped namespace for trusted recovery. The local adapter discards the complete PawMart instance, including newly created orders, without touching another namespace.
+
+A completed observation with verified cleanup returns a private replay capsule containing fingerprints rather than bodies or credentials. A fresh attempt uses the original configuration and fresh credential resolution, checks initial-state compatibility, then reports matching or differing observations. Missing compatibility or incomplete execution remains explicit. No capsule is published, no customer state is deleted, and no automatic production replay runs in this phase.

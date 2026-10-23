@@ -350,3 +350,17 @@ Next proposed phase: Part 4, Phase 4.6 — cleanup and reproducibility. Stop bef
 ### Phase 4.5 verification
 
 Verified 153 unit/HTTP tests: the full 152-test suite passed, then all 128 worker tests passed after the final immutable-input regression was added. Workspace type checks and production builds passed; the worker was rebuilt after that correction. Lint, formatting and whitespace checks passed. Eighteen new authorization tests cover healthy and seeded role/ownership failures, deterministic IDs, protected data under denial/alternate statuses, missing or mismatched evidence, identity/credential/resource scope, policy gaps, unsafe paths, mutation refusal, shared budgets, deadlines, cancellation/stale authority, redirects/rate limits, administrator response-contract consistency and caller mutation during async execution. Local fixtures were closed and their in-memory state discarded. No customer endpoint, real credential, external identity provider, database migration, browser run, production consumer or hosted CI run was exercised. No dependency was added.
+
+## Part 4 · Phase 4.6 — Cleanup and reproducibility
+
+- Added a callable lifecycle wrapper for each API stage, with detached input snapshots, unique scoped namespaces, provider-attested fixture/dataset/identity fingerprints, and bounded setup.
+- Cleanup runs independently of execution cancellation and budgets, requires separate ownership authorization, and verifies an exact empty namespace receipt. Failed or unsettled cleanup prevents completion while preserving observations. Providers must fence aborted setup; durable crash recovery remains pending.
+- Added an actual loopback PawMart adapter that resets the entire in-memory app, bounds ownership receipts, supports idempotent cleanup and prevents old namespaces from deleting newer state. It exposes no remote reset endpoint.
+- Added private metadata-only replay capsules. Compatibility checks reject configuration or initial-state drift before test requests; fresh runs compare ordered semantic observations without retaining payloads or credentials. Divergence is explicit and does not imply PR attribution.
+- Added lifecycle verification to the API suite and normal tests. No dependency, migration, production consumer or customer endpoint was introduced. Each call still owns a single-stage budget; whole-run reservations and production namespace adapters remain pending.
+
+Next proposed phase: Part 5, Phase 5.1 — browser observation. Stop before implementation.
+
+### Phase 4.6 verification
+
+All 164 unit/HTTP tests passed, including eleven new lifecycle tests. Verification covers fresh-run replay, incompatible configuration and dataset fingerprints, outcome divergence, real created-order disposal and mutation replay, idempotent cleanup, cross-namespace protection, setup failure/mismatched receipts, cancellation, exhausted request budgets, denied/nonempty/timed-out cleanup and unsettled setup. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Local fixtures were closed. No customer request, live credential, database migration, browser run, production consumer or hosted CI run was performed. No dependency was added.

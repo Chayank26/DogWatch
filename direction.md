@@ -451,3 +451,18 @@ Next proposed phase: Part 6, Phase 6.1 — finding schema. Stop before implement
 ### Phase 5.6 verification
 
 All 214 unit/HTTP tests passed, including eight replay tests and a literal-asset/traversal regression. Real Chromium verified healthy PawMart controls, repeated seeded stuck-checkout observations, distinct fresh namespaces, verified backend cleanup and incompatible dataset refusal before the next browser run. Unit coverage includes mixed/incomplete classifications, setup failure, mismatched receipts, denied/nonempty/wrong-scope cleanup, unsettled setup and invalid assertions/policy scope. Workspace type checks, production builds, lint, formatting and whitespace checks passed. A lint-driven cleanup refactor was followed by all eight replay tests and a worker rebuild. No live model, customer capture, real credential, migration or hosted CI run was exercised. No dependency was added. PR attribution remains unavailable.
+
+## Part 6 · Phase 6.1 — Finding schema
+
+- Added an explicit v2 reporting contract while retaining the original unversioned scaffold schema. No unsafe automatic conversion fills missing legacy scope or evidence metadata.
+- Separated confirmed failures, possible regressions, advisory observations and coverage gaps with distinct confidence/severity/reproduction/evidence requirements. Typed static/API/journey targets bind findings to their producing tier.
+- Bound head evidence to tenant/run/repository/SHA/role, required unique private artifact references, and required compatible confirmation basis kinds. Baseline attribution requires independent base scope and a comparison artifact; other categories cannot claim established attribution.
+- Added current-context validation for exact tenant/run/PR/SHA and evidence expiry, detached parse results, and bounded observed metrics with count consistency. Raw payload fields and unknown/public-URL attachment fields remain outside the contract.
+- Explicitly documented that redaction attestations and artifact references are not proof of content, ownership or truth. Storage verification, finding emission, deduplication and publication remain later phases; no fabricated evidence is emitted from current replay results.
+- Added contract tests and documentation. No dependency, migration, production consumer or external action was added.
+
+Next proposed phase: Part 6, Phase 6.2 — deduplication. Stop before implementation.
+
+### Phase 6.1 verification
+
+Verified 223 distinct unit/HTTP tests: the full 222-test suite passed, followed by all nine finding-contract tests after the final evidence-tier regression was added. Coverage includes category distinctions, required confirmation evidence, cross-scope/duplicate references, expiry/current context, independent baseline evidence, contradictory metrics, strict fields, tier/target/basis consistency and detached parse results. Workspace type checks, production builds, lint, formatting and whitespace checks passed. No browser run was needed for these pure contracts. Test artifact references are synthetic and were not asserted to exist in storage. No customer data, external publication, migration or hosted CI run was exercised; no dependency was added.

@@ -243,3 +243,7 @@ Existing Playwright routing applies bounded delay or explicit request abort only
 ## Part 5 · Phase 5.6 — Failure replay
 
 The callable replay runner composes existing scoped lifecycle receipts, restricted Playwright scripts and a shared process-local budget. SHA-256 fingerprints bind policy/script/assertion configuration and attested fixture state; image hashes identify captures without returning raw artifacts. Fixed predicate outcomes determine repeatability only after browser and backend cleanup. The local adapter fingerprints compiled server/browser code plus static assets and mode, ensuring UI changes affect compatibility. Independent two-second setup/cleanup waits cannot substitute for killable production supervision. See [browser replay](apps/worker/BROWSER_REPLAY.md).
+
+## Part 6 · Phase 6.1 — Finding schema
+
+The existing shared Zod package now exports a discriminated v2 reporting contract and trusted-context validator. Category-specific shapes separate failures from uncertainty and coverage; cross-field refinements bind artifact scope, evidence kinds, independent baselines and observed metrics. Explicit versioning preserves the earlier scaffold without inferring missing metadata. No database or storage dependency was added. Validation establishes structural consistency only; artifact authorization/content verification and redaction remain producer/storage responsibilities. See [finding contracts](packages/contracts/FINDINGS.md).

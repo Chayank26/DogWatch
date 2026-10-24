@@ -94,3 +94,5 @@ Part 5.4 adds synthetic persona suites and scope-bound shared reservations. Run 
 Part 5.5 adds bounded controlled-chaos fixture scripts. Run `npm run chaos:verify`; see [controlled chaos](apps/worker/BROWSER_CHAOS.md). Results remain unconfirmed until independent replay.
 
 Part 5.6 adds scoped failure replay with fresh browser/backend state, compatibility checks and verified cleanup. Run `npm run browser-replay:verify`; see [browser replay](apps/worker/BROWSER_REPLAY.md). Repeatability confirms configured synthetic predicates; PR attribution remains unavailable.
+
+Part 6.1 adds versioned scoped finding contracts for failures, possible regressions, advisories and coverage gaps. See [finding contracts](packages/contracts/FINDINGS.md). Evidence verification, aggregation and publication remain separate integration work.

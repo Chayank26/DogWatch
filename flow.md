@@ -261,3 +261,9 @@ When execution remains available, the runner waits within a bound for network se
 A trusted caller selects a synthetic failure/success assertion and an explicit script. Replay prepares fresh disposable state, runs the script in a new browser, captures the assertion outcome, closes the browser and verifies backend cleanup. It repeats only while authority, fixture compatibility and cleanup remain valid.
 
 The healthy PawMart fixture shows its validation error in each fresh attempt; the seeded stuck-checkout fixture repeatedly leaves its pending message visible. Replay distinguishes repeated failure, repeated success, mixed observations and incomplete work. Results contain private metadata and image hashes rather than raw page contents. They confirm only the configured observation predicate and retain unavailable PR attribution. No public report, customer capture or automatic base-preview comparison is added.
+
+## Part 6 · Phase 6.1 — Finding schema
+
+The public application and dispatch worker are unchanged. A future trusted aggregator can construct a v2 finding with scoped private evidence references, expected/actual behavior and reproduction steps, then validate it against the current run. Confirmed failures, possible regressions, advisories and coverage gaps retain distinct meanings. Expired or cross-scope references and contradictory attribution are rejected.
+
+No existing browser/API result is automatically published or converted into a finding. Replay hashes alone do not supply stored artifact references. The producer must first persist, authorize and inspect evidence and review narrative text for sensitive data. This increment supplies the contract and validation gates; later phases add deduplication, storage/report integration and delivery.

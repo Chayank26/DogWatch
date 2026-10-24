@@ -210,3 +210,12 @@ export const findingSchema = z.strictObject({
   ]),
 });
 export type Finding = z.infer<typeof findingSchema>;
+
+// Reporting v2 is explicit; the earlier unversioned scaffold stays compatible.
+export {
+  findingScopeSchema,
+  findingArtifactSchema,
+  findingRecordSchema,
+  validateFindingForContext,
+} from './findings.js';
+export type { FindingRecord } from './findings.js';

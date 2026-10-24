@@ -247,3 +247,7 @@ The callable replay runner composes existing scoped lifecycle receipts, restrict
 ## Part 6 · Phase 6.1 — Finding schema
 
 The existing shared Zod package now exports a discriminated v2 reporting contract and trusted-context validator. Category-specific shapes separate failures from uncertainty and coverage; cross-field refinements bind artifact scope, evidence kinds, independent baselines and observed metrics. Explicit versioning preserves the earlier scaffold without inferring missing metadata. No database or storage dependency was added. Validation establishes structural consistency only; artifact authorization/content verification and redaction remain producer/storage responsibilities. See [finding contracts](packages/contracts/FINDINGS.md).
+
+## Part 6 · Phase 6.2 — Deduplication
+
+The shared contracts package now exposes a synchronous Node.js grouping utility using existing Zod context validation, canonical key ordering and built-in SHA-256. Identity is conservative and version-domain-separated; full member records remain intact rather than merging evidence into a potentially misleading single finding. Maps enforce finding/artifact ID consistency and build shared-reference relationships without a model or database. Limits bound count and normalized byte volume, and outputs remain deterministic under input permutation. See [deduplication](packages/contracts/DEDUPLICATION.md).

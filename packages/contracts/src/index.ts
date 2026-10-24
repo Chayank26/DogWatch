@@ -219,3 +219,6 @@ export {
   validateFindingForContext,
 } from './findings.js';
 export type { FindingRecord } from './findings.js';
+
+export { deduplicateFindings } from './finding-deduplication.js';
+export type { FindingGroup } from './finding-deduplication.js';

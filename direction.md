@@ -466,3 +466,18 @@ Next proposed phase: Part 6, Phase 6.2 — deduplication. Stop before implementa
 ### Phase 6.1 verification
 
 Verified 223 distinct unit/HTTP tests: the full 222-test suite passed, followed by all nine finding-contract tests after the final evidence-tier regression was added. Coverage includes category distinctions, required confirmation evidence, cross-scope/duplicate references, expiry/current context, independent baseline evidence, contradictory metrics, strict fields, tier/target/basis consistency and detached parse results. Workspace type checks, production builds, lint, formatting and whitespace checks passed. No browser run was needed for these pure contracts. Test artifact references are synthetic and were not asserted to exist in storage. No customer data, external publication, migration or hosted CI run was exercised; no dependency was added.
+
+## Part 6 · Phase 6.2 — Deduplication
+
+- Added deterministic conservative grouping of v2 findings after current-context and evidence-expiry validation. Observation identity includes scope, environment, target, category, confidence/severity, narrative, ordered reproduction, basis kind and baseline scope; IDs, timestamps, reference ordering and metrics do not define observation identity.
+- Collapsed exact repeated input IDs while retaining distinct equivalent records as sorted members. Conflicting finding-ID content or artifact-reference metadata rejects the entire batch. Full evidence, metrics, timestamps and reproduction details remain available; there is no lossy merge or confidence promotion.
+- Added stable versioned group hashes, representative IDs, sorted evidence unions and category counts. Empty batches remain zero observations rather than passing verdicts. Metrics are retained, not summed across potentially overlapping records.
+- Added explicit shared-evidence relationships across otherwise distinct groups without inferring causation or merging API/browser tiers. Fuzzy semantic correlation remains unsupported.
+- Bounded input count and normalized bytes with explicit refusal rather than truncation. Outputs are detached from caller input. Added tests for ordering, retries, conflicts, scope/expiry, coverage gaps, evidence relationships and limits.
+- No dependency, migration, artifact access, worker consumption or publication was introduced. Artifact truth/ownership verification remains a storage integration responsibility.
+
+Next proposed phase: Part 6, Phase 6.3 — private artifacts. Stop before implementation.
+
+### Phase 6.2 verification
+
+All 232 unit/HTTP tests passed, including nine new deduplication tests. Coverage includes deterministic permutations, exact retries, evidence-order normalization, reproduction-order preservation, semantic/category/environment separation, finding/artifact ID conflicts, cross-tier shared evidence, retained metrics and coverage gaps, current scope/expiry, detached outputs, empty batches and explicit count/byte limits. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Tests use synthetic artifact references and do not claim storage verification. No browser run, customer data, migration, external publication or hosted CI run was needed; no dependency was added.

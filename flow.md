@@ -267,3 +267,9 @@ The healthy PawMart fixture shows its validation error in each fresh attempt; th
 The public application and dispatch worker are unchanged. A future trusted aggregator can construct a v2 finding with scoped private evidence references, expected/actual behavior and reproduction steps, then validate it against the current run. Confirmed failures, possible regressions, advisories and coverage gaps retain distinct meanings. Expired or cross-scope references and contradictory attribution are rejected.
 
 No existing browser/API result is automatically published or converted into a finding. Replay hashes alone do not supply stored artifact references. The producer must first persist, authorize and inspect evidence and review narrative text for sensitive data. This increment supplies the contract and validation gates; later phases add deduplication, storage/report integration and delivery.
+
+## Part 6 · Phase 6.2 — Deduplication
+
+A future trusted aggregator supplies v2 findings and current run scope to the deduplicator. Invalid, expired or cross-scope records stop the batch. Exact retries collapse; equivalent observations become a stable group retaining all distinct records and evidence. Differences in certainty, severity, environment, target or observed behavior remain separate.
+
+The result contains deterministic groups, original-member details, category counts and explicit shared-evidence relationships. Repeated reports do not increase confidence, coverage gaps do not become failures, and zero findings do not imply a passing run. Nothing is persisted or published, and no public UI changes. Private artifact integration is the next phase.

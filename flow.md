@@ -237,3 +237,9 @@ A seeded checkout fixture demonstrates console errors, a page exception, failed 
 The public application remains unchanged. A trusted supervisor supplies a synthetic fixture policy and proposes one structured action. The executor validates the proposal, target/value permission and current scope, performs the accessible interaction within its budget, and returns a fixed metadata result. Every browser request independently checks its grant and current authority. The supervisor can observe the resulting UI through Phase 5.1's private capture interface.
 
 Malformed or forbidden proposals never reach Playwright. Ambiguous targets, upload inputs, authority loss, timeout and blocked network activity close the browser. Explicit stop and final cleanup also close it. Successful interaction is separate from successful checkout: verification observes the created state rather than treating a click as proof. No model chooses actions or receives page data in this phase.
+
+## Part 5 · Phase 5.3 — Model adapter and loop
+
+The public UI remains unchanged. A trusted supervisor configures a synthetic goal, initial path, finite action menu and loop limits, then transfers ownership of a disposable executor to the loop. After navigation, the loop captures private fixture observations, verifies scope and authority, reserves token capacity and requests a structured proposal from an injected adapter. Valid permitted proposals execute through Phase 5.2; the next observation reveals the resulting state.
+
+Malformed, ungranted or repeated proposals and exhausted budgets stop further execution. The loop closes the browser on exit and returns metadata only. A model stop indicates that exploration stopped, not that checkout passed. The real Chromium verification uses an offline deterministic adapter to select a checkout click and then stop when the snapshot changes. No live model service, customer capture or credential is used, and nothing is published.

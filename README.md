@@ -86,3 +86,5 @@ Part 4.2 adds seeded logical boundary-case plans with optional synthetic fixture
 Part 5.1 adds bounded private browser observations and action-correlated diagnostics for synthetic fixtures. Run `npm run observation:verify`; see the [browser observation guide](apps/worker/BROWSER_OBSERVATION.md). Exploratory action execution and model integration remain pending.
 
 Part 5.2 adds validated actions for disposable browser fixtures with accessible target grants, synthetic value references and request policy. Run `npm run actions:verify`; see the [browser action guide](apps/worker/BROWSER_ACTIONS.md). Model integration and production execution remain pending.
+
+Part 5.3 adds a bounded browser loop and provider-neutral JSON adapter. Run `npm run browser-loop:verify` for real Chromium with an offline deterministic transport; see the [browser loop guide](apps/worker/BROWSER_LOOP.md). Live providers and production integration remain unconfigured.

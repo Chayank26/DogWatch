@@ -393,3 +393,17 @@ Next proposed phase: Part 5, Phase 5.3 — model adapter and loop. Stop before i
 ### Phase 5.2 verification
 
 All 176 unit/HTTP tests passed, including five new policy tests. Real Chromium verification passed for accessible navigation/fill/select/scroll/click, observed created state, invalid and destructive proposals, denied mutation requests, redirect refusal, upload refusal, action budgets, stale authority, scope mismatch, cancellation and an action deadline with a stalled authority callback. The initial browser check exposed a fixture select-label mismatch; explicit label association corrected it without weakening exact matching. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Browser and local server cleanup completed. No customer endpoint, live credential, model call, migration or hosted CI run was exercised. No dependency was added.
+
+## Part 5 · Phase 5.3 — Model adapter and loop
+
+- Added a provider-neutral JSON model adapter with strict structured action/usage replies and bounded response text. No provider default, external model call, credential access or SDK dependency is introduced.
+- Added a callable synthetic observation–proposal–validation–execution loop over the existing executor. It bootstraps a trusted initial path, verifies scope/current authority, passes private synthetic snapshots/images as untrusted input, accepts only an exact finite action menu or stop, and relies on the executor for independent permissions.
+- Reserved full token ceilings before calls, capped calls and repeated exact actions, and bounded execution and cleanup waits. Unknown/unused reservations are not refunded. Provider-specific token enforcement and accurate usage remain trusted transport obligations, not claims of a verified vendor spend ledger.
+- Executor ownership transfers to the loop, which closes it even after invalid configuration, cancellation or failures. Model stop is not application success; failed cleanup and incomplete work remain inconclusive. Returned records exclude model/page content and raw errors.
+- Added unit failure coverage and real Chromium verification using a deterministic offline transport, plus scripts and CI integration. No claim of live-model reasoning quality or production isolation is made.
+
+Next proposed phase: Part 5, Phase 5.4 — personas and budgets. Stop before implementation.
+
+### Phase 5.3 verification
+
+All 191 unit/HTTP tests passed, including fifteen new loop/adapter tests. Real Chromium with an offline deterministic transport verified observe → permitted checkout → changed-state observation → stop and browser cleanup. Tests cover malformed/oversized replies, invalid usage, ungranted proposals, repetitions, token/call limits, stale authority, cancellation, timeout, mismatched observations, unavailable observation, failed cleanup and invalid configuration cleanup. Workspace type checks, production builds, lint, formatting and whitespace checks passed. No live model/provider, customer capture, real credential, migration or hosted CI run was exercised. No dependency was added.

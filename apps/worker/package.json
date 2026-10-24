@@ -34,7 +34,8 @@
     "verify:observation": "node --import tsx src/verify-observation.ts",
     "verify:actions": "node --import tsx src/verify-actions.ts",
     "verify:browser-loop": "node --import tsx src/verify-browser-loop.ts",
-    "verify:personas": "node --import tsx src/verify-personas.ts"
+    "verify:personas": "node --import tsx src/verify-personas.ts",
+    "verify:chaos": "node --import tsx src/verify-chaos.ts"
   },
   "dependencies": {
     "@apidevtools/openapi-schemas": "^2.1.0",

@@ -90,3 +90,5 @@ Part 5.2 adds validated actions for disposable browser fixtures with accessible 
 Part 5.3 adds a bounded browser loop and provider-neutral JSON adapter. Run `npm run browser-loop:verify` for real Chromium with an offline deterministic transport; see the [browser loop guide](apps/worker/BROWSER_LOOP.md). Live providers and production integration remain unconfigured.
 
 Part 5.4 adds synthetic persona suites and scope-bound shared reservations. Run `npm run personas:verify`; see [personas and budgets](apps/worker/BROWSER_PERSONAS.md). Keyboard-only execution is explicitly unsupported; durable cross-worker accounting remains pending.
+
+Part 5.5 adds bounded controlled-chaos fixture scripts. Run `npm run chaos:verify`; see [controlled chaos](apps/worker/BROWSER_CHAOS.md). Results remain unconfirmed until independent replay.

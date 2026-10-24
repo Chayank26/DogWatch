@@ -422,3 +422,17 @@ Next proposed phase: Part 5, Phase 5.5 — controlled chaos. Stop before impleme
 ### Phase 5.4 verification
 
 All 201 unit/HTTP tests passed, including ten new persona/ledger tests. Real Chromium with an offline adapter verified two fresh persona sessions, the explicit keyboard-only gap, and exact shared request/action/token/estimated-cost reservations. Unit coverage includes atomic failed reservations, scope binding, detached counters, each capacity dimension, deadline expiry, cross-persona exhaustion, distinct profiles, impatient repetition limits, cancellation and invalid persona lists. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Browser and local server cleanup completed. No live model/provider billing, customer capture, real credential, migration or hosted CI run was exercised; no dependency was added.
+
+## Part 5 · Phase 5.5 — Controlled chaos
+
+- Added trusted exact-path/method request faults with matching ordinals, bounded injection counts and bounded delay. Faults run after authorization and shared request reservation; delayed requests recheck authority. Request-scoped offline and pre-dispatch navigation interruption do not weaken normal endpoint grants.
+- Added validated explicit scripts for slow network, offline, navigation interruption, refresh navigation, repeated submission and synthetic boundary inputs. Repetition and refresh require matching target/path steps; no automatic mutation retry or model fault authority was introduced.
+- Added a disposable fixture runner with fresh browser state, bounded network settling, final private capture, fixed action trace and planned/applied fault accounting. It closes the browser on every execution exit and reports cleanup failure. Server-state reset remains the caller's responsibility.
+- All observations remain explicitly unconfirmed. Fault-induced errors are not application bug findings, and unused configured faults remain visible. Replay, repeatability and base/head attribution remain Phase 5.6 and later integration.
+- Added unit plan tests, real Chromium checks for all six scenarios, scripts and CI integration. No dependency, live model, customer request or migration was added.
+
+Next proposed phase: Part 5, Phase 5.6 — failure replay. Stop before implementation.
+
+### Phase 5.5 verification
+
+All 205 unit/HTTP tests passed, including four new fault-plan/script tests. Real Chromium verified bounded delay, request-scoped offline behavior, pre-dispatch navigation interruption, repeated same-path navigation, repeated submission and synthetic boundary values. Checks include actual server dispatch counts, final PNG capture where execution remains available, fresh browser cleanup and unchanged authorization for denied requests. Workspace type checks, production builds, lint, formatting and whitespace checks passed after removing an unused initialization; the worker was rebuilt afterward. No customer endpoint, live model, real credential, migration or hosted CI run was exercised. Results remain explicitly unconfirmed pending replay. No dependency was added.

@@ -1,5 +1,7 @@
 /** Trusted loopback fixture executor; not a production browser sandbox. */
 import { chromium } from 'playwright';
+import { setTimeout as pause } from 'node:timers/promises';
+import { createRequestFault } from './browser-chaos.js';
 import type { BrowserBudget } from './browser-budget.js';
 import {
   browserActionSchema,
@@ -19,6 +21,7 @@ export async function createFixtureActionExecutor(
     isCurrent: () => Promise<boolean>;
     signal?: AbortSignal;
     budget?: BrowserBudget;
+    chaos?: unknown;
   },
 ) {
   const scope = scopeSchema.parse(scopeInput);
@@ -36,6 +39,8 @@ export async function createFixtureActionExecutor(
     policy.origin !== origin.origin
   )
     throw Error('fixture_origin');
+  const fault =
+    options.chaos === undefined ? undefined : createRequestFault(options.chaos);
   const isCurrent = options.isCurrent;
   const browser = await chromium.launch({ headless: true });
   let closed = false,
@@ -98,6 +103,22 @@ export async function createFixtureActionExecutor(
         signal.throwIfAborted();
         if (closed) throw Error('closed');
         options.budget?.reserve(scope, 'request');
+        const injection = fault?.next(
+          new URL(request.url()).pathname,
+          request.method(),
+          request.isNavigationRequest(),
+        );
+        if (injection?.kind === 'delay') {
+          await pause(injection.delayMs!, undefined, { signal });
+          signal.throwIfAborted();
+          if (closed || !(await bounded(isCurrent(), signal)))
+            throw Error('stale');
+        } else if (injection) {
+          await route.abort(
+            injection.kind === 'offline' ? 'internetdisconnected' : 'aborted',
+          );
+          return;
+        }
         const response = await route.fetch({
           maxRedirects: 0,
           timeout: policy.actionMs,
@@ -146,6 +167,20 @@ export async function createFixtureActionExecutor(
       signal.throwIfAborted();
     };
     return {
+      chaos: () => fault?.snapshot(),
+      async settle() {
+        if (closed || busy) throw Error('executor_unavailable');
+        busy = true;
+        try {
+          await current();
+          await page.waitForLoadState('networkidle', {
+            timeout: policy.actionMs,
+          });
+          await current();
+        } finally {
+          busy = false;
+        }
+      },
       observe: async () => {
         if (busy || closed) throw Error('executor_unavailable');
         busy = true;

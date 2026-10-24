@@ -37,11 +37,32 @@ const requestSchema = z
         message: 'Failure requires explicit blocking policy',
       });
   });
+const retirementSchema = z.strictObject({
+  scope: deliveryScopeSchema,
+  publicationApproved: z.literal(true),
+  reason: z.enum(['head_changed', 'superseded', 'cancelled']),
+});
 const id = z.number().int().positive().safe();
 export function createGitHubReporter(
   appId: number,
   privateKey: string,
   requestFetch: typeof fetch = fetch,
+) {
+  return createReportAdapter(appId, privateKey, requestFetch, false);
+}
+/** Callback authorizes retirement of this exact scope, independently of execution eligibility. */
+export function createGitHubReportRetirer(
+  appId: number,
+  privateKey: string,
+  requestFetch: typeof fetch = fetch,
+) {
+  return createReportAdapter(appId, privateKey, requestFetch, true);
+}
+function createReportAdapter(
+  appId: number,
+  privateKey: string,
+  requestFetch: typeof fetch,
+  retiring: boolean,
 ) {
   id.parse(appId);
   const app = new Octokit({
@@ -56,7 +77,19 @@ export function createGitHubReporter(
     input: unknown,
     isCurrent: () => Promise<boolean>,
   ) => {
-    const request = requestSchema.parse(input),
+    const retirement = retiring ? retirementSchema.parse(input) : undefined;
+    const request = requestSchema.parse(
+        retirement
+          ? {
+              scope: retirement.scope,
+              publicationApproved: true,
+              revision: 1,
+              phase: 'completed',
+              conclusion: 'cancelled',
+              markdown: `DogWatch report withdrawn (${retirement.reason}).\n\nThis run for commit ${retirement.scope.headSha} is no longer authoritative. It is not a verdict on the current pull request. Request a new run for current results.`,
+            }
+          : input,
+      ),
       scope = request.scope;
     const key = createHash('sha256')
       .update(JSON.stringify({ appId, ...scope }))
@@ -67,12 +100,23 @@ export function createGitHubReporter(
       .update(JSON.stringify(request))
       .digest('hex');
     return withReportJournal(root, scope, async (state, save) => {
-      if (request.revision < state.revision)
+      if (state.retired && !retirement) throw Error('report_retired');
+      if (retirement && state.retired && state.retired !== retirement.reason)
+        throw Error('retirement_conflict');
+      if (!retirement && request.revision < state.revision)
         throw Error('report_revision_stale');
-      if (request.revision === state.revision && state.digest !== digest)
+      if (
+        !retirement &&
+        request.revision === state.revision &&
+        state.digest !== digest
+      )
         throw Error('report_revision_conflict');
       const ranks = { queued: 0, in_progress: 1, completed: 2 };
-      if (state.phase && ranks[request.phase] < ranks[state.phase])
+      if (
+        !retirement &&
+        state.phase &&
+        ranks[request.phase] < ranks[state.phase]
+      )
         throw Error('report_phase_regression');
       const guard = async () => {
         const allowed = await new Promise<boolean>((resolve, reject) => {
@@ -136,16 +180,28 @@ export function createGitHubReporter(
           )
         ).data;
         if (
-          pr.state !== 'open' ||
+          (!retirement && pr.state !== 'open') ||
           pr.number !== scope.pullRequestNumber ||
-          pr.head.sha !== scope.headSha ||
+          (!retirement && pr.head.sha !== scope.headSha) ||
           Number(pr.base.repo.id) !== scope.repositoryId ||
           Number(pr.head.repo?.id) !== scope.repositoryId
         )
           throw Error('report_stale');
+        if (
+          retirement?.reason === 'head_changed' &&
+          !state.retired &&
+          pr.head.sha === scope.headSha
+        )
+          throw Error('report_not_stale');
         await guard();
       };
       await current();
+      if (retirement && !state.retired) {
+        // Persist terminal intent before reconciliation or any remote mutation.
+        state.retired = retirement.reason;
+        state.delivered = false;
+        await save();
+      }
       const comments = [];
       const checks = [];
       // Bounded exhaustive reconciliation. A full final page cannot prove absence.
@@ -207,6 +263,62 @@ export function createGitHubReporter(
         await save();
       }
       if (state.pending) throw Error('report_delivery_uncertain');
+      if (retirement) {
+        const checkMatches =
+          !state.checkId ||
+          (ownChecks[0]?.status === 'completed' &&
+            ownChecks[0]?.conclusion === 'cancelled' &&
+            ownChecks[0]?.output.title === 'DogWatch report withdrawn' &&
+            ownChecks[0]?.output.text === '' &&
+            ownChecks[0]?.output.summary === request.markdown);
+        const commentMatches =
+          !state.commentId || ownComments[0]?.body === body;
+        if (checkMatches && commentMatches && state.delivered)
+          return {
+            status: 'unchanged' as const,
+            commentId: state.commentId,
+            checkId: state.checkId,
+          };
+        state.delivered = false;
+        await save();
+        if (state.checkId && !checkMatches) {
+          await current();
+          await client.request(
+            'PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}',
+            {
+              ...target,
+              check_run_id: state.checkId,
+              status: 'completed',
+              conclusion: 'cancelled',
+              completed_at: new Date().toISOString(),
+              output: {
+                title: 'DogWatch report withdrawn',
+                summary: request.markdown,
+                text: '',
+              },
+            },
+          );
+        }
+        if (state.commentId && !commentMatches) {
+          await current();
+          await client.request(
+            'PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}',
+            {
+              ...target,
+              comment_id: state.commentId,
+              body,
+            },
+          );
+        }
+        await current();
+        state.delivered = true;
+        await save();
+        return {
+          status: 'retired' as const,
+          commentId: state.commentId,
+          checkId: state.checkId,
+        };
+      }
       if (
         request.revision === state.revision &&
         state.digest === digest &&

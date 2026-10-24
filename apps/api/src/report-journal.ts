@@ -24,6 +24,7 @@ export const deliveryStateSchema = z.strictObject({
     .regex(/^[a-f0-9]{64}$/)
     .optional(),
   delivered: z.boolean().optional(),
+  retired: z.enum(['head_changed', 'superseded', 'cancelled']).optional(),
   phase: z.enum(['queued', 'in_progress', 'completed']).optional(),
 });
 export type DeliveryState = z.infer<typeof deliveryStateSchema>;

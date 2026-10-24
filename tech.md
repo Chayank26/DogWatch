@@ -263,3 +263,7 @@ The worker composes the existing v2 contracts, deduplicator and local artifact v
 ## Part 6 · Phase 6.5 — GitHub comments and checks
 
 Existing Octokit and GitHub App authentication implement a separate one-repository write-token path for reviewed comments and checks. Zod validates scope, revisions and conclusion attestations. Deterministic markers and App-owned remote reconciliation combine with a private fsynced local journal to track one comment/check pair per run. Pending-create records prevent blind retries after ambiguous responses; local locks serialize writers but do not replace distributed durable leases. HTTP retries are disabled and request/authority waits are bounded. See [GitHub reporting](apps/api/GITHUB_REPORTING.md) for permission, recovery and race limits.
+
+## Part 6 · Phase 6.6 — Stale-result handling
+
+The API reporter now shares its scoped authentication, owned-object reconciliation and filesystem lock with an explicit retirement adapter. An optional journal retirement reason acts as a terminal publication fence while preserving compatibility with existing records. Fixed withdrawal output and cancelled check conclusions replace old verdicts through tracked PATCH requests only. Remote content comparison makes partial retries resumable without new objects. Cleanup authorization is separate from current-run execution eligibility; automatic supervision and distributed coordination remain integration work. See [GitHub reporting](apps/api/GITHUB_REPORTING.md).

@@ -104,3 +104,5 @@ Part 6.3 adds local private v2 artifact storage, scoped integrity/expiry checks 
 Part 6.4 adds private deterministic Markdown reports with authorized artifact checks, explicit coverage and bounded whole-group omissions. See [Markdown reports](apps/worker/MARKDOWN_REPORT.md). GitHub delivery remains pending.
 
 Part 6.5 adds explicitly approved GitHub comment/check delivery with owned-object reconciliation and a local publication journal. See [GitHub reporting](apps/api/GITHUB_REPORTING.md). Tests use synthetic transport; automatic production publication remains disabled.
+
+Phase 6.6 adds callable stale-report retirement: an independently authorized supervisor can withdraw an old run's comment/check, persist a terminal publication fence, and retry partial cleanup. Automatic reconciliation and live GitHub verification remain pending. See [GitHub reporting](apps/api/GITHUB_REPORTING.md).

@@ -291,3 +291,9 @@ Large reports omit complete finding sections with counts and IDs rather than cut
 A trusted supervisor can explicitly approve a reviewed Markdown report for a specific PR audience and invoke the publisher. The publisher verifies current scope, obtains a narrowly scoped App token, reconciles owned remote objects, and creates or updates the tracked check and comment. Queued/running/final revisions are distinct, and success or blocking failure requires explicit policy attestations.
 
 A lost create response leaves a pending journal entry. A retry adopts a uniquely matching App-owned object or stops as uncertain; it does not blindly post again. Stale scope or conflicting revisions stop writes. The local journal retains IDs/digests without credentials or report bodies. These flows were exercised only through synthetic GitHub responses; no live report was sent and normal worker dispatch remains unchanged. Explicit stale-result reconciliation is next.
+
+## Part 6 · Phase 6.6 — Stale-result handling
+
+A supervisor identifies a head-changed, superseded or cancelled run and independently authorizes cleanup of its exact scope. The retirement adapter validates the PR/repository, records terminal intent, reconciles the old owned report and replaces its verdict with a withdrawal notice and cancelled check. It creates no new report objects and leaves newer runs untouched.
+
+Once fenced, ordinary publication is refused permanently. Partial cleanup can resume under renewed authorization; ambiguous remote state remains an explicit failure requiring reconciliation. This operation is callable and tested with synthetic transport. Automatic invalidation dispatch, durable scheduling and live GitHub verification remain pending.

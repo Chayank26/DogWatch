@@ -525,3 +525,16 @@ Next proposed phase: Part 6, Phase 6.6 — stale-result handling. Stop before im
 ### Phase 6.5 verification
 
 All 257 tests passed, including eight new synthetic-transport GitHub reporting tests. Coverage includes lifecycle updates, identical retries, lost create responses, uncertain delivery, foreign-App ownership, stale authority/SHA, publication policy, revision conflicts and concurrent local writers. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The pre-existing generated web declaration change was restored after the build. No live GitHub mutation, customer data, browser run, database migration or hosted CI run was exercised; no dependency was added. Production wiring and stale-result repair remain pending.
+
+## Part 6 · Phase 6.6 — Stale-result handling
+
+- Added an explicit scoped report retirement adapter with independent cleanup authorization and fixed withdrawal notices. Head-change retirement verifies GitHub's head; same-head supersession/cancellation requires trusted caller attestation.
+- Persisted terminal retirement intent before reconciliation or remote updates. Later publication cannot restore a verdict, even with a higher revision or a reverted head. Existing journals remain readable.
+- Reused owned-object reconciliation and local serialization. Cleanup cancels only the old check and replaces its comment; absent objects are never created, uncertain creates remain unresolved until safely reconciled, and other runs are untouched.
+- Added recovery tests for lost responses, partial publication, authority revocation and immutable retirement state. No automatic consumer, live GitHub mutation, dependency or migration was added.
+
+Next proposed phase: Part 7, Phase 7.1 — login and membership. Stop before implementation.
+
+### Phase 6.6 verification
+
+All 267 tests passed, including ten new retirement tests using synthetic GitHub transport. Coverage includes terminal publication fencing, reverted heads, same-head cancellation/supersession, partial publication, lost create/PATCH responses, revoked cleanup authority, conflicting reasons, cross-scope journals, foreign ownership and isolation from other reports. Workspace type checks, production builds, lint, formatting and whitespace checks passed. All 18 reporting tests and API compilation were repeated after tightening the withdrawal-output comparison. The build-generated web declaration was restored to its starting content. No live GitHub mutation, customer data, browser run, migration or hosted CI run was exercised; no dependency was added. Automatic supervision and distributed coordination remain pending.

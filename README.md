@@ -88,3 +88,5 @@ Part 5.1 adds bounded private browser observations and action-correlated diagnos
 Part 5.2 adds validated actions for disposable browser fixtures with accessible target grants, synthetic value references and request policy. Run `npm run actions:verify`; see the [browser action guide](apps/worker/BROWSER_ACTIONS.md). Model integration and production execution remain pending.
 
 Part 5.3 adds a bounded browser loop and provider-neutral JSON adapter. Run `npm run browser-loop:verify` for real Chromium with an offline deterministic transport; see the [browser loop guide](apps/worker/BROWSER_LOOP.md). Live providers and production integration remain unconfigured.
+
+Part 5.4 adds synthetic persona suites and scope-bound shared reservations. Run `npm run personas:verify`; see [personas and budgets](apps/worker/BROWSER_PERSONAS.md). Keyboard-only execution is explicitly unsupported; durable cross-worker accounting remains pending.

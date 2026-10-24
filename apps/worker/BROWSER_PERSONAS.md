@@ -1,0 +1,20 @@
+# Personas and shared budgets
+
+Phase 5.4 adds `runPersonaSuite`, fixed synthetic behavior profiles and a process-local `BrowserBudget`. Run `npm run personas:verify` for fresh Chromium sessions with an offline deterministic model transport. No live provider, customer identity or production consumer is enabled.
+
+The trusted suite configuration binds tenant, run, repository, PR and SHA, lists unique personas (up to four), and supplies shared limits. The loop configuration remains subject to the previous synthetic-data attestation and finite action menu. Every supported persona receives a fresh executor from the caller's trusted factory, which must pass the supplied budget and AbortSignal into `createFixtureActionExecutor`. The suite passes the same ledger into each loop. Reusing browsers/state across personas would violate the factory contract. All profiles remain synthetic and make no claims about real user demographics or accessibility compliance.
+
+- `novice` requests a straightforward journey using visible labels without assuming hidden application knowledge.
+- `impatient` limits the loop to at most three calls, one occurrence of each action and five seconds. It never grants repeated submission or extra permission.
+- `unusual_input` asks the model to use only configured synthetic boundary-value references. The caller must provide those fixtures/menu entries; this profile does not invent raw input or guarantee boundary coverage.
+- `keyboard_only` is recognized but returns `persona_unsupported` without opening a browser. The current action executor has no keyboard/focus vocabulary. Mouse substitution is refused; keyboard execution and accessibility testing remain an explicit coverage gap.
+
+Prompts guide selection; they do not guarantee human-like behavior or expand action authority. The executor continues to enforce target, origin, request and mutation policy independently.
+
+The shared ledger reserves model calls, full token ceilings, non-stop browser actions (including each initial navigation), dispatched requests and estimated cost before side effects. Stop and cleanup remain available without another action reservation. Reservations are synchronous/atomic within this process, scope-bound, and not refunded for failed/uncertain attempts. A rejected multi-resource call reservation changes no counters. HTTP requests are reserved immediately before transport after existing policy checks. Already forbidden requests are not dispatched or charged. The shared wall-clock deadline covers factory setup and all personas; each loop also caps its remaining time to the shared deadline. Per-executor limits still apply.
+
+`maxCostMicros` and `costPerCallMicros` are required caller-supplied estimates in a consistent monetary unit (for example millionths of a configured currency unit). There is no built-in provider price. Supply a conservative ceiling for a full allowed call, including images and output. These counters are local reservations, not verified billing, exchange-rate conversion or durable spend accounting. Live provider token enforcement remains a transport obligation.
+
+A suite returns separate persona records and a detached budget snapshot. A model stop is not a pass. Unsupported personas, exhausted budgets, stale/cancelled setup and cleanup failures stay visible. Executor factory work must honor cancellation; if it resolves late, the suite invokes close on the late executor. It cannot forcibly kill a factory or prove late cleanup succeeded. Production needs isolated supervision, durable leases and a shared persistent usage ledger across processes/restarts.
+
+The real verification exercises two fresh Chromium sessions, a keyboard coverage gap, and shared request/action/token/cost reservations. Unit tests cover scope mismatch, atomic failed reservations, counter immutability, each budget dimension, deadline expiry, cross-persona exhaustion, distinct instructions, impatient limits and cancellation. No public artifact or model transcript is published.

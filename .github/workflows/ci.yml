@@ -69,6 +69,7 @@ jobs:
       - run: npm run observation:verify
       - run: npm run actions:verify
       - run: npm run browser-loop:verify
+      - run: npm run personas:verify
       # Build only the small trusted sandbox context, then verify real engine controls.
       - run: npm run sandbox:build
       - run: npm run isolation:verify

@@ -407,3 +407,18 @@ Next proposed phase: Part 5, Phase 5.4 — personas and budgets. Stop before imp
 ### Phase 5.3 verification
 
 All 191 unit/HTTP tests passed, including fifteen new loop/adapter tests. Real Chromium with an offline deterministic transport verified observe → permitted checkout → changed-state observation → stop and browser cleanup. Tests cover malformed/oversized replies, invalid usage, ungranted proposals, repetitions, token/call limits, stale authority, cancellation, timeout, mismatched observations, unavailable observation, failed cleanup and invalid configuration cleanup. Workspace type checks, production builds, lint, formatting and whitespace checks passed. No live model/provider, customer capture, real credential, migration or hosted CI run was exercised. No dependency was added.
+
+## Part 5 · Phase 5.4 — Personas and budgets
+
+- Added explicit novice, impatient and unusual-input synthetic profiles to the loop. The impatient profile narrows time/call/repetition limits; unusual-input selection remains restricted to configured synthetic value references. Profiles do not grant actions or guarantee human-like behavior.
+- Recognized keyboard-only requests as an explicit unsupported coverage gap without browser setup. The current executor lacks keyboard/focus actions; mouse substitution and accessibility claims are refused.
+- Added a scope-bound process-local ledger shared by sequential fresh persona executors. Calls reserve full token/cost ceilings atomically; actions and network requests reserve before side effects. Failed/uncertain attempts retain reservations. Stop and cleanup do not consume action capacity.
+- Added a shared wall-clock deadline spanning setup and persona execution, and caller-supplied estimated cost ceilings with no built-in provider prices. Persistent cross-worker budgets and verified provider billing remain pending.
+- Added suite orchestration with detached configuration, current-authority checks, cancellation, fresh executor ownership and late factory cleanup. The trusted factory must wire the supplied ledger/signal into its executor; arbitrary ignored cancellation cannot be forcibly terminated in process.
+- Added unit tests, real Chromium verification with offline transport, scripts and CI integration. No dependency, customer request, live model or migration was added.
+
+Next proposed phase: Part 5, Phase 5.5 — controlled chaos. Stop before implementation.
+
+### Phase 5.4 verification
+
+All 201 unit/HTTP tests passed, including ten new persona/ledger tests. Real Chromium with an offline adapter verified two fresh persona sessions, the explicit keyboard-only gap, and exact shared request/action/token/estimated-cost reservations. Unit coverage includes atomic failed reservations, scope binding, detached counters, each capacity dimension, deadline expiry, cross-persona exhaustion, distinct profiles, impatient repetition limits, cancellation and invalid persona lists. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Browser and local server cleanup completed. No live model/provider billing, customer capture, real credential, migration or hosted CI run was exercised; no dependency was added.

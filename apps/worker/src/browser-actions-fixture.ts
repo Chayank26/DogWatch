@@ -1,5 +1,6 @@
 /** Trusted loopback fixture executor; not a production browser sandbox. */
 import { chromium } from 'playwright';
+import type { BrowserBudget } from './browser-budget.js';
 import {
   browserActionSchema,
   browserPolicySchema,
@@ -14,7 +15,11 @@ import { fixtureObservationSource } from './browser-observation-playwright.js';
 export async function createFixtureActionExecutor(
   scopeInput: unknown,
   policyInput: unknown,
-  options: { isCurrent: () => Promise<boolean>; signal?: AbortSignal },
+  options: {
+    isCurrent: () => Promise<boolean>;
+    signal?: AbortSignal;
+    budget?: BrowserBudget;
+  },
 ) {
   const scope = scopeSchema.parse(scopeInput);
   const policy = browserPolicySchema.parse(policyInput);
@@ -92,6 +97,7 @@ export async function createFixtureActionExecutor(
         }
         signal.throwIfAborted();
         if (closed) throw Error('closed');
+        options.budget?.reserve(scope, 'request');
         const response = await route.fetch({
           maxRedirects: 0,
           timeout: policy.actionMs,

@@ -481,3 +481,18 @@ Next proposed phase: Part 6, Phase 6.3 — private artifacts. Stop before implem
 ### Phase 6.2 verification
 
 All 232 unit/HTTP tests passed, including nine new deduplication tests. Coverage includes deterministic permutations, exact retries, evidence-order normalization, reproduction-order preservation, semantic/category/environment separation, finding/artifact ID conflicts, cross-tier shared evidence, retained metrics and coverage gaps, current scope/expiry, detached outputs, empty batches and explicit count/byte limits. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Tests use synthetic artifact references and do not claim storage verification. No browser run, customer data, migration, external publication or hosted CI run was needed; no dependency was added.
+
+## Part 6 · Phase 6.3 — Private artifacts
+
+- Added a separate local v2 artifact adapter with finding-compatible scoped references and reviewed-redacted JSON/PNG content envelopes. Earlier smoke artifacts retain their existing format and location.
+- Enforced private directory/file permissions, no-follow exclusive temporary writes, non-replacing synced publication, per-run writer locks, size/complexity limits, seven-day maximum retention and a 50-artifact quota. Payload snapshots are captured before asynchronous writes.
+- Added exact scoped reads that verify persisted bytes, digest, kind, expiry and all supplied reference metadata. Unsafe directories, symlink files, tampering, expired references and conflicting lookup metadata fail closed.
+- Added authorized finding-reference verification, including independent checks for base-run evidence. It explicitly reports storage/reference verification without claiming semantic evidence truth or promoting finding confidence.
+- Added scoped expiry pruning that only removes validated matching records and leaves other scope data untouched. Operator-private storage assumptions, crash reconciliation and redaction limitations remain documented.
+- Added real-filesystem tests and documentation. No public URLs, hosted storage, database catalog, automatic deletion scheduler, production consumer or dependency was introduced.
+
+Next proposed phase: Part 6, Phase 6.4 — Markdown report. Stop before implementation.
+
+### Phase 6.3 verification
+
+All 241 unit/HTTP tests passed, including nine new real-filesystem tests. Coverage includes private permissions, detached writes, persistent roundtrips, every scope dimension, forged references, payload tampering, symlink/permissive-file refusal, JSON/PNG/size/expiry constraints, writer locks, publication quota, scoped expiry pruning, missing artifacts and independent head/base authorization for findings. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Temporary test storage was removed. No customer payload, hosted storage, public endpoint, browser run, migration or hosted CI run was exercised; no dependency was added. Semantic evidence verification remains explicitly unperformed.

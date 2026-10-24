@@ -251,3 +251,7 @@ The existing shared Zod package now exports a discriminated v2 reporting contrac
 ## Part 6 · Phase 6.2 — Deduplication
 
 The shared contracts package now exposes a synchronous Node.js grouping utility using existing Zod context validation, canonical key ordering and built-in SHA-256. Identity is conservative and version-domain-separated; full member records remain intact rather than merging evidence into a potentially misleading single finding. Maps enforce finding/artifact ID consistency and build shared-reference relationships without a model or database. Limits bound count and normalized byte volume, and outputs remain deterministic under input permutation. See [deduplication](packages/contracts/DEDUPLICATION.md).
+
+## Part 6 · Phase 6.3 — Private artifacts
+
+Node filesystem primitives provide a local private adapter for v2 finding references: mode-0700 directories, mode-0600 no-follow files, exclusive temporary creation, synced non-replacing hard links and per-run writer locks. Zod validates envelopes while bounded JSON traversal and fixed-size reads constrain storage input/output. SHA-256 and complete reference comparison enforce integrity against trusted caller metadata. An explicit authorization callback guards every finding reference, including independent baseline runs. This does not replace content verification, redaction review, OS isolation or a durable hosted catalog. See [private artifacts](apps/worker/PRIVATE_ARTIFACTS.md).

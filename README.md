@@ -98,3 +98,5 @@ Part 5.6 adds scoped failure replay with fresh browser/backend state, compatibil
 Part 6.1 adds versioned scoped finding contracts for failures, possible regressions, advisories and coverage gaps. See [finding contracts](packages/contracts/FINDINGS.md). Evidence verification, aggregation and publication remain separate integration work.
 
 Part 6.2 adds conservative deterministic finding groups with conflict detection and preserved evidence. See [deduplication](packages/contracts/DEDUPLICATION.md). Shared artifacts establish reference relationships, not common root causes.
+
+Part 6.3 adds local private v2 artifact storage, scoped integrity/expiry checks and authorized finding-reference verification. See [private artifacts](apps/worker/PRIVATE_ARTIFACTS.md). Hosted storage, public delivery and semantic evidence verification remain separate work.

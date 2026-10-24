@@ -273,3 +273,9 @@ No existing browser/API result is automatically published or converted into a fi
 A future trusted aggregator supplies v2 findings and current run scope to the deduplicator. Invalid, expired or cross-scope records stop the batch. Exact retries collapse; equivalent observations become a stable group retaining all distinct records and evidence. Differences in certainty, severity, environment, target or observed behavior remain separate.
 
 The result contains deterministic groups, original-member details, category counts and explicit shared-evidence relationships. Repeated reports do not increase confidence, coverage gaps do not become failures, and zero findings do not imply a passing run. Nothing is persisted or published, and no public UI changes. Private artifact integration is the next phase.
+
+## Part 6 · Phase 6.3 — Private artifacts
+
+A trusted producer can now persist a reviewed synthetic artifact and receive a real scoped v2 reference. An aggregator validates its finding and independently authorizes each artifact lookup, including base evidence, before verifying stored bytes and expiry. The returned verification result distinguishes valid stored references from proof that their contents support the finding.
+
+Expired records are inaccessible; an explicit authorized prune can remove validated expired records for one scope. Other run/SHA/role data stays outside that operation. The public UI and normal worker dispatch remain unchanged: no download endpoint, signed link, automatic artifact producer or report is published. Local filesystem verification supplies the storage boundary for later report integration.

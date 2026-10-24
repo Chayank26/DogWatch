@@ -6,7 +6,11 @@ const path = z
   .string()
   .min(1)
   .max(1024)
-  .refine((value) => /^\/(?!\/)[A-Za-z0-9/_-]*$/.test(value));
+  .refine(
+    (value) =>
+      /^\/(?!\/)[A-Za-z0-9/_.-]*$/.test(value) &&
+      !value.split('/').some((segment) => segment === '.' || segment === '..'),
+  );
 export const browserActionSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('navigate'), path }),
   z.strictObject({ kind: z.literal('click'), target: id }),

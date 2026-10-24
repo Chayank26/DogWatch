@@ -436,3 +436,18 @@ Next proposed phase: Part 5, Phase 5.6 — failure replay. Stop before implement
 ### Phase 5.5 verification
 
 All 205 unit/HTTP tests passed, including four new fault-plan/script tests. Real Chromium verified bounded delay, request-scoped offline behavior, pre-dispatch navigation interruption, repeated same-path navigation, repeated submission and synthetic boundary values. Checks include actual server dispatch counts, final PNG capture where execution remains available, fresh browser cleanup and unchanged authorization for denied requests. Workspace type checks, production builds, lint, formatting and whitespace checks passed after removing an unused initialization; the worker was rebuilt afterward. No customer endpoint, live model, real credential, migration or hosted CI run was exercised. Results remain explicitly unconfirmed pending replay. No dependency was added.
+
+## Part 5 · Phase 5.6 — Failure replay
+
+- Added bounded repeated execution of explicit chaos scripts with fresh browsers and scoped lifecycle namespaces. Setup receipts must match scope and fixture/dataset/identity fingerprints; incompatible state stops before another browser attempt.
+- Required independent authorized backend cleanup and matching empty receipts after every attempted setup. Unsettled setup, lost authority, incomplete captures and failed cleanup prevent confirmation and stop further replay.
+- Added explicit trusted failure/success snapshot predicates and classifications for reproduced, not reproduced, unstable and inconclusive observations. Repeated predicate evidence does not imply causal or PR attribution; base attribution remains unavailable.
+- Bound shared replay action/request reservations and total elapsed time across attempts. Returned metadata includes configuration/state digests, namespace IDs, outcomes and PNG hashes without page contents or assertion values. Durable artifacts and cross-worker recovery remain pending.
+- Extended the PawMart lifecycle adapter to validated fault modes and browser/server/HTML/CSS fingerprints. Real replay exposed the need for literal asset paths; `.js`/`.css` paths now validate while dot-segment traversal remains forbidden.
+- Added unit coverage, real healthy/seeded Chromium replay, changed-state refusal, scripts and CI integration. No dependency, customer execution, live model or migration was added.
+
+Next proposed phase: Part 6, Phase 6.1 — finding schema. Stop before implementation.
+
+### Phase 5.6 verification
+
+All 214 unit/HTTP tests passed, including eight replay tests and a literal-asset/traversal regression. Real Chromium verified healthy PawMart controls, repeated seeded stuck-checkout observations, distinct fresh namespaces, verified backend cleanup and incompatible dataset refusal before the next browser run. Unit coverage includes mixed/incomplete classifications, setup failure, mismatched receipts, denied/nonempty/wrong-scope cleanup, unsettled setup and invalid assertions/policy scope. Workspace type checks, production builds, lint, formatting and whitespace checks passed. A lint-driven cleanup refactor was followed by all eight replay tests and a worker rebuild. No live model, customer capture, real credential, migration or hosted CI run was exercised. No dependency was added. PR attribution remains unavailable.

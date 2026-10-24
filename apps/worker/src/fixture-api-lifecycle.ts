@@ -9,13 +9,23 @@ import type { ApiScope } from './api-execution.js';
 
 export async function createFixtureApiLifecycle(
   authority: Omit<ApiScope, 'runId'> & { deploymentId: string },
+  modeInput = 'healthy',
 ) {
   const trusted = { ...authority };
   const moduleUrl = new URL('../../fixture/dist/app.js', import.meta.url);
-  const { createFixtureApp } = await import(moduleUrl.href);
+  const { createFixtureApp, parseFixtureMode } = await import(moduleUrl.href);
+  const mode = parseFixtureMode(modeInput);
   const fingerprint = (value: string) =>
     createHash('sha256').update(value).digest('hex');
-  const fixtureDigest = fingerprint(await readFile(moduleUrl, 'utf8'));
+  const sources = await Promise.all(
+    [
+      moduleUrl,
+      new URL('../../fixture/dist/browser.js', import.meta.url),
+      new URL('../../fixture/public/index.html', import.meta.url),
+      new URL('../../fixture/public/style.css', import.meta.url),
+    ].map((url) => readFile(url, 'utf8')),
+  );
+  const fixtureDigest = fingerprint(JSON.stringify({ mode, sources }));
   let active: { context: ApiNamespace; app: RequestListener } | undefined;
   let closed = false;
   // Bounded receipts permit idempotent compensation without retaining application data.
@@ -54,7 +64,7 @@ export async function createFixtureApiLifecycle(
         throw Error('fixture_scope');
       // No await between abort check, ownership registration and state creation.
       owned.set(context.namespaceId, key(context));
-      active = { context: { ...context }, app: createFixtureApp('healthy') };
+      active = { context: { ...context }, app: createFixtureApp(mode) };
       return {
         ...context,
         fixtureDigest,

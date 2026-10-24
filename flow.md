@@ -255,3 +255,9 @@ Novice and unusual-input profiles guide model selection within existing permissi
 A trusted developer configures a disposable scenario and existing endpoint/target permissions. The runner opens a fresh browser and executes explicit navigation, fill/select or click steps. Matching authorized requests may be delayed or aborted; denied requests stay denied. Repeated submission consumes separate action/request capacity rather than triggering a hidden retry.
 
 When execution remains available, the runner waits within a bound for network settling and returns a final private snapshot, PNG and diagnostic capture with scenario/fault accounting. Interrupted navigation or incomplete capture remains inconclusive. Every record is unconfirmed until independent replay; a simulated network failure is not automatically a product defect. The runner closes the browser, and the caller resets server data. No public UI, model-driven fault injection or published finding is added.
+
+## Part 5 · Phase 5.6 — Failure replay
+
+A trusted caller selects a synthetic failure/success assertion and an explicit script. Replay prepares fresh disposable state, runs the script in a new browser, captures the assertion outcome, closes the browser and verifies backend cleanup. It repeats only while authority, fixture compatibility and cleanup remain valid.
+
+The healthy PawMart fixture shows its validation error in each fresh attempt; the seeded stuck-checkout fixture repeatedly leaves its pending message visible. Replay distinguishes repeated failure, repeated success, mixed observations and incomplete work. Results contain private metadata and image hashes rather than raw page contents. They confirm only the configured observation predicate and retain unavailable PR attribution. No public report, customer capture or automatic base-preview comparison is added.

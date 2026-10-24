@@ -102,3 +102,19 @@ test('policy snapshots detach mutable input and reject ambiguous target IDs', ()
     browserPolicySchema.parse({ ...p, targets: [p.targets[0], p.targets[0]] }),
   );
 });
+
+test('literal asset filenames are allowed while dot-segment traversal remains forbidden', () => {
+  assert.ok(
+    browserActionSchema.parse({ kind: 'navigate', path: '/assets/app.js' }),
+  );
+  for (const path of [
+    '/../app.js',
+    '/./app.js',
+    '/assets/../app.js',
+    '/%2e/app.js',
+  ])
+    assert.equal(
+      browserActionSchema.safeParse({ kind: 'navigate', path }).success,
+      false,
+    );
+});

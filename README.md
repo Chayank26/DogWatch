@@ -92,3 +92,5 @@ Part 5.3 adds a bounded browser loop and provider-neutral JSON adapter. Run `npm
 Part 5.4 adds synthetic persona suites and scope-bound shared reservations. Run `npm run personas:verify`; see [personas and budgets](apps/worker/BROWSER_PERSONAS.md). Keyboard-only execution is explicitly unsupported; durable cross-worker accounting remains pending.
 
 Part 5.5 adds bounded controlled-chaos fixture scripts. Run `npm run chaos:verify`; see [controlled chaos](apps/worker/BROWSER_CHAOS.md). Results remain unconfirmed until independent replay.
+
+Part 5.6 adds scoped failure replay with fresh browser/backend state, compatibility checks and verified cleanup. Run `npm run browser-replay:verify`; see [browser replay](apps/worker/BROWSER_REPLAY.md). Repeatability confirms configured synthetic predicates; PR attribution remains unavailable.

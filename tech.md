@@ -239,3 +239,7 @@ Fixed profile instructions and Zod-validated persona IDs keep behavior configura
 ## Part 5 · Phase 5.5 — Controlled chaos
 
 Existing Playwright routing applies bounded delay or explicit request abort only after policy and budget checks. An immutable validated fault plan tracks exact matching ordinals and injection attempts. Explicit action scripts reuse the existing executor and synthetic value references; no separate unsafe action vocabulary is added. A bounded network-idle wait precedes the final observation where possible, without claiming business completion. Fresh browser state and independent cleanup keep fixture attempts separate; backend fixture reset, production isolation and durable evidence remain external obligations. See [controlled chaos](apps/worker/BROWSER_CHAOS.md).
+
+## Part 5 · Phase 5.6 — Failure replay
+
+The callable replay runner composes existing scoped lifecycle receipts, restricted Playwright scripts and a shared process-local budget. SHA-256 fingerprints bind policy/script/assertion configuration and attested fixture state; image hashes identify captures without returning raw artifacts. Fixed predicate outcomes determine repeatability only after browser and backend cleanup. The local adapter fingerprints compiled server/browser code plus static assets and mode, ensuring UI changes affect compatibility. Independent two-second setup/cleanup waits cannot substitute for killable production supervision. See [browser replay](apps/worker/BROWSER_REPLAY.md).

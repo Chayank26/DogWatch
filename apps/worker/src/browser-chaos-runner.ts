@@ -42,6 +42,7 @@ export async function runFixtureChaos(
     cleanup = 'unverified';
     code = 'chaos_unconfirmed';
     for (const action of script.steps) {
+      if (action.kind !== 'stop') options.budget?.reserve(scope, 'action');
       const result = await executor.execute(action);
       trace.push({
         step: trace.length + 1,

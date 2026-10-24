@@ -255,3 +255,7 @@ The shared contracts package now exposes a synchronous Node.js grouping utility 
 ## Part 6 · Phase 6.3 — Private artifacts
 
 Node filesystem primitives provide a local private adapter for v2 finding references: mode-0700 directories, mode-0600 no-follow files, exclusive temporary creation, synced non-replacing hard links and per-run writer locks. Zod validates envelopes while bounded JSON traversal and fixed-size reads constrain storage input/output. SHA-256 and complete reference comparison enforce integrity against trusted caller metadata. An explicit authorization callback guards every finding reference, including independent baseline runs. This does not replace content verification, redaction review, OS isolation or a durable hosted catalog. See [private artifacts](apps/worker/PRIVATE_ARTIFACTS.md).
+
+## Part 6 · Phase 6.4 — Markdown report
+
+The worker composes the existing v2 contracts, deduplicator and local artifact verifier into a deterministic private renderer. Strict counter validation preserves coverage uncertainty; dynamically sized Markdown code spans prevent narrative markup interpretation. Bounded group/byte output omits whole sections with explicit metadata, while all input evidence remains subject to authorization and integrity checks. AbortSignals and final current-scope/expiry checks bound asynchronous verification. No Markdown library or external publication dependency was needed. See [Markdown report](apps/worker/MARKDOWN_REPORT.md).

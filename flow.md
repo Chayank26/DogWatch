@@ -279,3 +279,9 @@ The result contains deterministic groups, original-member details, category coun
 A trusted producer can now persist a reviewed synthetic artifact and receive a real scoped v2 reference. An aggregator validates its finding and independently authorizes each artifact lookup, including base evidence, before verifying stored bytes and expiry. The returned verification result distinguishes valid stored references from proof that their contents support the finding.
 
 Expired records are inaccessible; an explicit authorized prune can remove validated expired records for one scope. Other run/SHA/role data stays outside that operation. The public UI and normal worker dispatch remain unchanged: no download endpoint, signed link, automatic artifact producer or report is published. Local filesystem verification supplies the storage boundary for later report integration.
+
+## Part 6 · Phase 6.4 — Markdown report
+
+A trusted aggregator supplies scoped findings and observed coverage/usage to the renderer. The renderer validates and groups records, independently authorizes each head/base artifact, checks stored integrity, then returns private Markdown. The report preserves reported confidence and coverage gaps, includes reproduction and private evidence IDs, and makes missing coverage explicit.
+
+Large reports omit complete finding sections with counts and IDs rather than cutting evidence mid-section. Cancelled or stale authority prevents return. The renderer does not judge semantic truth, infer a pass from zero findings, expose artifact contents, or publish anything. The public UI and normal worker dispatch remain unchanged; GitHub delivery follows in the next phase.

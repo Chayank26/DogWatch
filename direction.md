@@ -496,3 +496,17 @@ Next proposed phase: Part 6, Phase 6.4 — Markdown report. Stop before implemen
 ### Phase 6.3 verification
 
 All 241 unit/HTTP tests passed, including nine new real-filesystem tests. Coverage includes private permissions, detached writes, persistent roundtrips, every scope dimension, forged references, payload tampering, symlink/permissive-file refusal, JSON/PNG/size/expiry constraints, writer locks, publication quota, scoped expiry pruning, missing artifacts and independent head/base authorization for findings. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Temporary test storage was removed. No customer payload, hosted storage, public endpoint, browser run, migration or hosted CI run was exercised; no dependency was added. Semantic evidence verification remains explicitly unperformed.
+
+## Part 6 · Phase 6.4 — Markdown report
+
+- Added a callable private Markdown renderer over v2 finding deduplication and authorized artifact-reference verification. All records are verified even when output limits omit their groups; missing, expired, cross-scope or unauthorized evidence prevents rendering.
+- Included immutable review context, reported progress, category counts, coverage/unaccounted checks, usage estimates, reproduction, expected/actual behavior, baseline status, retained member details and private evidence metadata. Empty findings or completed progress do not become passing verdicts.
+- Rendered narrative fields as dynamically delimited literal code spans and flattened control/newline/directional characters. No raw payload, artifact URL, local path or inline image is emitted. Redaction and semantic truth remain producer/aggregator obligations, stated in the report.
+- Ordered groups deterministically by category/severity/ID and bounded group count and UTF-8 output. Whole-section omissions yield explicit partial reports and omitted group IDs rather than silent truncation.
+- Added cancellation/current-authority/expiry rechecks, a bounded verification wait, and real-artifact integration tests. No public publication, GitHub check, browser interaction, database mutation or dependency was added.
+
+Next proposed phase: Part 6, Phase 6.5 — GitHub comments and checks. Stop before implementation.
+
+### Phase 6.4 verification
+
+All 249 unit/HTTP tests passed, including eight Markdown-report tests backed by real temporary artifact storage. Coverage includes deterministic retained groups/reproduction, literal hostile text, empty/missing coverage, group/byte omissions, verification of omitted records, unauthorized/missing references, cancellation/stale authority, invalid scope/counters and explicit usage estimates. Workspace type checks and production builds passed. Lint flagged control-character regex syntax; replacing it with explicit code-point checks preserved behavior, and all eight report tests, lint, formatting, whitespace checks and a worker rebuild passed afterward. Temporary artifact storage was removed. No customer data, public report, GitHub API call, browser run, migration or hosted CI run was exercised; no dependency was added.

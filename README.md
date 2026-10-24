@@ -100,3 +100,5 @@ Part 6.1 adds versioned scoped finding contracts for failures, possible regressi
 Part 6.2 adds conservative deterministic finding groups with conflict detection and preserved evidence. See [deduplication](packages/contracts/DEDUPLICATION.md). Shared artifacts establish reference relationships, not common root causes.
 
 Part 6.3 adds local private v2 artifact storage, scoped integrity/expiry checks and authorized finding-reference verification. See [private artifacts](apps/worker/PRIVATE_ARTIFACTS.md). Hosted storage, public delivery and semantic evidence verification remain separate work.
+
+Part 6.4 adds private deterministic Markdown reports with authorized artifact checks, explicit coverage and bounded whole-group omissions. See [Markdown reports](apps/worker/MARKDOWN_REPORT.md). GitHub delivery remains pending.

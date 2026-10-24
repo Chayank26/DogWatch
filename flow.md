@@ -231,3 +231,9 @@ A completed observation with verified cleanup returns a private replay capsule c
 The public UI and normal worker dispatch remain unchanged. A trusted developer script creates a restricted synthetic browser, attaches observation before navigation, marks each scripted action with an internal ID, and requests an observation. The observer checks current scope, captures accessibility text and a masked screenshot, checks scope again, then returns private untrusted data with timestamped diagnostic metadata.
 
 A seeded checkout fixture demonstrates console errors, a page exception, failed network access and 404/500 responses. These are observable signals, not automatic findings. Capture failures, oversized data and dropped diagnostics remain explicit. Cancellation or stale authority prevents captured page data from being returned. The script detaches observation and closes the browser and local server in cleanup. No model selects actions, no customer data is observed, and no artifact is published in this phase.
+
+## Part 5 · Phase 5.2 — Validated action executor
+
+The public application remains unchanged. A trusted supervisor supplies a synthetic fixture policy and proposes one structured action. The executor validates the proposal, target/value permission and current scope, performs the accessible interaction within its budget, and returns a fixed metadata result. Every browser request independently checks its grant and current authority. The supervisor can observe the resulting UI through Phase 5.1's private capture interface.
+
+Malformed or forbidden proposals never reach Playwright. Ambiguous targets, upload inputs, authority loss, timeout and blocked network activity close the browser. Explicit stop and final cleanup also close it. Successful interaction is separate from successful checkout: verification observes the created state rather than treating a click as proof. No model chooses actions or receives page data in this phase.

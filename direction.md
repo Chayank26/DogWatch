@@ -379,3 +379,17 @@ Next proposed phase: Part 5, Phase 5.2 — validated action executor. Stop befor
 ### Phase 5.1 verification
 
 All 171 unit/HTTP tests passed, including seven new observer tests. Real Chromium verification passed for accessible snapshots, viewport PNG capture, updated checkout state and action-correlated console errors, page exceptions, failed requests and 404/500 responses. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Initial sandbox runs could not bind local servers; verification succeeded with the required local execution permission. Browser, observer and server cleanup completed. No customer preview, live credential, model call, database migration or hosted CI run was exercised; no dependency was added.
+
+## Part 5 · Phase 5.2 — Validated action executor
+
+- Added strict navigate/click/fill/select/scroll/stop proposals with explicit immutable scope, accessible target/action grants and synthetic value references. Unknown fields, selectors, scripts, uploads and coordinates are rejected; coordinate execution remains unsupported rather than bypassing target policy.
+- Added a disposable loopback Playwright executor that requires exact unique role/name or label matches. Destructive targets require explicit permission and disposable data. Network mutation grants are independent of target grants.
+- Enforced exact request path/method/origin grants, top-level navigation allowlists, current authority and request counts. Redirects, subframe navigation, WebSockets, popups, dialogs, file inputs and downloads stop execution. Browser hooks remain fixture controls, not production egress isolation.
+- Added sequential action/observation access, action and session deadlines, action limits, cancellation and browser cleanup. Uncertain actions close the session without retries. A completed interaction does not imply application success; asynchronous requests may fail later and stop the session.
+- Added unit policy checks, real Chromium verification, scripts and CI integration. No model adapter, customer execution, dependency or migration was added.
+
+Next proposed phase: Part 5, Phase 5.3 — model adapter and loop. Stop before implementation.
+
+### Phase 5.2 verification
+
+All 176 unit/HTTP tests passed, including five new policy tests. Real Chromium verification passed for accessible navigation/fill/select/scroll/click, observed created state, invalid and destructive proposals, denied mutation requests, redirect refusal, upload refusal, action budgets, stale authority, scope mismatch, cancellation and an action deadline with a stalled authority callback. The initial browser check exposed a fixture select-label mismatch; explicit label association corrected it without weakening exact matching. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Browser and local server cleanup completed. No customer endpoint, live credential, model call, migration or hosted CI run was exercised. No dependency was added.

@@ -510,3 +510,18 @@ Next proposed phase: Part 6, Phase 6.5 — GitHub comments and checks. Stop befo
 ### Phase 6.4 verification
 
 All 249 unit/HTTP tests passed, including eight Markdown-report tests backed by real temporary artifact storage. Coverage includes deterministic retained groups/reproduction, literal hostile text, empty/missing coverage, group/byte omissions, verification of omitted records, unauthorized/missing references, cancellation/stale authority, invalid scope/counters and explicit usage estimates. Workspace type checks and production builds passed. Lint flagged control-character regex syntax; replacing it with explicit code-point checks preserved behavior, and all eight report tests, lint, formatting, whitespace checks and a worker rebuild passed afterward. Temporary artifact storage was removed. No customer data, public report, GitHub API call, browser run, migration or hosted CI run was exercised; no dependency was added.
+
+## Part 6 · Phase 6.5 — GitHub comments and checks
+
+- Added an explicitly callable GitHub App reporter with scoped repository tokens, canonical repository resolution and current open same-repository PR/SHA checks. Existing ingress tokens remain read-only; no normal worker or public endpoint invokes publication.
+- Required separate publication approval for reviewed Markdown, monotonic revisions, phase transitions and explicit success-coverage/blocking-failure policy. Private report generation does not imply approval to publish.
+- Added owned marker/external-ID reconciliation and tracked comment/check updates. Remote scans are bounded; foreign-App markers, ambiguous matches and changed tracked identities cannot be adopted or overwritten.
+- Added a private synced local journal with intended revision/digest, remote IDs and pending creates. Lost create responses reconcile or remain uncertain without blind POST retries; concurrent local writers serialize. Tokens and report bodies are absent from the journal.
+- Checked current GitHub API documentation and verified real Octokit request/auth paths with synthetic transport. No live GitHub mutation was performed. Distributed leases, production consumers, live permission verification and stale-result repair remain pending.
+- Preserved the pre-existing generated web type declaration change while implementing API-only behavior. No dependency or database migration was added.
+
+Next proposed phase: Part 6, Phase 6.6 — stale-result handling. Stop before implementation.
+
+### Phase 6.5 verification
+
+All 257 tests passed, including eight new synthetic-transport GitHub reporting tests. Coverage includes lifecycle updates, identical retries, lost create responses, uncertain delivery, foreign-App ownership, stale authority/SHA, publication policy, revision conflicts and concurrent local writers. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The pre-existing generated web declaration change was restored after the build. No live GitHub mutation, customer data, browser run, database migration or hosted CI run was exercised; no dependency was added. Production wiring and stale-result repair remain pending.

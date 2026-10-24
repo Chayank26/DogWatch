@@ -259,3 +259,7 @@ Node filesystem primitives provide a local private adapter for v2 finding refere
 ## Part 6 · Phase 6.4 — Markdown report
 
 The worker composes the existing v2 contracts, deduplicator and local artifact verifier into a deterministic private renderer. Strict counter validation preserves coverage uncertainty; dynamically sized Markdown code spans prevent narrative markup interpretation. Bounded group/byte output omits whole sections with explicit metadata, while all input evidence remains subject to authorization and integrity checks. AbortSignals and final current-scope/expiry checks bound asynchronous verification. No Markdown library or external publication dependency was needed. See [Markdown report](apps/worker/MARKDOWN_REPORT.md).
+
+## Part 6 · Phase 6.5 — GitHub comments and checks
+
+Existing Octokit and GitHub App authentication implement a separate one-repository write-token path for reviewed comments and checks. Zod validates scope, revisions and conclusion attestations. Deterministic markers and App-owned remote reconciliation combine with a private fsynced local journal to track one comment/check pair per run. Pending-create records prevent blind retries after ambiguous responses; local locks serialize writers but do not replace distributed durable leases. HTTP retries are disabled and request/authority waits are bounded. See [GitHub reporting](apps/api/GITHUB_REPORTING.md) for permission, recovery and race limits.

@@ -102,3 +102,5 @@ Part 6.2 adds conservative deterministic finding groups with conflict detection 
 Part 6.3 adds local private v2 artifact storage, scoped integrity/expiry checks and authorized finding-reference verification. See [private artifacts](apps/worker/PRIVATE_ARTIFACTS.md). Hosted storage, public delivery and semantic evidence verification remain separate work.
 
 Part 6.4 adds private deterministic Markdown reports with authorized artifact checks, explicit coverage and bounded whole-group omissions. See [Markdown reports](apps/worker/MARKDOWN_REPORT.md). GitHub delivery remains pending.
+
+Part 6.5 adds explicitly approved GitHub comment/check delivery with owned-object reconciliation and a local publication journal. See [GitHub reporting](apps/api/GITHUB_REPORTING.md). Tests use synthetic transport; automatic production publication remains disabled.

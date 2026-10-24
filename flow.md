@@ -285,3 +285,9 @@ Expired records are inaccessible; an explicit authorized prune can remove valida
 A trusted aggregator supplies scoped findings and observed coverage/usage to the renderer. The renderer validates and groups records, independently authorizes each head/base artifact, checks stored integrity, then returns private Markdown. The report preserves reported confidence and coverage gaps, includes reproduction and private evidence IDs, and makes missing coverage explicit.
 
 Large reports omit complete finding sections with counts and IDs rather than cutting evidence mid-section. Cancelled or stale authority prevents return. The renderer does not judge semantic truth, infer a pass from zero findings, expose artifact contents, or publish anything. The public UI and normal worker dispatch remain unchanged; GitHub delivery follows in the next phase.
+
+## Part 6 · Phase 6.5 — GitHub comments and checks
+
+A trusted supervisor can explicitly approve a reviewed Markdown report for a specific PR audience and invoke the publisher. The publisher verifies current scope, obtains a narrowly scoped App token, reconciles owned remote objects, and creates or updates the tracked check and comment. Queued/running/final revisions are distinct, and success or blocking failure requires explicit policy attestations.
+
+A lost create response leaves a pending journal entry. A retry adopts a uniquely matching App-owned object or stops as uncertain; it does not blindly post again. Stale scope or conflicting revisions stop writes. The local journal retains IDs/digests without credentials or report bodies. These flows were exercised only through synthetic GitHub responses; no live report was sent and normal worker dispatch remains unchanged. Explicit stale-result reconciliation is next.

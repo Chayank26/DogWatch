@@ -4,6 +4,7 @@
  * queue dispatch occurs in the separate worker process.
  */
 import express from 'express';
+import type { Router } from 'express';
 import type { ErrorRequestHandler } from 'express';
 import { verifyGitHubSignature } from './webhook.js';
 import { authorizeDelivery } from './authorization.js';
@@ -25,9 +26,11 @@ export function createApiApp(
   authorization?: AuthorizationDependencies,
   persist?: (input: AcceptanceInput) => Promise<AcceptanceResult>,
   stop?: (input: StopInput) => Promise<number>,
+  identity?: Router,
 ) {
   const app = express();
   app.disable('x-powered-by');
+  if (identity) app.use('/auth', identity);
   app.get('/health', (_request, response) =>
     response.json({ service: 'dogwatch-api', status: 'ok' }),
   );

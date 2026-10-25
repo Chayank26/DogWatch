@@ -21,7 +21,8 @@
     "prebuild": "npm run build -w @dogwatch/contracts",
     "pretypecheck": "npm run build -w @dogwatch/contracts",
     "preverify": "npm run build -w @dogwatch/contracts",
-    "preverify:acceptance": "npm run build -w @dogwatch/contracts"
+    "preverify:acceptance": "npm run build -w @dogwatch/contracts",
+    "verify:identity": "tsx src/verify-identity.ts"
   },
   "devDependencies": {
     "prisma": "^7.10.0"

@@ -43,7 +43,8 @@
     "browser-loop:verify": "npm run verify:browser-loop -w @dogwatch/worker",
     "personas:verify": "npm run verify:personas -w @dogwatch/worker",
     "chaos:verify": "npm run verify:chaos -w @dogwatch/worker",
-    "browser-replay:verify": "npm run verify:browser-replay -w @dogwatch/worker"
+    "browser-replay:verify": "npm run verify:browser-replay -w @dogwatch/worker",
+    "db:verify:identity": "npm run verify:identity -w @dogwatch/database"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

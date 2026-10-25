@@ -106,3 +106,5 @@ Part 6.4 adds private deterministic Markdown reports with authorized artifact ch
 Part 6.5 adds explicitly approved GitHub comment/check delivery with owned-object reconciliation and a local publication journal. See [GitHub reporting](apps/api/GITHUB_REPORTING.md). Tests use synthetic transport; automatic production publication remains disabled.
 
 Phase 6.6 adds callable stale-report retirement: an independently authorized supervisor can withdraw an old run's comment/check, persist a terminal publication fence, and retry partial cleanup. Automatic reconciliation and live GitHub verification remain pending. See [GitHub reporting](apps/api/GITHUB_REPORTING.md).
+
+Phase 7.1 adds optional GitHub login, persistent sessions and owner/member organization membership. See [identity setup](apps/api/IDENTITY.md) for configuration, API routes, operator membership provisioning and deployment limits. Verify local PostgreSQL behavior with `npm run db:verify:identity`. Login does not automatically grant tenant or installation access.

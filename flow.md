@@ -297,3 +297,9 @@ A lost create response leaves a pending journal entry. A retry adopts a uniquely
 A supervisor identifies a head-changed, superseded or cancelled run and independently authorizes cleanup of its exact scope. The retirement adapter validates the PR/repository, records terminal intent, reconciles the old owned report and replaces its verdict with a withdrawal notice and cancelled check. It creates no new report objects and leaves newer runs untouched.
 
 Once fenced, ordinary publication is refused permanently. Partial cleanup can resume under renewed authorization; ambiguous remote state remains an explicit failure requiring reconciliation. This operation is callable and tested with synthetic transport. Automatic invalidation dispatch, durable scheduling and live GitHub verification remain pending.
+
+## Part 7 · Phase 7.1 — Login and membership
+
+A user opens `/auth/github`, authenticates at GitHub, and returns through a browser-bound single-use callback. The API confirms their GitHub identity, rotates an opaque server session, and shows `/auth/me` with current DogWatch memberships. New users have no tenant access until an operator provisions membership.
+
+Membership inspection rereads database roles and returns no other tenant's membership. Role changes, removals and local user disablement affect the next request. Logout requires the configured Origin and revokes the session. This phase adds API login and membership behavior; onboarding screens, installation linking and automatic GitHub membership synchronization remain pending.

@@ -27,3 +27,6 @@ export { dispatchNext, dispatchAttemptLimit } from './dispatch.js';
 // Stop signals are durable; callers must obtain policy/actor context through authorization.
 export { stopRuns, canExecuteRun } from './lifecycle.js';
 export type { StopInput } from './lifecycle.js';
+
+export { createIdentityStore } from './identity.js';
+export type { Identity, IdentityStore } from './identity.js';

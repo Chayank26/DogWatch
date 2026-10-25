@@ -22,12 +22,13 @@ enum RunState {
   superseded
 }
 
-// Minimal organization record. Authentication/membership comes in a later phase.
+// Organization identity; membership is independent of GitHub installation ownership.
 model Tenant {
   id            String         @id @default(uuid()) @db.Uuid
   name          String
   createdAt     DateTime       @default(now()) @db.Timestamptz(3)
   installations Installation[]
+  memberships Membership[]
 }
 
 // A GitHub installation belongs to one tenant. BigInt avoids truncating GitHub IDs.
@@ -111,4 +112,46 @@ model WebhookDelivery {
 
   @@unique([tenantId, runId])
   @@index([tenantId, createdAt])
+}
+
+
+enum MembershipRole {
+  owner
+  member
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  githubId BigInt @unique
+  login String
+  disabledAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  memberships Membership[]
+  sessions LoginSession[]
+}
+
+model Membership {
+  tenantId String @db.Uuid
+  userId String @db.Uuid
+  role MembershipRole
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([tenantId, userId])
+  @@index([userId])
+}
+
+model LoginSession {
+  tokenHash String @id @db.VarChar(64)
+  userId String @db.Uuid
+  expiresAt DateTime @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([expiresAt])
+  @@index([userId])
+}
+
+model LoginAttempt {
+  stateHash String @id @db.VarChar(64)
+  browserHash String @db.VarChar(64)
+  expiresAt DateTime @db.Timestamptz(3)
+  @@index([expiresAt])
 }

@@ -538,3 +538,17 @@ Next proposed phase: Part 7, Phase 7.1 — login and membership. Stop before imp
 ### Phase 6.6 verification
 
 All 267 tests passed, including ten new retirement tests using synthetic GitHub transport. Coverage includes terminal publication fencing, reverted heads, same-head cancellation/supersession, partial publication, lost create/PATCH responses, revoked cleanup authority, conflicting reasons, cross-scope journals, foreign ownership and isolation from other reports. Workspace type checks, production builds, lint, formatting and whitespace checks passed. All 18 reporting tests and API compilation were repeated after tightening the withdrawal-output comparison. The build-generated web declaration was restored to its starting content. No live GitHub mutation, customer data, browser run, migration or hosted CI run was exercised; no dependency was added. Automatic supervision and distributed coordination remain pending.
+
+## Part 7 · Phase 7.1 — Login and membership
+
+- Followed the small-phase roadmap: GitHub login and DogWatch owner/member membership are implemented here; installation linking, broader tenant isolation and onboarding remain separate phases.
+- Added optional OAuth routes using state/browser binding, S256 PKCE, exact configured callback origin and identity revalidation. Provider tokens are used transiently and never persisted or returned.
+- Added an additive User/Membership/LoginSession/LoginAttempt migration, immutable GitHub ID mapping, hashed opaque eight-hour sessions, atomic single-use attempts and transactional session rotation. Disabled users cannot resolve sessions or log in.
+- Added fresh membership introspection, owner-role enforcement and Origin-checked logout. Login grants no tenant membership; trusted operators provision membership until onboarding is implemented.
+- Wired optional API startup without widening webhook authorization. Added synthetic HTTP tests and real local PostgreSQL verification. Public dashboard screens, live OAuth verification, automatic expiry pruning and ingress rate limiting remain pending.
+
+Next proposed phase: Part 7, Phase 7.2 — installation linking. Stop before implementation.
+
+### Phase 7.1 verification
+
+All 276 tests passed, including nine new HTTP/OAuth tests with synthetic provider responses. Real local PostgreSQL verification passed for concurrent single-use state consumption, browser binding, expiry, stable numeric identity, transactional session rotation, tenant membership scoping, role/removal changes and disabled users. The additive migration applied successfully; a second application was a no-op. Random database fixtures were removed. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The generated web declaration was restored to its starting content. No live OAuth exchange, customer data, external publication or hosted CI run was exercised; no dependency was added. Live login, production proxy verification, ingress rate limiting, expiry pruning and onboarding remain pending.

@@ -267,3 +267,7 @@ Existing Octokit and GitHub App authentication implement a separate one-reposito
 ## Part 6 · Phase 6.6 — Stale-result handling
 
 The API reporter now shares its scoped authentication, owned-object reconciliation and filesystem lock with an explicit retirement adapter. An optional journal retirement reason acts as a terminal publication fence while preserving compatibility with existing records. Fixed withdrawal output and cancelled check conclusions replace old verdicts through tracked PATCH requests only. Remote content comparison makes partial retries resumable without new objects. Cleanup authorization is separate from current-run execution eligibility; automatic supervision and distributed coordination remain integration work. See [GitHub reporting](apps/api/GITHUB_REPORTING.md).
+
+## Part 7 · Phase 7.1 — Login and membership
+
+Express exposes optional GitHub OAuth routes backed by new Prisma identity, membership, login-attempt and session tables. Node crypto generates 256-bit state/verifier/session values; PostgreSQL stores hashes and consumes bound attempts with one conditional deletion. Sessions rotate transactionally and resolve fresh membership/user-disablement state. GitHub numeric identity is independent of mutable login names and App installation authority. Fixed origins, secure host cookies, PKCE, bounded provider reads and Origin-checked logout protect the browser boundary. No dependency was added. See [identity setup and limits](apps/api/IDENTITY.md).

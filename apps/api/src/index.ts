@@ -1,5 +1,7 @@
 /** API process entry point; configure secrets in the shell, never in source files. */
 import { createApiApp } from './app.js';
+import { createIdentityRouter, validateLoginConfig } from './identity.js';
+import { createIdentityStore } from '@dogwatch/database';
 import { readFileSync } from 'node:fs';
 import { parsePolicies } from './authorization.js';
 import { createGitHubResolver } from './github.js';
@@ -38,20 +40,39 @@ if (policyFile || keyFile || appIdText) {
 }
 // DATABASE_URL explicitly opts authorized ingress into durable acceptance.
 // No fallback database URL is used for customer event writes.
-if (process.env.DATABASE_URL && !authorization)
+const loginValues = [
+  process.env.GITHUB_OAUTH_CLIENT_ID,
+  process.env.GITHUB_OAUTH_CLIENT_SECRET,
+  process.env.AUTH_ORIGIN,
+];
+let login;
+if (loginValues.some((value) => value !== undefined)) {
+  if (!loginValues.every(Boolean) || !process.env.DATABASE_URL)
+    throw Error('Complete login configuration and DATABASE_URL are required');
+  login = validateLoginConfig({
+    clientId: loginValues[0]!,
+    clientSecret: loginValues[1]!,
+    origin: loginValues[2]!,
+  });
+}
+if (process.env.DATABASE_URL && !authorization && !login)
   throw new Error('Persistence requires GitHub authorization configuration');
 const database = process.env.DATABASE_URL
   ? createDatabase(process.env.DATABASE_URL)
   : undefined;
-const persist = database
-  ? (input: Parameters<typeof acceptDelivery>[1]) =>
-      acceptDelivery(database, input)
-  : undefined;
+const persist =
+  database && authorization
+    ? (input: Parameters<typeof acceptDelivery>[1]) =>
+        acceptDelivery(database, input)
+    : undefined;
 const server = createApiApp(
   secret,
   authorization,
   persist,
-  database ? (input) => stopRuns(database, input) : undefined,
+  database && authorization ? (input) => stopRuns(database, input) : undefined,
+  database && login
+    ? createIdentityRouter(login, createIdentityStore(database))
+    : undefined,
 ).listen(port, '127.0.0.1', () => {
   process.stdout.write(`DogWatch API listening on http://127.0.0.1:${port}\n`);
 });

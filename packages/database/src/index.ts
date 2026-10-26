@@ -30,3 +30,10 @@ export type { StopInput } from './lifecycle.js';
 
 export { createIdentityStore } from './identity.js';
 export type { Identity, IdentityStore } from './identity.js';
+
+export { createInstallationLinkStore } from './installation-link.js';
+export type {
+  InstallationLinkStore,
+  LinkScope,
+  VerifiedInstallationLink,
+} from './installation-link.js';

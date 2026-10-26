@@ -44,7 +44,8 @@
     "personas:verify": "npm run verify:personas -w @dogwatch/worker",
     "chaos:verify": "npm run verify:chaos -w @dogwatch/worker",
     "browser-replay:verify": "npm run verify:browser-replay -w @dogwatch/worker",
-    "db:verify:identity": "npm run verify:identity -w @dogwatch/database"
+    "db:verify:identity": "npm run verify:identity -w @dogwatch/database",
+    "db:verify:installation-link": "npm run verify:installation-link -w @dogwatch/database"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

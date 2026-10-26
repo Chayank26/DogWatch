@@ -303,3 +303,9 @@ Once fenced, ordinary publication is refused permanently. Partial cleanup can re
 A user opens `/auth/github`, authenticates at GitHub, and returns through a browser-bound single-use callback. The API confirms their GitHub identity, rotates an opaque server session, and shows `/auth/me` with current DogWatch memberships. New users have no tenant access until an operator provisions membership.
 
 Membership inspection rereads database roles and returns no other tenant's membership. Role changes, removals and local user disablement affect the next request. Logout requires the configured Origin and revokes the session. This phase adds API login and membership behavior; onboarding screens, installation linking and automatic GitHub membership synchronization remain pending.
+
+## Part 7 · Phase 7.2 — Installation linking
+
+A trusted server-side caller supplies the owner's DogWatch session and a separately obtained GitHub App user token. The linker verifies both identities, current installation access and personal ownership or organization-admin status, then asks the database to recheck local authority and claim the installation for the tenant.
+
+A same-tenant retry returns unchanged; another tenant cannot claim the installation. Linking creates no repository policy or execution grant. Browser token acquisition, onboarding screens and automatic installation lifecycle reconciliation remain pending; the callable adapter is exercised through synthetic GitHub and real local database tests.

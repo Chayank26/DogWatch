@@ -552,3 +552,16 @@ Next proposed phase: Part 7, Phase 7.2 — installation linking. Stop before imp
 ### Phase 7.1 verification
 
 All 276 tests passed, including nine new HTTP/OAuth tests with synthetic provider responses. Real local PostgreSQL verification passed for concurrent single-use state consumption, browser binding, expiry, stable numeric identity, transactional session rotation, tenant membership scoping, role/removal changes and disabled users. The additive migration applied successfully; a second application was a no-op. Random database fixtures were removed. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The generated web declaration was restored to its starting content. No live OAuth exchange, customer data, external publication or hosted CI run was exercised; no dependency was added. Live login, production proxy verification, ingress rate limiting, expiry pruning and onboarding remain pending.
+
+## Part 7 · Phase 7.2 — Installation linking
+
+- Added a callable GitHub App installation linker requiring both a fresh DogWatch owner session and independently verified GitHub account authority. Personal installs require exact account ownership; organizations require active admin membership and matching numeric identities.
+- Reconciled user-accessible installations with App-authenticated metadata, bounded pagination and a final installation recheck. Suspended, inaccessible, foreign-App and changed-account cases fail closed.
+- Added transactional persistence using existing installation uniqueness and locked session/user/membership rows. Same-tenant retries are idempotent; cross-tenant reassignment is refused. Local role changes, disablement, expiry and logout are checked at commit.
+- Kept token acquisition separate from Phase 7.1 login, which intentionally discards credentials. Browser linking routes, onboarding UI and live GitHub permission verification remain pending; no automatic credential widening, repository registration or migration was introduced.
+
+Next proposed phase: Part 7, Phase 7.3 — tenant isolation verification. Stop before implementation.
+
+### Phase 7.2 verification
+
+All 283 tests passed, including seven new synthetic GitHub installation-link tests. Real local PostgreSQL checks passed for concurrent same-tenant idempotence, competing tenant claims, actor mismatch, demotion, disablement, expired sessions and logout. Random fixtures were removed. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The generated web declaration was restored to its starting content. No live GitHub request, customer data, migration, dependency or hosted CI run was introduced. Browser token acquisition, live permissions and automatic installation lifecycle reconciliation remain pending.

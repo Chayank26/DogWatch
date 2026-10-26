@@ -271,3 +271,7 @@ The API reporter now shares its scoped authentication, owned-object reconciliati
 ## Part 7 · Phase 7.1 — Login and membership
 
 Express exposes optional GitHub OAuth routes backed by new Prisma identity, membership, login-attempt and session tables. Node crypto generates 256-bit state/verifier/session values; PostgreSQL stores hashes and consumes bound attempts with one conditional deletion. Sessions rotate transactionally and resolve fresh membership/user-disablement state. GitHub numeric identity is independent of mutable login names and App installation authority. Fixed origins, secure host cookies, PKCE, bounded provider reads and Origin-checked logout protect the browser boundary. No dependency was added. See [identity setup and limits](apps/api/IDENTITY.md).
+
+## Part 7 · Phase 7.2 — Installation linking
+
+Existing Octokit App/user authentication verifies immutable actor/account/App identities and active organization-admin authority. A separate database adapter locks current session, user and owner-membership rows before committing to the existing globally unique Installation table. Conditional insertion provides same-tenant idempotence and cross-tenant conflict refusal without reassignment. Runtime schemas validate both boundaries; secrets remain transient. No dependency or migration was needed. See [installation linking](apps/api/INSTALLATION_LINKING.md) for the trusted token source and remote-race limitations.

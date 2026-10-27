@@ -50,6 +50,8 @@ model Repository {
   fullName       String
   installation   Installation @relation(fields: [tenantId, installationId], references: [tenantId, id], onDelete: Restrict)
   runs           Run[]
+  manualSettings ManualRunSettings?
+  controlEvents RunControlEvent[]
 
   @@unique([tenantId, id])
   @@index([tenantId, installationId])
@@ -154,4 +156,29 @@ model LoginAttempt {
   browserHash String @db.VarChar(64)
   expiresAt DateTime @db.Timestamptz(3)
   @@index([expiresAt])
+}
+
+
+model ManualRunSettings {
+  repositoryId BigInt @id
+  tenantId String @db.Uuid
+  revision Int
+  enabled Boolean
+  budget Json
+  @@unique([tenantId, repositoryId])
+  repository Repository @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
+}
+
+model RunControlEvent {
+  id String @id @default(uuid()) @db.Uuid
+  tenantId String @db.Uuid
+  repositoryId BigInt
+  actorId BigInt
+  kind String
+  revision Int
+  sourceRunId String @db.Uuid
+  resultRunId String? @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  repository Repository @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
+  @@index([tenantId, repositoryId, createdAt])
 }

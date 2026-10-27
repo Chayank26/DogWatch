@@ -1,4 +1,5 @@
 'use client';
+import Controls from './controls';
 import { useEffect, useRef, useState } from 'react';
 type Run = {
   id: string;
@@ -11,9 +12,9 @@ type Run = {
   evidence?: { message: string };
 };
 export default function Runs() {
-  const [workspaces, setWorkspaces] = useState<{ id: string; name: string }[]>(
-    [],
-  );
+  const [workspaces, setWorkspaces] = useState<
+    { id: string; name: string; role: string }[]
+  >([]);
   const [tenant, setTenant] = useState('');
   const [runs, setRuns] = useState<Run[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -213,6 +214,16 @@ export default function Runs() {
           )}
         </>
       )}
+      {detail &&
+        workspaces.find((workspace) => workspace.id === tenant)?.role ===
+          'owner' &&
+        !signedOut && (
+          <Controls
+            key={tenant + detail.id}
+            tenantId={tenant}
+            runId={detail.id}
+          />
+        )}
     </main>
   );
 }

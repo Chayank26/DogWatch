@@ -116,3 +116,5 @@ Phase 7.3 adds `npm run tenant-isolation:verify` for focused boundary tests and 
 Phase 7.4 adds `/onboarding` for sign-in, first-workspace creation and setup status. See [onboarding setup](apps/api/ONBOARDING.md) for matching browser/API origins and remaining administrator-assisted installation/repository steps. Run `npm run db:verify:onboarding` for local transaction verification.
 
 Phase 7.5 adds `/runs` with authorized workspace run lists/details and an explicit evidence-availability panel. Actual findings and artifact downloads await durable cataloging. See [run views](apps/api/RUN_VIEWS.md); verify local persistence with `npm run db:verify:run-views`.
+
+Phase 7.6 adds owner-only manual rerun settings and requests from run details. Apply migrations first. [Run controls](apps/api/RUN_CONTROLS.md) describes revision checks, current-head verification, audit records, idempotency and manual-only scope. Verify local transactions with `npm run db:verify:run-controls`.

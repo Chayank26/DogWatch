@@ -606,3 +606,17 @@ Next proposed phase: Part 7, Phase 7.6 — configuration and reruns. Stop before
 ### Phase 7.5 verification
 
 All 287 tests passed. Real local PostgreSQL checks verified member reads, 51-run pagination with equal timestamps, cross-tenant/run/cursor refusal, private-field omission and membership/session revocation. Headless Chromium against the production build with synthetic API responses verified workspace selection, detail/evidence availability, empty/revoked states, clearing old details and mobile overflow. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Random database fixtures were removed, the temporary web server stopped and the generated web declaration restored. Live OAuth, production proxy/TLS, finding ingestion and artifact downloads remain unverified. No migration, dependency or deployment was introduced.
+
+## Part 7 · Phase 7.6 — Configuration and reruns
+
+- Added owner-only repository settings for manual rerun enablement and bounded budgets, with optimistic revision checks and audit metadata. File-backed webhook policies remain independent and the UI states that scope.
+- Added Origin/session/schema-protected routes and owner controls on run details. Unsaved settings disable requests; network retries retain the same request UUID within the detail view.
+- Added current GitHub PR/install verification and atomic received-run/outbox/audit creation, rechecking owner authority and configuration revision at commit. Duplicate requests return the original run; active work blocks another request for that PR.
+- Applied an additive manual-settings/control-audit migration. Source runs and private evidence remain unchanged; new runs capture the current SHA and fresh policy/budget without copying preview readiness.
+- Used the Sites skill locally. No live GitHub mutation, QA execution, dependency or deployment was introduced. Broader preview/contract/identity configuration, cancellation, quotas and production consumption remain pending.
+
+Next proposed phase: Part 7, Phase 7.7 — usage ledger and quotas. Stop before implementation.
+
+### Phase 7.6 verification
+
+All 291 tests passed, including new service and HTTP run-control tests. Real PostgreSQL checks verified owner scope, settings revision races, disabled requests, duplicate reruns, atomic outbox/audit records, current-SHA snapshots, active-run refusal and revoked authority. Chromium against the production build with synthetic API responses verified owner controls, save-before-request behavior, accepted/duplicate feedback, stable retry IDs and unsaved-edit guards. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The additive migration applied; random database fixtures were removed, the temporary web server stopped and the generated web declaration restored. An initial Prisma relation uniqueness error and UI syntax error were corrected before successful checks. No live GitHub request, QA execution, dependency or deployment was introduced.

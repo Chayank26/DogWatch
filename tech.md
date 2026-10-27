@@ -287,3 +287,7 @@ Next.js client state and a server-configured `/auth/*` rewrite connect the setup
 ## Part 7 · Phase 7.5 — Run and evidence views
 
 A Prisma read adapter combines current session/membership row locks, mandatory tenant filters, explicit safe-field projections and stable timestamp/UUID pagination. Express exposes no-store read routes; Next.js renders text-only metadata and tracks request generations to discard late results after selection changes. Evidence reports not-cataloged until durable references and content authorization exist. See [run views](apps/api/RUN_VIEWS.md).
+
+## Part 7 · Phase 7.6 — Configuration and reruns
+
+Prisma manual-settings and control-audit tables support locked owner-authorized updates, revision conflict detection and UUID-idempotent manual run acceptance. The GitHub resolver supplies current immutable PR context before a second transactional guard snapshots policy and budget with an outbox record. Express bounds JSON and checks Origin; the Next.js owner form tracks unsaved state and retry identity. See [run controls](apps/api/RUN_CONTROLS.md) for the manual-only configuration scope and execution limits.

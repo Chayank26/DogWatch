@@ -327,3 +327,9 @@ Installation linking and repository configuration still require administrator as
 Members open Runs from setup, select a workspace, browse recorded runs and open details. Refresh reloads the latest page; older pages use tenant-scoped cursors. Revoked or foreign access returns unavailable without exposing records.
 
 Details show immutable commit and lifecycle metadata. The evidence panel states that evidence is not cataloged and cannot support a verdict. Actual finding content and downloads are not available yet. These views are read-only and cannot rerun or cancel work.
+
+## Part 7 · Phase 7.6 — Configuration and reruns
+
+An owner opens an existing run, enables manual requests and saves repository budget limits. Requesting a rerun checks the current open PR and creates new durable work with its current SHA. The UI reports acceptance, and the user refreshes the list to follow the new run. Members cannot change settings or request work.
+
+Concurrent settings edits conflict; duplicate request IDs resolve to the original run. Existing active work prevents another request. The source run, evidence and webhook policy are not modified. Execution and preview readiness are not implied by acceptance.

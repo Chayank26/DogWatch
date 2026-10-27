@@ -1,10 +1,12 @@
 /** API process entry point; configure secrets in the shell, never in source files. */
+import { createRerunService } from './run-controls.js';
 import { createApiApp } from './app.js';
 import { createIdentityRouter, validateLoginConfig } from './identity.js';
 import {
   createIdentityStore,
   createOnboardingStore,
   createRunViewStore,
+  createRunControlStore,
 } from '@dogwatch/database';
 import { readFileSync } from 'node:fs';
 import { parsePolicies } from './authorization.js';
@@ -82,6 +84,15 @@ const server = createApiApp(
         () => new Date(),
         createOnboardingStore(database),
         createRunViewStore(database),
+        {
+          store: createRunControlStore(database),
+          rerun: authorization
+            ? createRerunService(
+                createRunControlStore(database),
+                authorization.resolvePullRequest,
+              )
+            : undefined,
+        },
       )
     : undefined,
 ).listen(port, '127.0.0.1', () => {

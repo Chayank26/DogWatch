@@ -1,7 +1,12 @@
 /** Opt-in browser identity. OAuth credentials never enter sessions or worker inputs. */
 import { Router, json } from 'express';
 import { workspaceNameSchema } from '@dogwatch/database';
-import type { OnboardingStore, RunViewStore } from '@dogwatch/database';
+import type {
+  OnboardingStore,
+  RunViewStore,
+  RunControlStore,
+  ControlScope,
+} from '@dogwatch/database';
 import type { Request } from 'express';
 import { createHash, randomBytes } from 'node:crypto';
 import { z } from 'zod';
@@ -59,6 +64,10 @@ export function createIdentityRouter(
   now = () => new Date(),
   onboarding?: OnboardingStore,
   runs?: RunViewStore,
+  controls?: {
+    store: RunControlStore;
+    rerun?: (scope: ControlScope, requestId: string) => Promise<unknown>;
+  },
 ) {
   const config = validateLoginConfig(input);
   const secure = config.origin.startsWith('https:');
@@ -349,6 +358,89 @@ export function createIdentityRouter(
           .json({ error: 'Run view unavailable' });
       }
     });
+  }
+  if (controls) {
+    const controlPath = '/tenants/:tenantId/runs/:runId';
+    router.use(controlPath, (req, res, next) => {
+      if (req.method !== 'GET' && req.get('origin') !== config.origin) {
+        res.status(403).json({ error: 'Invalid origin' });
+        return;
+      }
+      next();
+    });
+    const scopeFor = (req: Request) => {
+      const session = cookie(req, sessionName);
+      if (!session) throw Error('control_login_required');
+      return {
+        sessionHash: hash(session),
+        ...z.object({ tenantId: z.uuid(), runId: z.uuid() }).parse(req.params),
+      };
+    };
+    const fail = (res: import('express').Response, error: unknown) => {
+      const code = error instanceof Error ? error.message : '';
+      res
+        .status(
+          error instanceof z.ZodError
+            ? 400
+            : code === 'control_login_required'
+              ? 401
+              : code === 'control_not_found'
+                ? 404
+                : [
+                      'control_revision_conflict',
+                      'control_request_conflict',
+                      'control_run_active',
+                      'control_disabled',
+                      'control_pr_unavailable',
+                    ].includes(code)
+                  ? 409
+                  : 503,
+        )
+        .json({
+          error: [
+            'control_revision_conflict',
+            'control_run_active',
+            'control_disabled',
+            'control_pr_unavailable',
+          ].includes(code)
+            ? code
+            : 'Run control unavailable',
+        });
+    };
+    router.get(controlPath + '/configuration', async (req, res) => {
+      try {
+        res.json(await controls.store.get(scopeFor(req)));
+      } catch (error) {
+        fail(res, error);
+      }
+    });
+    router.post(
+      controlPath + '/configuration',
+      json({ limit: '4kb', inflate: false }),
+      async (req, res) => {
+        try {
+          res.json(await controls.store.save(scopeFor(req), req.body));
+        } catch (error) {
+          fail(res, error);
+        }
+      },
+    );
+    router.post(
+      controlPath + '/rerun',
+      json({ limit: '1kb', inflate: false }),
+      async (req, res) => {
+        try {
+          const scope = scopeFor(req);
+          const { requestId } = z
+            .strictObject({ requestId: z.uuid() })
+            .parse(req.body);
+          if (!controls.rerun) throw Error('control_unconfigured');
+          res.status(202).json(await controls.rerun(scope, requestId));
+        } catch (error) {
+          fail(res, error);
+        }
+      },
+    );
   }
   router.post('/logout', async (req, res) => {
     if (req.get('origin') !== config.origin) {

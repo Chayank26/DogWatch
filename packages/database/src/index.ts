@@ -43,3 +43,11 @@ export type { OnboardingStore, OnboardingStatus } from './onboarding.js';
 
 export { createRunViewStore } from './run-views.js';
 export type { RunViewStore, RunView, RunDetail } from './run-views.js';
+
+export { createRunControlStore, manualSettingsSchema } from './run-controls.js';
+export type {
+  RunControlStore,
+  ControlScope,
+  RerunContext,
+  ManualSettings,
+} from './run-controls.js';

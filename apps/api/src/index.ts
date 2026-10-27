@@ -1,7 +1,11 @@
 /** API process entry point; configure secrets in the shell, never in source files. */
 import { createApiApp } from './app.js';
 import { createIdentityRouter, validateLoginConfig } from './identity.js';
-import { createIdentityStore, createOnboardingStore } from '@dogwatch/database';
+import {
+  createIdentityStore,
+  createOnboardingStore,
+  createRunViewStore,
+} from '@dogwatch/database';
 import { readFileSync } from 'node:fs';
 import { parsePolicies } from './authorization.js';
 import { createGitHubResolver } from './github.js';
@@ -77,6 +81,7 @@ const server = createApiApp(
         fetch,
         () => new Date(),
         createOnboardingStore(database),
+        createRunViewStore(database),
       )
     : undefined,
 ).listen(port, '127.0.0.1', () => {

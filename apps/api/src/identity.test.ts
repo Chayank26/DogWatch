@@ -94,6 +94,21 @@ async function fixture(secure = false, onboardingEnabled = false) {
             },
           }
         : undefined,
+      onboardingEnabled
+        ? {
+            async list(tokenHash, tenantId) {
+              if (
+                !sessions.has(tokenHash) ||
+                tenantId !== identity.memberships[0].tenantId
+              )
+                throw Error('run_view_not_found');
+              return { runs: [], nextCursor: null };
+            },
+            async detail() {
+              throw Error('run_view_not_found');
+            },
+          }
+        : undefined,
     ),
   );
   const server = app.listen(0, '127.0.0.1');
@@ -402,6 +417,29 @@ test('onboarding routes require a session, exact Origin and a strict workspace p
     ])
       assert.equal((await create(body)).status, 400);
     assert.equal((await create({ name: ' My team ' })).status, 200);
+  } finally {
+    await f.close();
+  }
+});
+
+test('run routes require a session and conceal inaccessible tenants and runs', async () => {
+  const f = await fixture(false, true);
+  try {
+    const tenant = f.identity.memberships[0].tenantId;
+    assert.equal((await f.request(`/auth/tenants/${tenant}/runs`)).status, 401);
+    const { cookie } = await f.login();
+    const get = (path: string) => f.request(path, { headers: { cookie } });
+    const response = await get(`/auth/tenants/${tenant}/runs`);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    assert.deepEqual(await response.json(), { runs: [], nextCursor: null });
+    for (const path of [
+      `/auth/tenants/${randomUUID()}/runs`,
+      `/auth/tenants/${tenant}/runs/${randomUUID()}`,
+      `/auth/tenants/${tenant}/runs?after=invalid`,
+      `/auth/tenants/${tenant}/runs?tenantId=forged`,
+    ])
+      assert.equal((await get(path)).status, 404);
   } finally {
     await f.close();
   }

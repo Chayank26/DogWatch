@@ -28,3 +28,5 @@ The application database role is privileged and can read both tenants. PostgreSQ
 There is no production QA consumer, public run/evidence dashboard API, authenticated artifact-download route or browser installation-linking route yet. Those surfaces need additional adversarial integration tests when implemented. Hosted storage, distributed leases, live GitHub credentials, production service roles and hosted CI are outside this verification. The suite is a manual local command; the ordinary CI unit-test step includes the added resolver and artifact regressions but does not automatically start this database suite.
 
 Phase 7.4 is onboarding. New surfaces must retain these checks and extend this matrix rather than treating the current passing suite as blanket authorization to expose internal adapters.
+
+Phase 7.5 adds public authenticated run-metadata reads. Their separate `npm run db:verify:run-views` gate checks member access, foreign tenant/run/cursor refusal and revocation with real local PostgreSQL; HTTP tests cover route/session behavior. This updates the earlier pending run-API boundary. Artifact downloads, RLS and production consumption remain pending.

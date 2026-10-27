@@ -592,3 +592,17 @@ Next proposed phase: Part 7, Phase 7.5 — run and evidence views. Stop before i
 ### Phase 7.4 verification
 
 All 286 tests passed. Real PostgreSQL checks verified atomic first-workspace creation, concurrent duplicate submissions, owner assignment, tenant-scoped status and role/disablement/revocation guards; random fixtures were removed. Headless Chromium against the production-built page with synthetic API responses verified signed-out, unavailable/retry, creation, setup checklist, mobile overflow and logout states. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The temporary web server was stopped and the generated web declaration restored. Live GitHub OAuth, production proxy/TLS and install-to-first-run onboarding remain unverified. No migration, dependency or deployment was introduced.
+
+## Part 7 · Phase 7.5 — Run and evidence views
+
+- Added the `/runs` UI with workspace selection, bounded recent/older run pages, detail view and explicit loading/empty/inaccessible states. Workspace changes clear prior results and late responses cannot replace a newer selection.
+- Added tenant-authorized read endpoints and a database adapter that locks current session/user/membership rows through scoped queries. Unknown/foreign tenants, runs and cursors are concealed; both owners and members can read.
+- Selected only safe run metadata; policy, budget and preview snapshots, delivery identities and artifact paths remain private. Completed state is not represented as a passing verdict.
+- Added an explicit not-cataloged evidence panel because durable finding/reference ingestion does not exist yet. Actual findings and authenticated artifact downloads remain pending; no private directory scan or fabricated empty finding list was added.
+- Used the Sites local-only workflow and installed Next.js guidance. No migration, dependency or deployment was introduced.
+
+Next proposed phase: Part 7, Phase 7.6 — configuration and reruns. Stop before implementation.
+
+### Phase 7.5 verification
+
+All 287 tests passed. Real local PostgreSQL checks verified member reads, 51-run pagination with equal timestamps, cross-tenant/run/cursor refusal, private-field omission and membership/session revocation. Headless Chromium against the production build with synthetic API responses verified workspace selection, detail/evidence availability, empty/revoked states, clearing old details and mobile overflow. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Random database fixtures were removed, the temporary web server stopped and the generated web declaration restored. Live OAuth, production proxy/TLS, finding ingestion and artifact downloads remain unverified. No migration, dependency or deployment was introduced.

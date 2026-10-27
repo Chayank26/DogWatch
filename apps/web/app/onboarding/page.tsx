@@ -90,6 +90,7 @@ export default function Onboarding() {
         DogWatch
       </a>
       <h1>Set up your workspace.</h1>
+      <a href="/runs">View runs and evidence</a>
       <p className="intro">
         Bring your team’s pull requests into one place. Start with your
         workspace, then connect an installation and prepare a repository.

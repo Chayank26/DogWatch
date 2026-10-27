@@ -321,3 +321,9 @@ This verifies implemented boundaries without exposing new product routes. Privil
 A visitor enters setup and signs in through GitHub. Users without memberships can create their first workspace and become its owner; existing users see only their own workspace memberships and recorded setup counts. Errors offer retry, and logout revokes the session.
 
 Installation linking and repository configuration still require administrator assistance. The checklist explains those limits and never starts QA or infers readiness from a stored record. The UI is local repository code and was not deployed.
+
+## Part 7 · Phase 7.5 — Run and evidence views
+
+Members open Runs from setup, select a workspace, browse recorded runs and open details. Refresh reloads the latest page; older pages use tenant-scoped cursors. Revoked or foreign access returns unavailable without exposing records.
+
+Details show immutable commit and lifecycle metadata. The evidence panel states that evidence is not cataloged and cannot support a verdict. Actual finding content and downloads are not available yet. These views are read-only and cannot rerun or cancel work.

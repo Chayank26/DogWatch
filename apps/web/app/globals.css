@@ -111,3 +111,31 @@ input {
   border-radius: 8px;
   color: #ffd0c9;
 }
+
+select {
+  display: block;
+  max-width: 100%;
+  margin: 12px 0 20px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #17232b;
+  color: #edf4f1;
+  border: 1px solid #84998f;
+  font: inherit;
+}
+.run-list {
+  list-style: none;
+  padding: 0;
+}
+.run-list li {
+  padding: 18px 0;
+  border-bottom: 1px solid #35463f;
+}
+dt {
+  font-weight: 600;
+  margin-top: 16px;
+}
+dd {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}

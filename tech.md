@@ -283,3 +283,7 @@ A dedicated npm gate composes focused Node tests with local PostgreSQL identity,
 ## Part 7 · Phase 7.4 — Onboarding
 
 Next.js client state and a server-configured `/auth/*` rewrite connect the setup page to Express. The API adds bounded, Origin-checked bootstrap requests and membership-scoped setup summaries. Prisma transactions lock session/user rows and create tenant/owner records atomically; same-name retries return the original workspace. No migration or dependency was required. See [onboarding configuration and limits](apps/api/ONBOARDING.md).
+
+## Part 7 · Phase 7.5 — Run and evidence views
+
+A Prisma read adapter combines current session/membership row locks, mandatory tenant filters, explicit safe-field projections and stable timestamp/UUID pagination. Express exposes no-store read routes; Next.js renders text-only metadata and tracks request generations to discard late results after selection changes. Evidence reports not-cataloged until durable references and content authorization exist. See [run views](apps/api/RUN_VIEWS.md).

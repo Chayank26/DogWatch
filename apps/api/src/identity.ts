@@ -1,7 +1,7 @@
 /** Opt-in browser identity. OAuth credentials never enter sessions or worker inputs. */
 import { Router, json } from 'express';
 import { workspaceNameSchema } from '@dogwatch/database';
-import type { OnboardingStore } from '@dogwatch/database';
+import type { OnboardingStore, RunViewStore } from '@dogwatch/database';
 import type { Request } from 'express';
 import { createHash, randomBytes } from 'node:crypto';
 import { z } from 'zod';
@@ -58,6 +58,7 @@ export function createIdentityRouter(
   transport: typeof fetch = fetch,
   now = () => new Date(),
   onboarding?: OnboardingStore,
+  runs?: RunViewStore,
 ) {
   const config = validateLoginConfig(input);
   const secure = config.origin.startsWith('https:');
@@ -306,6 +307,48 @@ export function createIdentityRouter(
         }
       },
     );
+  }
+  if (runs) {
+    router.get('/tenants/:tenantId/runs{/:runId}', async (req, res) => {
+      const session = cookie(req, sessionName);
+      if (!session) {
+        res.status(401).json({ error: 'Login required' });
+        return;
+      }
+      const scope = z
+        .object({ tenantId: z.uuid(), runId: z.uuid().optional() })
+        .safeParse(req.params);
+      const query = z
+        .strictObject({ after: z.uuid().optional() })
+        .safeParse(req.query);
+      if (!scope.success || !query.success) {
+        res.status(404).json({ error: 'Run view not found' });
+        return;
+      }
+      try {
+        res.json(
+          scope.data.runId
+            ? await runs.detail(
+                hash(session),
+                scope.data.tenantId,
+                scope.data.runId,
+              )
+            : await runs.list(
+                hash(session),
+                scope.data.tenantId,
+                query.data.after,
+              ),
+        );
+      } catch (error) {
+        res
+          .status(
+            error instanceof Error && error.message === 'run_view_not_found'
+              ? 404
+              : 503,
+          )
+          .json({ error: 'Run view unavailable' });
+      }
+    });
   }
   router.post('/logout', async (req, res) => {
     if (req.get('origin') !== config.origin) {

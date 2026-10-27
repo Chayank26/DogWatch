@@ -634,3 +634,17 @@ Next proposed phase: Part 8, Phase 8.1 — logs and tracing. Stop before impleme
 ### Phase 7.7 verification
 
 All 293 tests passed. Real local PostgreSQL checks passed for cross-repository quota races, exact retries at capacity, rollback of supersession/work creation, measured settlement retries/conflicts, retained overruns, UTC cohorts, pending reservations and legacy dispatcher deferral/handoff. Existing acceptance and manual-rerun suites passed. The additive migration applied and reapplication was a no-op. Chromium with synthetic responses verified quota/pending labels, revoked-state clearing and mobile width. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Random fixtures were removed, the temporary web server stopped and the generated web declaration restored. No live usage measurement, customer execution, dependency or deployment was introduced; production settlement and historical reconciliation remain pending.
+
+## Part 8 · Phase 8.1 — Logs and tracing
+
+- Added a dependency-free internal telemetry workspace with versioned JSON records, fixed event/outcome values and a bounded metadata allowlist. Raw payloads, URLs/query strings, headers and exception text are excluded.
+- Added server-generated HTTP request IDs, async-local context isolation, response/abort completion records and durable run correlation across acceptance, dispatcher and queue attempts. Incoming correlation headers cannot override server identity.
+- Logged dispatcher outcomes after transaction completion, separated Redis acknowledgement from commit, and suppressed idle polling. Sink/formatting failures fail open; stdout backpressure drops records with a local diagnostic count.
+- Replaced ad-hoc API/dispatcher/queue lifecycle errors with structured events and retained the disabled production-consumer boundary. Added telemetry/HTTP tests and real local dispatcher/queue verification.
+- Updated the old queue fixture to satisfy the newer budget/quota contracts. No third-party dependency, database migration, browser change or deployment was introduced. External tracing collectors, retention, metrics and alerts remain pending.
+
+Next proposed phase: Part 8, Phase 8.2 — metrics and alerts. Stop before implementation.
+
+### Phase 8.1 verification
+
+All 300 tests passed, including seven new telemetry/HTTP cases covering field allowlists, secret omission, concurrent context isolation, stable run traces, distinct spans, spoofed headers, aborted requests and sink failure isolation. Real PostgreSQL verification checked committed dispatch outcomes, correlation and broken-sink behavior. Real Redis integration passed after replacing an obsolete fixture budget and assigning test-only quota capacity; crash-window reconciliation, retries, concurrency and invalid-job checks passed. Workspace type checks, builds, lint, formatting and whitespace checks passed. The lockfile adds only a local workspace link, with no third-party package added. Random database/queue fixtures were removed and the generated web declaration restored. No live customer request, browser run, migration, external collector or deployment was exercised.

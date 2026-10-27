@@ -18,17 +18,26 @@
     "typecheck": "npm run generate && tsc --noEmit",
     "verify": "tsx src/verify.ts",
     "verify:acceptance": "tsx src/verify-acceptance.ts",
-    "prebuild": "npm run build -w @dogwatch/contracts",
-    "pretypecheck": "npm run build -w @dogwatch/contracts",
-    "preverify": "npm run build -w @dogwatch/contracts",
-    "preverify:acceptance": "npm run build -w @dogwatch/contracts",
+    "prebuild": "npm run build -w @dogwatch/telemetry && npm run build -w @dogwatch/contracts",
+    "pretypecheck": "npm run build -w @dogwatch/telemetry && npm run build -w @dogwatch/contracts",
+    "preverify": "npm run build -w @dogwatch/telemetry && npm run build -w @dogwatch/contracts",
+    "preverify:acceptance": "npm run build -w @dogwatch/telemetry && npm run build -w @dogwatch/contracts",
     "verify:identity": "tsx src/verify-identity.ts",
     "verify:installation-link": "tsx src/verify-installation-link.ts",
     "verify:tenant-isolation": "tsx src/verify-tenant-isolation.ts",
     "verify:onboarding": "tsx src/verify-onboarding.ts",
     "verify:run-views": "tsx src/verify-run-views.ts",
     "verify:run-controls": "tsx src/verify-run-controls.ts",
-    "verify:usage": "tsx src/verify-usage.ts"
+    "verify:usage": "tsx src/verify-usage.ts",
+    "preverify:identity": "npm run build -w @dogwatch/telemetry",
+    "preverify:installation-link": "npm run build -w @dogwatch/telemetry",
+    "preverify:tenant-isolation": "npm run build -w @dogwatch/telemetry",
+    "preverify:onboarding": "npm run build -w @dogwatch/telemetry",
+    "preverify:run-views": "npm run build -w @dogwatch/telemetry",
+    "preverify:run-controls": "npm run build -w @dogwatch/telemetry",
+    "preverify:usage": "npm run build -w @dogwatch/telemetry",
+    "verify:telemetry": "tsx src/verify-telemetry.ts",
+    "preverify:telemetry": "npm run build -w @dogwatch/telemetry"
   },
   "devDependencies": {
     "prisma": "^7.10.0"
@@ -38,6 +47,7 @@
     "@prisma/client": "^7.10.0",
     "dotenv": "^17.4.2",
     "pg": "^8.23.1",
-    "@dogwatch/contracts": "0.1.0"
+    "@dogwatch/contracts": "0.1.0",
+    "@dogwatch/telemetry": "0.1.0"
   }
 }

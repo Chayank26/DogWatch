@@ -1,6 +1,8 @@
 /** Queue primitives: only UUID references cross Redis, never credentials/source. */
 import { Queue, Worker, UnrecoverableError } from 'bullmq';
 import type { ConnectionOptions, Job } from 'bullmq';
+import { createLogger, runTrace, withTrace } from '@dogwatch/telemetry';
+const log = createLogger('queue');
 import { z } from 'zod';
 
 export const runJobSchema = z.strictObject({
@@ -42,9 +44,7 @@ export function createRunQueue(redisUrl: string, name = 'dogwatch-runs') {
     },
   });
   // Avoid unhandled emitter errors; operators receive sanitized diagnostic codes.
-  queue.on('error', () =>
-    process.stderr.write('DogWatch queue connection error\n'),
-  );
+  queue.on('error', () => log('queue.connection', 'failed'));
   return queue;
 }
 
@@ -67,7 +67,15 @@ export async function enqueueRun(queue: Queue<RunJob>, input: RunJob) {
       'Queue identity conflicts with durable run',
     );
   }
-  return queue.add('run.requested', data, { jobId: data.runId });
+  const job = await queue.add('run.requested', data, { jobId: data.runId });
+  withTrace(runTrace(data.runId), () =>
+    log('queue.enqueue', 'completed', {
+      tenantId: data.tenantId,
+      runId: data.runId,
+      jobId: data.runId,
+    }),
+  );
+  return job;
 }
 
 /**
@@ -87,14 +95,37 @@ export function createRunWorker(
     name,
     async (job) => {
       const parsed = runJobSchema.safeParse(job.data);
-      if (!parsed.success || job.name !== 'run.requested')
+      if (!parsed.success || job.name !== 'run.requested') {
+        log('queue.process', 'failed');
         throw new UnrecoverableError('Invalid run job');
-      return processor(parsed.data, job);
+      }
+      return withTrace(runTrace(parsed.data.runId), async () => {
+        const fields = {
+          tenantId: parsed.data.tenantId,
+          runId: parsed.data.runId,
+          jobId: job.id,
+          attempt: job.attemptsMade + 1,
+        };
+        const started = performance.now();
+        log('queue.process', 'started', fields);
+        try {
+          const result = await processor(parsed.data, job);
+          log('queue.process', 'completed', {
+            ...fields,
+            durationMs: performance.now() - started,
+          });
+          return result;
+        } catch (error) {
+          log('queue.process', 'failed', {
+            ...fields,
+            durationMs: performance.now() - started,
+          });
+          throw error;
+        }
+      });
     },
     { connection: connection(redisUrl, true), concurrency, maxStalledCount: 1 },
   );
-  worker.on('error', () =>
-    process.stderr.write('DogWatch worker connection error\n'),
-  );
+  worker.on('error', () => log('queue.connection', 'failed'));
   return worker;
 }

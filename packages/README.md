@@ -19,3 +19,7 @@ See [database setup](database/README.md) for local Postgres/Redis, schema owners
 ## Queue — Phase 2.4
 
 The [queue package](queue/README.md) provides Redis job identity, payload validation, retry defaults, and an injected worker harness. Configured runner startup dispatches committed database outbox records; it does not execute QA tiers yet.
+
+## Telemetry — Phase 8.1
+
+The [telemetry workspace](telemetry/README.md) provides allowlisted JSON logging, asynchronous request context and durable run correlation using Node built-ins. API, database dispatcher and queue consumers build it before use. No external logging or tracing service is configured.

@@ -47,7 +47,7 @@ async function createPending() {
       pullRequestNumber: 42,
       headSha: 'a'.repeat(40),
       policySnapshot: { fixture: true },
-      budgetSnapshot: { fixture: true },
+      budgetSnapshot: {},
     },
   });
   await db.outboxEvent.create({ data: { tenantId, runId: run.id } });
@@ -58,6 +58,8 @@ try {
   await db.tenant.create({
     data: { id: tenantId, name: 'Queue verification fixture' },
   });
+  // This suite measures queue retries/concurrency, not admission quotas.
+  await db.tenantQuota.create({ data: { tenantId, maxConcurrent: 10 } });
   await db.installation.create({ data: { id: installationId, tenantId } });
   await db.repository.create({
     data: {

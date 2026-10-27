@@ -4,6 +4,14 @@
  * queue dispatch occurs in the separate worker process.
  */
 import express from 'express';
+import {
+  createLogger,
+  protectLogger,
+  newTrace,
+  withTrace,
+  runTrace,
+} from '@dogwatch/telemetry';
+import type { Logger } from '@dogwatch/telemetry';
 import type { Router } from 'express';
 import type { ErrorRequestHandler } from 'express';
 import { verifyGitHubSignature } from './webhook.js';
@@ -28,9 +36,39 @@ export function createApiApp(
   persist?: (input: AcceptanceInput) => Promise<AcceptanceResult>,
   stop?: (input: StopInput) => Promise<number>,
   identity?: Router,
+  log: Logger = createLogger('api'),
 ) {
+  log = protectLogger(log);
   const app = express();
   app.disable('x-powered-by');
+  app.use((request, response, next) => {
+    const trace = newTrace();
+    const started = performance.now();
+    let recorded = false;
+    response.set('X-Request-ID', trace.requestId);
+    const complete = (aborted: boolean) => {
+      if (recorded) return;
+      recorded = true;
+      log(
+        'http.request',
+        aborted
+          ? 'aborted'
+          : response.statusCode >= 500
+            ? 'failed'
+            : 'completed',
+        {
+          ...trace,
+          method: request.method,
+          route: request.route?.path ?? 'unmatched',
+          ...(aborted ? {} : { statusCode: response.statusCode }),
+          durationMs: performance.now() - started,
+        },
+      );
+    };
+    response.once('finish', () => complete(false));
+    response.once('close', () => complete(!response.writableFinished));
+    withTrace(trace, next);
+  });
   if (identity) app.use('/auth', identity);
   app.get('/health', (_request, response) =>
     response.json({ service: 'dogwatch-api', status: 'ok' }),
@@ -111,6 +149,13 @@ export function createApiApp(
               .update(request.body)
               .digest('hex'),
           });
+          withTrace(runTrace(saved.runId), () =>
+            log('webhook.acceptance', saved.status, {
+              tenantId: result.event.tenantId,
+              runId: saved.runId,
+              deliveryId: result.event.deliveryId,
+            }),
+          );
           response.status(saved.status === 'accepted' ? 202 : 200).json(saved);
           return;
         }

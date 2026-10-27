@@ -38,10 +38,15 @@ test('manual rerun resolves current SHA and delegates a bound context without tr
     },
   } as RunControlStore;
   const requestId = randomUUID();
-  await createRerunService(store, async (installation, repo, number) => {
-    assert.deepEqual([installation, repo, number], [10, 20, 42]);
-    return pr;
-  })(scope, requestId);
+  const result = await createRerunService(
+    store,
+    async (installation, repo, number) => {
+      assert.deepEqual([installation, repo, number], [10, 20, 42]);
+      return pr;
+    },
+  )(scope, requestId);
+  assert.equal(result.status, 'accepted');
+  assert.equal(result.queued, false);
   assert.equal(commits, 1);
 });
 test('closed, suspended, forked or mismatched PR contexts cannot create reruns', async () => {

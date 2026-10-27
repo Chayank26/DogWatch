@@ -20,6 +20,7 @@
     "octokit": "^5.0.5",
     "zod": "^4.6.5",
     "@dogwatch/contracts": "0.1.0",
-    "@dogwatch/database": "0.1.0"
+    "@dogwatch/database": "0.1.0",
+    "@dogwatch/telemetry": "0.1.0"
   }
 }

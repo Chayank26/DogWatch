@@ -1,4 +1,6 @@
 /** API process entry point; configure secrets in the shell, never in source files. */
+import { createLogger } from '@dogwatch/telemetry';
+const log = createLogger('api');
 import { createRerunService } from './run-controls.js';
 import { createApiApp } from './app.js';
 import { createIdentityRouter, validateLoginConfig } from './identity.js';
@@ -98,13 +100,14 @@ const server = createApiApp(
       )
     : undefined,
 ).listen(port, '127.0.0.1', () => {
-  process.stdout.write(`DogWatch API listening on http://127.0.0.1:${port}\n`);
+  log('service.lifecycle', 'started');
 });
 // Graceful shutdown stops new requests and releases keep-alive connections.
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
     server.close(() => {
       void database?.$disconnect();
+      log('service.lifecycle', 'stopped');
     });
     server.closeIdleConnections();
   });

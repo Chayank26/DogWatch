@@ -295,3 +295,7 @@ Prisma manual-settings and control-audit tables support locked owner-authorized 
 ## Part 7 · Phase 7.7 — Usage ledger and quotas
 
 Prisma quota/reservation tables combine tenant-row admission locks, UTC acceptance cohorts, immutable budget reservations and explicit actual counters. Both ingress paths reserve in the same transaction as durable work; dispatcher fallback gates unreserved received work. Internal settlement requires complete measurements and terminal scope, rejects conflicting retries and preserves overruns. A locked membership-authorized summary powers the Next.js usage page. See [usage accounting](apps/api/USAGE.md) for defaults and incomplete-history/settlement limits.
+
+## Part 8 · Phase 8.1 — Logs and tracing
+
+A new internal telemetry workspace uses Node AsyncLocalStorage, crypto-generated request/span IDs and deterministic run trace IDs. A fixed serializer emits JSON metadata with bounded fields; custom/default sink failures cannot alter application outcomes. API completion hooks, post-transaction dispatcher events and Redis processor attempt events provide correlation without changing queue payloads or persisting secrets. Build prerequisites include the local package. See [telemetry contracts and limits](packages/telemetry/README.md).

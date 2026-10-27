@@ -339,3 +339,9 @@ Concurrent settings edits conflict; duplicate request IDs resolve to the origina
 Before accepting work, DogWatch reserves tenant capacity and the run's model budget. Concurrent requests share the same gate. Quota failures return a clear refusal without partially creating work. Members can inspect daily commitments and unsettled reservations from Runs → Usage.
 
 After execution has stopped, a trusted supervisor reports complete usage and settles the reservation. Missing measurements stay pending rather than becoming zero, including cancelled/failed runs. Automated production settlement is not wired yet; unknown outcomes require reconciliation.
+
+## Part 8 · Phase 8.1 — Logs and tracing
+
+Every API request receives a server-generated X-Request-ID. A successful durable acceptance links that request to its run; dispatcher and queue events retain stable run correlation while each attempt gets a separate span. Aborted HTTP responses and failed operations have sanitized outcomes without exposing payloads.
+
+Operators can follow request ID → accepted run ID → dispatch/processor records. Logs are operational evidence, not an audit ledger or proof that customer QA ran. External collectors, searchable dashboards and alerts are not configured yet.

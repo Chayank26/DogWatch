@@ -1,4 +1,5 @@
 import type { RunControlStore, ControlScope } from '@dogwatch/database';
+import { createLogger, withTrace, runTrace } from '@dogwatch/telemetry';
 import { z } from 'zod';
 import type { AuthorizationDependencies } from './authorization.js';
 export function createRerunService(
@@ -22,7 +23,7 @@ export function createRerunService(
       pr.headRepositoryId !== context.repositoryId
     )
       throw Error('control_pr_unavailable');
-    return store.commit(
+    const result = await store.commit(
       scope,
       requestId,
       context,
@@ -31,5 +32,12 @@ export function createRerunService(
         .regex(/^[a-f0-9]{40}$/)
         .parse(pr.headSha),
     );
+    withTrace(runTrace(result.runId), () =>
+      createLogger('api')('manual.acceptance', result.status, {
+        tenantId: scope.tenantId,
+        runId: result.runId,
+      }),
+    );
+    return result;
   };
 }

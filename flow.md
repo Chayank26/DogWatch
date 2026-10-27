@@ -357,3 +357,18 @@ rules; no collector or notification receiver is started automatically. Shutdown
 closes scrape connections. Counters reset with the process; first observations
 create series. Dispatch/queue metrics represent handoff and attempts, not QA
 completion or unique-run billing. See ops/monitoring/README.md for runbooks.
+
+## Phase 8.3 — Recovery verification and operator flow
+
+Disposable source DB → committed run/outbox → child enqueues then terminates →
+DB transaction rolls back while stable Redis identity survives → source snapshot
+restored into a separate DB → concurrent dispatchers reconcile the pending
+handoff once. Further injected transport failures recover within budget or leave
+an explicit failed run with its unknown usage still reserved. Deleting a published
+fixture job leaves a visible queued/missing-job gap; it never authorizes replay.
+
+Operators use the scoped read-only inspection query, pause affected writers,
+preserve evidence, restore into isolation and reconcile DB/queue/artifact/report
+state before resuming. The runbook distinguishes ordinary pending retries from
+exhausted, cancelled, superseded or ambiguous work. Full-system failover and active
+QA-worker recovery remain pending; the drill sends no customer/provider requests.

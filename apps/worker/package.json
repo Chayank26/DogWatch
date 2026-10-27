@@ -37,7 +37,9 @@
     "verify:personas": "node --import tsx src/verify-personas.ts",
     "verify:chaos": "node --import tsx src/verify-chaos.ts",
     "verify:browser-replay": "node --import tsx src/verify-browser-replay.ts",
-    "preverify:browser-replay": "npm run build -w @dogwatch/fixture"
+    "preverify:browser-replay": "npm run build -w @dogwatch/fixture",
+    "preverify:recovery": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
+    "verify:recovery": "node --import tsx src/verify-recovery.ts"
   },
   "dependencies": {
     "@apidevtools/openapi-schemas": "^2.1.0",

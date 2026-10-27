@@ -127,3 +127,8 @@ Phase 8.2 adds optional loopback Prometheus endpoints, bounded event counters an
 latency histograms, plus locally testable alert rules. See the
 [monitoring setup and runbooks](ops/monitoring/README.md). Scraping and production
 notification delivery are not enabled automatically.
+
+Phase 8.3 adds `npm run recovery:verify`: an isolated local dispatcher-crash,
+PostgreSQL backup/restore and retry drill. See the
+[recovery procedures and limitations](ops/recovery/README.md). It creates and
+cleans its own databases/queue; it does not repair production work automatically.

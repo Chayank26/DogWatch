@@ -52,7 +52,8 @@
     "db:verify:run-views": "npm run verify:run-views -w @dogwatch/database",
     "db:verify:run-controls": "npm run verify:run-controls -w @dogwatch/database",
     "db:verify:usage": "npm run verify:usage -w @dogwatch/database",
-    "db:verify:telemetry": "npm run verify:telemetry -w @dogwatch/database"
+    "db:verify:telemetry": "npm run verify:telemetry -w @dogwatch/database",
+    "recovery:verify": "npm run verify:recovery -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

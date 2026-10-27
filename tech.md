@@ -315,3 +315,19 @@ promtool fixtures and operational runbooks. Alerts cover target loss, API errors
 and latency with volume gates, dispatch/Redis failures and telemetry loss.
 Production routing/retention, backlog/readiness metrics and recovery remain
 outside this phase; QA consumption remains disabled.
+
+## Phase 8.3 — Recovery drills
+
+`npm run recovery:verify` creates two disposable local databases and one isolated
+Redis queue. A child dispatcher exits after enqueue while its DB transaction is
+open; the drill checks rollback, restores a custom-format PostgreSQL snapshot
+into a separate database and races dispatchers against the retained stable job.
+It verifies reservation preservation, transient retry, terminal exhaustion and
+refusal to replay a published run after its Redis job disappears. A tenant-scoped
+read-only SQL inspection query supports triage. Cleanup touches generated fixture
+resources only. No runtime recovery endpoint, migration or dependency was added.
+
+`ops/recovery/README.md` documents decision gates, backup scope, cross-store
+reconciliation and unresolved production exercises. Production QA consumption
+remains disabled. Prometheus 3.5.0 config/rule/fixture validation now passes,
+closing the previous phase's tool-download blocker.

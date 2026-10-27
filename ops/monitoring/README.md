@@ -48,14 +48,14 @@ production use. Each rule retains job/instance so operators can identify the
 process. Check sanitized logs using time and run/request correlation; never add
 IDs to metrics to investigate an incident.
 
-| Alert                           | Trigger                                               | Investigation and recovery                                                                                                                                                                          |
-| ------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DogWatchTargetDown              | Configured target unreachable for 2m                  | Check process, configured port and same-host scrape access. Remove deliberately disabled targets. A missing scrape configuration cannot fire this rule.                                             |
-| DogWatchApiErrors               | >5% 5xx and >=20 non-health requests/5m, held 2m      | Inspect API completion logs, configuration, DB and GitHub dependencies. Verify a health response and a safe application request after restoring the dependency.                                     |
-| DogWatchDispatchFailures        | >=3 failed dispatch events/5m, held 1m                | Inspect dispatcher logs and DB/Redis reachability. A failed event can mean DB failure or exhausted handoff retries. Do not blindly replay or modify outbox state; reconciliation remains Phase 8.3. |
-| DogWatchQueueConnectionFailures | >=3 queue connection failures/5m, held 1m             | Check Redis process, URL and connection capacity. Confirm successful handoff after recovery. Production QA consumption remains disabled.                                                            |
-| DogWatchTelemetryLoss           | Any observed increase in log/metric discard counts/5m | Check stdout consumer/backpressure and process resource pressure; inspect label contract if the series cap is reached. Missing logs cannot be recovered from this registry.                         |
-| DogWatchApiLatency              | Estimated p95 >2s with >=20 observations/5m, held 5m  | Compare route histograms and logs; inspect slow dependencies. Aborts are included; do not infer successful responses from latency alone.                                                            |
+| Alert                           | Trigger                                               | Investigation and recovery                                                                                                                                                                                              |
+| ------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DogWatchTargetDown              | Configured target unreachable for 2m                  | Check process, configured port and same-host scrape access. Remove deliberately disabled targets. A missing scrape configuration cannot fire this rule.                                                                 |
+| DogWatchApiErrors               | >5% 5xx and >=20 non-health requests/5m, held 2m      | Inspect API completion logs, configuration, DB and GitHub dependencies. Verify a health response and a safe application request after restoring the dependency.                                                         |
+| DogWatchDispatchFailures        | >=3 failed dispatch events/5m, held 1m                | Inspect dispatcher logs and DB/Redis reachability. A failed event can mean DB failure or exhausted handoff retries. Do not blindly replay or modify outbox state; follow the [recovery runbook](../recovery/README.md). |
+| DogWatchQueueConnectionFailures | >=3 queue connection failures/5m, held 1m             | Check Redis process, URL and connection capacity. Confirm successful handoff after recovery. Production QA consumption remains disabled.                                                                                |
+| DogWatchTelemetryLoss           | Any observed increase in log/metric discard counts/5m | Check stdout consumer/backpressure and process resource pressure; inspect label contract if the series cap is reached. Missing logs cannot be recovered from this registry.                                             |
+| DogWatchApiLatency              | Estimated p95 >2s with >=20 observations/5m, held 5m  | Compare route histograms and logs; inspect slow dependencies. Aborts are included; do not infer successful responses from latency alone.                                                                                |
 
 ## Validate without sending notifications
 
@@ -67,8 +67,9 @@ promtool check rules alerts.yaml
 promtool test rules alerts.test.yaml
 ```
 
-The fixtures are authored but promtool execution is pending because the tool
-download did not complete during implementation. They cover every alert firing, initial hold periods, low request volume,
+Prometheus 3.5.0 configuration/rule checks and fixture execution passed during
+Phase 8.3, closing the Phase 8.2 download blocker. Fixtures cover every alert
+firing, initial hold periods, low request volume,
 idle counters, a counter reset and absent targets. Follow the official
 [rule-testing reference](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/)
 when extending them. Production scrape connectivity and notification delivery

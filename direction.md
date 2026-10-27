@@ -683,3 +683,37 @@ have not yet executed with promtool. Run the three commands in
 ops/monitoring/README.md before treating these alert rules as verified or moving
 to Phase 8.3. No database/Redis integration was rerun because persistence and
 handoff behavior were unchanged. No live customer request or deployment occurred.
+
+## Part 8 · Phase 8.3 — Recovery drills
+
+- Closed the Phase 8.2 validation blocker: Prometheus 3.5.0 passed scrape-config,
+  six-rule syntax and synthetic alert-fixture checks. Production alert routing
+  remains unconfigured.
+- Added `npm run recovery:verify`, restricted to generated local databases and an
+  isolated queue. A child process terminates after Redis acknowledgement while
+  its DB transaction remains open; the drill proves rollback and retained job
+  identity, then restores a PostgreSQL backup into a separate database.
+- Verified concurrent handoff reconciliation, reservation preservation, transient
+  recovery, terminal retry exhaustion and no silent replay after published-job
+  loss. Added a tenant-scoped read-only inspection query and recovery/backup
+  runbooks with explicit cross-store reconciliation requirements.
+- Retained the disabled production QA-consumer boundary. Full-system failover,
+  Redis AOF restoration, active QA-worker termination and automatic repair remain
+  pending. No new dependency, schema migration, UI feature or deployment was added.
+
+Next proposed phase: Part 8, Phase 8.4 — labeled benchmark. Stop before implementation.
+
+### Phase 8.3 verification
+
+All 304 application tests passed. The real local recovery drill passed eight
+checks, including actual child-process termination, PostgreSQL snapshot equality,
+correct-tenant diagnostics and cross-tenant omission. The final tiny-fixture
+restore/validation took 266 ms and the complete drill 1,561 ms; these are local
+observations, not production RTO commitments. Real Redis queue integration also
+passed processor retries/exhaustion, concurrency and invalid-job checks. The first
+recovery attempt exposed a fixture due-time race; explicitly due fixture rows
+resolved it before successful reruns. Workspace type checks, builds, lint,
+formatting and whitespace checks passed. Generated databases, queue keys and
+backup files were cleaned, and the generated web declaration restored. No live
+provider/customer traffic, full-cluster restore or production notification was
+exercised.

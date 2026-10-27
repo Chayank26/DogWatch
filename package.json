@@ -45,7 +45,9 @@
     "chaos:verify": "npm run verify:chaos -w @dogwatch/worker",
     "browser-replay:verify": "npm run verify:browser-replay -w @dogwatch/worker",
     "db:verify:identity": "npm run verify:identity -w @dogwatch/database",
-    "db:verify:installation-link": "npm run verify:installation-link -w @dogwatch/database"
+    "db:verify:installation-link": "npm run verify:installation-link -w @dogwatch/database",
+    "db:verify:tenant-isolation": "npm run verify:tenant-isolation -w @dogwatch/database",
+    "tenant-isolation:verify": "npm run build -w @dogwatch/database && node --import tsx --test apps/api/src/identity.test.ts apps/api/src/authorization.test.ts apps/api/src/github.test.ts apps/api/src/installation-link.test.ts apps/api/src/github-reporting.test.ts apps/worker/src/private-artifacts.test.ts && npm run db:verify:tenant-isolation && npm run db:verify:identity && npm run db:verify:installation-link"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -565,3 +565,16 @@ Next proposed phase: Part 7, Phase 7.3 — tenant isolation verification. Stop b
 ### Phase 7.2 verification
 
 All 283 tests passed, including seven new synthetic GitHub installation-link tests. Real local PostgreSQL checks passed for concurrent same-tenant idempotence, competing tenant claims, actor mismatch, demotion, disablement, expired sessions and logout. Random fixtures were removed. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The generated web declaration was restored to its starting content. No live GitHub request, customer data, migration, dependency or hosted CI run was introduced. Browser token acquisition, live permissions and automatic installation lifecycle reconciliation remain pending.
+
+## Part 7 · Phase 7.3 — Tenant isolation verification
+
+- Added a repeatable isolation gate spanning HTTP identity/authorization, synthetic GitHub token/link/report checks, private filesystem artifacts and real PostgreSQL authority checks.
+- Added two-tenant foreign-key and worker-eligibility verification with positive controls, swapped tenant/run IDs, forged relationships and scoped cancellation. Added same-run-ID artifact substitution checks across tenant directories.
+- Fixed an audit finding in the older webhook GitHub resolver: returned installation and App IDs must match before a token can be minted. Malformed or mismatched identities fail before any token request.
+- Documented the tested boundary and gaps explicitly. The database role remains privileged without RLS; production worker consumption and authenticated artifact-download/run APIs are not implemented and are not claimed as verified.
+
+Next proposed phase: Part 7, Phase 7.4 — onboarding. Stop before implementation.
+
+### Phase 7.3 verification
+
+All 285 tests passed. The dedicated isolation gate passed 54 focused tests plus real local PostgreSQL tenant-relationship, identity and installation-link suites. Own-scope positive controls succeeded; swapped relationships failed with foreign-key errors, swapped worker references failed eligibility, and foreign artifact references failed reads. All random database/filesystem fixtures were removed. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The build-generated web declaration was restored. No live GitHub request, customer data, migration, dependency or hosted CI run was introduced. RLS and future production/public-download boundaries remain explicitly unverified.

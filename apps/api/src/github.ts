@@ -32,6 +32,11 @@ export function createGitHubResolver(
       'GET /app/installations/{installation_id}',
       { installation_id: installationId },
     );
+    if (
+      safeId(installation.id) !== installationId ||
+      safeId(installation.app_id) !== appId
+    )
+      throw new Error('Installation identity mismatch');
     if (installation.suspended_at)
       return {
         installationActive: false,

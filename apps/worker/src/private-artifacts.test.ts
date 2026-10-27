@@ -340,3 +340,23 @@ test('per-run quota refuses additional publication without overwriting existing 
     await f.cleanup();
   }
 });
+
+test('two tenants with the same run ID cannot substitute or prune each other’s artifacts', async () => {
+  const f = await fixture();
+  try {
+    const other = { ...f.scope, tenantId: randomUUID() };
+    const a = await persistPrivateArtifact(f.root, f.scope, f.content);
+    const b = await persistPrivateArtifact(f.root, other, f.content);
+    await readPrivateArtifact(f.root, f.scope, a);
+    await readPrivateArtifact(f.root, other, b);
+    await assert.rejects(readPrivateArtifact(f.root, f.scope, b));
+    await assert.rejects(readPrivateArtifact(f.root, other, a));
+    await assert.rejects(
+      readPrivateArtifact(f.root, other, { ...a, tenantId: other.tenantId }),
+    );
+    await prunePrivateArtifacts(f.root, other);
+    await readPrivateArtifact(f.root, f.scope, a);
+  } finally {
+    await f.cleanup();
+  }
+});

@@ -110,3 +110,5 @@ Phase 6.6 adds callable stale-report retirement: an independently authorized sup
 Phase 7.1 adds optional GitHub login, persistent sessions and owner/member organization membership. See [identity setup](apps/api/IDENTITY.md) for configuration, API routes, operator membership provisioning and deployment limits. Verify local PostgreSQL behavior with `npm run db:verify:identity`. Login does not automatically grant tenant or installation access.
 
 Phase 7.2 adds a callable [installation linker](apps/api/INSTALLATION_LINKING.md) with verified GitHub ownership, current tenant-owner authorization and transactional cross-tenant conflict protection. Browser linking/onboarding and live App permission verification remain pending. Run `npm run db:verify:installation-link` for local database verification.
+
+Phase 7.3 adds `npm run tenant-isolation:verify` for focused boundary tests and real local two-tenant PostgreSQL checks. See [the isolation matrix](docs/TENANT_ISOLATION.md) for coverage and limits, including the privileged database role and pending production/download surfaces.

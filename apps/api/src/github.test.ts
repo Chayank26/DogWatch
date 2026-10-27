@@ -21,7 +21,7 @@ test('adapter limits token to one repository and read grants, resolves canonical
     const url = String(input);
     calls.push(url);
     if (url.endsWith('/app/installations/10'))
-      return json({ id: 10, suspended_at: null });
+      return json({ id: 10, app_id: 1, suspended_at: null });
     if (url.endsWith('/app/installations/10/access_tokens')) {
       assert.deepEqual(JSON.parse(String(init?.body)), {
         repository_ids: [20],
@@ -58,7 +58,7 @@ test('suspended installations stop before minting tokens and remote failures pro
   let calls = 0;
   const suspended: typeof fetch = async () => {
     calls++;
-    return json({ suspended_at: '2026-10-04T00:00:00Z' });
+    return json({ id: 10, app_id: 1, suspended_at: '2026-10-04T00:00:00Z' });
   };
   assert.equal(
     (await createGitHubResolver(1, key, suspended)(10, 20, 42))
@@ -68,4 +68,21 @@ test('suspended installations stop before minting tokens and remote failures pro
   assert.equal(calls, 1);
   const revoked: typeof fetch = async () => json({ message: 'Not Found' }, 404);
   await assert.rejects(createGitHubResolver(1, key, revoked)(10, 20, 42));
+});
+
+test('wrong installation or App identity cannot mint a repository token', async () => {
+  for (const response of [
+    { id: 11, app_id: 1 },
+    { id: 10, app_id: 2 },
+    { id: 10 },
+    { id: Number.MAX_SAFE_INTEGER + 1, app_id: 1 },
+  ]) {
+    let calls = 0;
+    const transport: typeof fetch = async () => {
+      calls++;
+      return json({ ...response, suspended_at: null });
+    };
+    await assert.rejects(createGitHubResolver(1, key, transport)(10, 20, 42));
+    assert.equal(calls, 1);
+  }
 });

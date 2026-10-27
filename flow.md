@@ -309,3 +309,9 @@ Membership inspection rereads database roles and returns no other tenant's membe
 A trusted server-side caller supplies the owner's DogWatch session and a separately obtained GitHub App user token. The linker verifies both identities, current installation access and personal ownership or organization-admin status, then asks the database to recheck local authority and claim the installation for the tenant.
 
 A same-tenant retry returns unchanged; another tenant cannot claim the installation. Linking creates no repository policy or execution grant. Browser token acquisition, onboarding screens and automatic installation lifecycle reconciliation remain pending; the callable adapter is exercised through synthetic GitHub and real local database tests.
+
+## Part 7 · Phase 7.3 — Tenant isolation verification
+
+The verification command creates independent local tenant fixtures and attempts to exchange their identifiers across database relationships, worker eligibility and artifact references. Own-scope controls succeed; foreign-scope operations fail. Existing session, membership, installation-link and report tests run alongside these checks.
+
+This verifies implemented boundaries without exposing new product routes. Privileged database access, future production consumption and future authenticated download/dashboard APIs remain explicit limits in the isolation matrix.

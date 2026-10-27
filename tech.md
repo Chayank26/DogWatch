@@ -275,3 +275,7 @@ Express exposes optional GitHub OAuth routes backed by new Prisma identity, memb
 ## Part 7 · Phase 7.2 — Installation linking
 
 Existing Octokit App/user authentication verifies immutable actor/account/App identities and active organization-admin authority. A separate database adapter locks current session, user and owner-membership rows before committing to the existing globally unique Installation table. Conditional insertion provides same-tenant idempotence and cross-tenant conflict refusal without reassignment. Runtime schemas validate both boundaries; secrets remain transient. No dependency or migration was needed. See [installation linking](apps/api/INSTALLATION_LINKING.md) for the trusted token source and remote-race limitations.
+
+## Part 7 · Phase 7.3 — Tenant isolation verification
+
+A dedicated npm gate composes focused Node tests with local PostgreSQL identity, installation-link and two-tenant relationship checks. Composite foreign-key failures are asserted by Prisma code P2003, while worker eligibility is checked using swapped tenant/run pairs and independent positive controls. The GitHub resolver now checks returned installation/App identity before token issuance. No dependency, migration or RLS policy was added. See [isolation evidence and limits](docs/TENANT_ISOLATION.md).

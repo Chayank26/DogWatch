@@ -23,7 +23,8 @@
     "preverify": "npm run build -w @dogwatch/contracts",
     "preverify:acceptance": "npm run build -w @dogwatch/contracts",
     "verify:identity": "tsx src/verify-identity.ts",
-    "verify:installation-link": "tsx src/verify-installation-link.ts"
+    "verify:installation-link": "tsx src/verify-installation-link.ts",
+    "verify:tenant-isolation": "tsx src/verify-tenant-isolation.ts"
   },
   "devDependencies": {
     "prisma": "^7.10.0"

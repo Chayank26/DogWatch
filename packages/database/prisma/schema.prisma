@@ -29,6 +29,7 @@ model Tenant {
   createdAt     DateTime       @default(now()) @db.Timestamptz(3)
   installations Installation[]
   memberships Membership[]
+  quota TenantQuota?
 }
 
 // A GitHub installation belongs to one tenant. BigInt avoids truncating GitHub IDs.
@@ -76,6 +77,7 @@ model Run {
   createdAt           DateTime     @default(now()) @db.Timestamptz(3)
   repository          Repository   @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
   outboxEvents        OutboxEvent[]
+  usage UsageReservation?
   webhookDelivery     WebhookDelivery?
 
   @@unique([tenantId, id])
@@ -181,4 +183,28 @@ model RunControlEvent {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   repository Repository @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
   @@index([tenantId, repositoryId, createdAt])
+}
+
+
+model TenantQuota {
+ tenantId String @id @db.Uuid
+ maxConcurrent Int @default(2)
+ maxDailyRuns Int @default(100)
+ maxDailyModelCostCents Int @default(10000)
+ tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model UsageReservation {
+ runId String @id @db.Uuid
+ tenantId String @db.Uuid
+ reservedAt DateTime @default(now()) @db.Timestamptz(3)
+ budget Json
+ reservedModelCostCents Int
+ actual Json?
+ actualModelCostCents Int?
+ settledAt DateTime? @db.Timestamptz(3)
+ run Run @relation(fields: [tenantId, runId], references: [tenantId, id], onDelete: Cascade)
+ @@unique([tenantId, runId])
+ @@index([tenantId, reservedAt])
+ @@index([tenantId, settledAt])
 }

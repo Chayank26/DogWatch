@@ -1,10 +1,11 @@
 /** Opt-in browser identity. OAuth credentials never enter sessions or worker inputs. */
 import { Router, json } from 'express';
-import { workspaceNameSchema } from '@dogwatch/database';
+import { QuotaExceededError, workspaceNameSchema } from '@dogwatch/database';
 import type {
   OnboardingStore,
   RunViewStore,
   RunControlStore,
+  UsageStore,
   ControlScope,
 } from '@dogwatch/database';
 import type { Request } from 'express';
@@ -68,6 +69,7 @@ export function createIdentityRouter(
     store: RunControlStore;
     rerun?: (scope: ControlScope, requestId: string) => Promise<unknown>;
   },
+  usage?: UsageStore,
 ) {
   const config = validateLoginConfig(input);
   const secure = config.origin.startsWith('https:');
@@ -378,6 +380,10 @@ export function createIdentityRouter(
     };
     const fail = (res: import('express').Response, error: unknown) => {
       const code = error instanceof Error ? error.message : '';
+      if (error instanceof QuotaExceededError) {
+        res.status(429).json({ error: error.message });
+        return;
+      }
       res
         .status(
           error instanceof z.ZodError
@@ -442,6 +448,30 @@ export function createIdentityRouter(
       },
     );
   }
+  if (usage)
+    router.get('/tenants/:tenantId/usage', async (req, res) => {
+      const session = cookie(req, sessionName);
+      if (!session) {
+        res.status(401).json({ error: 'Login required' });
+        return;
+      }
+      const tenant = z.uuid().safeParse(req.params.tenantId);
+      if (!tenant.success) {
+        res.status(404).json({ error: 'Usage unavailable' });
+        return;
+      }
+      try {
+        res.json(await usage.summary(hash(session), tenant.data));
+      } catch (error) {
+        res
+          .status(
+            error instanceof Error && error.message === 'usage_not_found'
+              ? 404
+              : 503,
+          )
+          .json({ error: 'Usage unavailable' });
+      }
+    });
   router.post('/logout', async (req, res) => {
     if (req.get('origin') !== config.origin) {
       res.status(403).json({ error: 'Invalid origin' });

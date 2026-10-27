@@ -620,3 +620,17 @@ Next proposed phase: Part 7, Phase 7.7 — usage ledger and quotas. Stop before 
 ### Phase 7.6 verification
 
 All 291 tests passed, including new service and HTTP run-control tests. Real PostgreSQL checks verified owner scope, settings revision races, disabled requests, duplicate reruns, atomic outbox/audit records, current-SHA snapshots, active-run refusal and revoked authority. Chromium against the production build with synthetic API responses verified owner controls, save-before-request behavior, accepted/duplicate feedback, stable retry IDs and unsaved-edit guards. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The additive migration applied; random database fixtures were removed, the temporary web server stopped and the generated web declaration restored. An initial Prisma relation uniqueness error and UI syntax error were corrected before successful checks. No live GitHub request, QA execution, dependency or deployment was introduced.
+
+## Part 7 · Phase 7.7 — Usage ledger and quotas
+
+- Added tenant quotas and per-run usage reservations with admission-day accounting. Tenant locking serializes webhook/manual acceptance across repositories; quota failures roll back run/outbox/receipt/audit changes.
+- Added legacy received-run reservation at dispatcher handoff. Quota deferrals do not consume transport retry attempts. Historical already-dispatched work remains an explicit reconciliation obligation.
+- Added trusted terminal-run settlement with complete counters, idempotent retries, conflict refusal and retained overruns. Unknown measurements keep capacity reserved; terminal state never implies zero consumption.
+- Added membership-authorized quota summaries and a local `/usage` page that distinguishes reservations from reported actuals. Limits remain operator-controlled and manual quota failures have explicit UI messages.
+- Applied an additive migration and used the Sites local-only workflow. No live model/GitHub request, customer QA run or deployment was performed. Automatic worker settlement, correction/recovery workflows and broader resource quotas remain pending.
+
+Next proposed phase: Part 8, Phase 8.1 — logs and tracing. Stop before implementation.
+
+### Phase 7.7 verification
+
+All 293 tests passed. Real local PostgreSQL checks passed for cross-repository quota races, exact retries at capacity, rollback of supersession/work creation, measured settlement retries/conflicts, retained overruns, UTC cohorts, pending reservations and legacy dispatcher deferral/handoff. Existing acceptance and manual-rerun suites passed. The additive migration applied and reapplication was a no-op. Chromium with synthetic responses verified quota/pending labels, revoked-state clearing and mobile width. Workspace type checks, production builds, lint, formatting and whitespace checks passed. Random fixtures were removed, the temporary web server stopped and the generated web declaration restored. No live usage measurement, customer execution, dependency or deployment was introduced; production settlement and historical reconciliation remain pending.

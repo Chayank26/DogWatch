@@ -51,3 +51,12 @@ export type {
   RerunContext,
   ManualSettings,
 } from './run-controls.js';
+
+export {
+  reserveRunUsage,
+  settleRunUsage,
+  createUsageStore,
+  actualUsageSchema,
+  QuotaExceededError,
+} from './usage.js';
+export type { UsageStore, UsageSummary } from './usage.js';

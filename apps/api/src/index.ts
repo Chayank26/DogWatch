@@ -7,6 +7,7 @@ import {
   createOnboardingStore,
   createRunViewStore,
   createRunControlStore,
+  createUsageStore,
 } from '@dogwatch/database';
 import { readFileSync } from 'node:fs';
 import { parsePolicies } from './authorization.js';
@@ -93,6 +94,7 @@ const server = createApiApp(
               )
             : undefined,
         },
+        createUsageStore(database),
       )
     : undefined,
 ).listen(port, '127.0.0.1', () => {

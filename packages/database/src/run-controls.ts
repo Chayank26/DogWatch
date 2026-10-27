@@ -1,3 +1,4 @@
+import { reserveRunUsage } from './usage.js';
 import { z } from 'zod';
 import { budgetSchema, repositoryPolicySchema } from '@dogwatch/contracts';
 import type { PrismaClient, Prisma } from './generated/prisma/client.js';
@@ -223,6 +224,7 @@ export function createRunControlStore(db: PrismaClient): RunControlStore {
             budgetSnapshot: config.budget,
           },
         });
+        await reserveRunUsage(tx, scope.tenantId, run.id, config.budget);
         await tx.outboxEvent.create({
           data: { tenantId: scope.tenantId, runId: run.id },
         });

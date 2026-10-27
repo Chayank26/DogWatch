@@ -118,3 +118,5 @@ Phase 7.4 adds `/onboarding` for sign-in, first-workspace creation and setup sta
 Phase 7.5 adds `/runs` with authorized workspace run lists/details and an explicit evidence-availability panel. Actual findings and artifact downloads await durable cataloging. See [run views](apps/api/RUN_VIEWS.md); verify local persistence with `npm run db:verify:run-views`.
 
 Phase 7.6 adds owner-only manual rerun settings and requests from run details. Apply migrations first. [Run controls](apps/api/RUN_CONTROLS.md) describes revision checks, current-head verification, audit records, idempotency and manual-only scope. Verify local transactions with `npm run db:verify:run-controls`.
+
+Phase 7.7 adds transactional quota reservations for webhook/manual runs, trusted usage settlement and `/usage`. Apply migrations first. See [usage accounting and limits](apps/api/USAGE.md), including default quotas and the pending automatic settlement workflow. Run `npm run db:verify:usage` for local race/reconciliation checks.

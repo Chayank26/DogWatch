@@ -130,6 +130,7 @@ export default function Runs() {
         DogWatch · Workspace setup
       </a>
       <h1>Runs and evidence.</h1>
+      <a href="/usage">View usage and quotas</a>
       <p className="intro">
         Review recorded QA activity for your workspace. A completed run is a
         lifecycle state, not a passing verdict.

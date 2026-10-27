@@ -27,7 +27,8 @@
     "verify:tenant-isolation": "tsx src/verify-tenant-isolation.ts",
     "verify:onboarding": "tsx src/verify-onboarding.ts",
     "verify:run-views": "tsx src/verify-run-views.ts",
-    "verify:run-controls": "tsx src/verify-run-controls.ts"
+    "verify:run-controls": "tsx src/verify-run-controls.ts",
+    "verify:usage": "tsx src/verify-usage.ts"
   },
   "devDependencies": {
     "prisma": "^7.10.0"

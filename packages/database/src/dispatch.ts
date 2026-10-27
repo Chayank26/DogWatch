@@ -3,6 +3,7 @@
  * an in-memory leader. A crash after enqueue but before commit leaves the receipt
  * pending; retry uses the same stable Redis identity. No execution starts here.
  */
+import { reserveRunUsage, QuotaExceededError } from './usage.js';
 import type { PrismaClient } from './generated/prisma/client.js';
 
 export const dispatchAttemptLimit = 5;
@@ -28,6 +29,23 @@ export async function dispatchNext(
     `;
       const row = rows[0];
       if (!row) return 'idle';
+      const run = await tx.run.findUniqueOrThrow({
+        where: { id: row.runId },
+        select: { budgetSnapshot: true },
+      });
+      try {
+        await reserveRunUsage(tx, row.tenantId, row.runId, run.budgetSnapshot);
+      } catch (error) {
+        if (!(error instanceof QuotaExceededError)) throw error;
+        await tx.outboxEvent.update({
+          where: { id: row.id },
+          data: {
+            nextAttemptAt: new Date(Date.now() + 30000),
+            lastErrorCode: error.message,
+          },
+        });
+        return 'retry';
+      }
       const attempts = row.attempts + 1;
       try {
         await enqueue({ runId: row.runId, tenantId: row.tenantId });

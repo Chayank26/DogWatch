@@ -71,6 +71,11 @@ export default function Controls({
       const data = await response.json();
       if (!response.ok) {
         const messages: Record<string, string> = {
+          quota_concurrent:
+            'Workspace capacity is reserved. Ask an administrator to settle finished runs or wait for capacity.',
+          quota_daily_runs: 'This workspace has reached its daily run limit.',
+          quota_daily_model_cost:
+            'This request exceeds the workspace’s daily model budget.',
           control_revision_conflict:
             'Settings changed. Refresh the run before trying again.',
           control_run_active:

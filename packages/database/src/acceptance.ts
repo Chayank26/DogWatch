@@ -3,6 +3,7 @@
  * run snapshot, and dispatch instruction together; Redis is deliberately not used.
  * Unique constraints arbitrate concurrent requests rather than an in-memory lock.
  */
+import { reserveRunUsage } from './usage.js';
 import { z } from 'zod';
 import {
   evaluateOptIn,
@@ -86,6 +87,8 @@ export async function acceptDelivery(
         `;
         if (!repositories.length)
           throw new OwnershipMismatchError('Repository ownership mismatch');
+        const prior = await existingResult();
+        if (prior) return prior;
         // Accepting a newer authorized snapshot makes unfinished older heads obsolete.
         // Receipt conflicts roll this back too, so redelivery cannot supersede work.
         await transaction.run.updateMany({
@@ -118,6 +121,12 @@ export async function acceptDelivery(
             budgetSnapshot: policy.budget,
           },
         });
+        await reserveRunUsage(
+          transaction,
+          event.tenantId,
+          run.id,
+          policy.budget,
+        );
         await transaction.webhookDelivery.create({
           data: {
             deliveryId: event.deliveryId,

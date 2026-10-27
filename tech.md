@@ -291,3 +291,7 @@ A Prisma read adapter combines current session/membership row locks, mandatory t
 ## Part 7 · Phase 7.6 — Configuration and reruns
 
 Prisma manual-settings and control-audit tables support locked owner-authorized updates, revision conflict detection and UUID-idempotent manual run acceptance. The GitHub resolver supplies current immutable PR context before a second transactional guard snapshots policy and budget with an outbox record. Express bounds JSON and checks Origin; the Next.js owner form tracks unsaved state and retry identity. See [run controls](apps/api/RUN_CONTROLS.md) for the manual-only configuration scope and execution limits.
+
+## Part 7 · Phase 7.7 — Usage ledger and quotas
+
+Prisma quota/reservation tables combine tenant-row admission locks, UTC acceptance cohorts, immutable budget reservations and explicit actual counters. Both ingress paths reserve in the same transaction as durable work; dispatcher fallback gates unreserved received work. Internal settlement requires complete measurements and terminal scope, rejects conflicting retries and preserves overruns. A locked membership-authorized summary powers the Next.js usage page. See [usage accounting](apps/api/USAGE.md) for defaults and incomplete-history/settlement limits.

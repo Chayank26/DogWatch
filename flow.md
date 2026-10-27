@@ -333,3 +333,9 @@ Details show immutable commit and lifecycle metadata. The evidence panel states 
 An owner opens an existing run, enables manual requests and saves repository budget limits. Requesting a rerun checks the current open PR and creates new durable work with its current SHA. The UI reports acceptance, and the user refreshes the list to follow the new run. Members cannot change settings or request work.
 
 Concurrent settings edits conflict; duplicate request IDs resolve to the original run. Existing active work prevents another request. The source run, evidence and webhook policy are not modified. Execution and preview readiness are not implied by acceptance.
+
+## Part 7 · Phase 7.7 — Usage ledger and quotas
+
+Before accepting work, DogWatch reserves tenant capacity and the run's model budget. Concurrent requests share the same gate. Quota failures return a clear refusal without partially creating work. Members can inspect daily commitments and unsettled reservations from Runs → Usage.
+
+After execution has stopped, a trusted supervisor reports complete usage and settles the reservation. Missing measurements stay pending rather than becoming zero, including cancelled/failed runs. Automated production settlement is not wired yet; unknown outcomes require reconciliation.

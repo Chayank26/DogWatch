@@ -50,7 +50,8 @@
     "tenant-isolation:verify": "npm run build -w @dogwatch/database && node --import tsx --test apps/api/src/identity.test.ts apps/api/src/authorization.test.ts apps/api/src/github.test.ts apps/api/src/installation-link.test.ts apps/api/src/github-reporting.test.ts apps/worker/src/private-artifacts.test.ts && npm run db:verify:tenant-isolation && npm run db:verify:identity && npm run db:verify:installation-link",
     "db:verify:onboarding": "npm run verify:onboarding -w @dogwatch/database",
     "db:verify:run-views": "npm run verify:run-views -w @dogwatch/database",
-    "db:verify:run-controls": "npm run verify:run-controls -w @dogwatch/database"
+    "db:verify:run-controls": "npm run verify:run-controls -w @dogwatch/database",
+    "db:verify:usage": "npm run verify:usage -w @dogwatch/database"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

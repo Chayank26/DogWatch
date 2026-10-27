@@ -13,6 +13,7 @@ import { ZodError } from 'zod';
 import { createHash } from 'node:crypto';
 import {
   DeliveryConflictError,
+  QuotaExceededError,
   OwnershipMismatchError,
 } from '@dogwatch/database';
 import type {
@@ -120,7 +121,9 @@ export function createApiApp(
             : result,
         );
       } catch (error) {
-        if (error instanceof DeliveryConflictError) {
+        if (error instanceof QuotaExceededError) {
+          response.status(429).json({ error: error.message, queued: false });
+        } else if (error instanceof DeliveryConflictError) {
           response.status(409).json({ error: 'Delivery identity conflict' });
         } else if (error instanceof OwnershipMismatchError) {
           response.status(403).json({ error: 'Repository ownership mismatch' });

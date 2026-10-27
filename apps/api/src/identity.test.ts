@@ -10,7 +10,7 @@ import {
   validateLoginConfig,
 } from './identity.js';
 const digest = (v: string) => createHash('sha256').update(v).digest('hex');
-async function fixture(secure = false) {
+async function fixture(secure = false, onboardingEnabled = false) {
   let time = Date.now(),
     unavailable = false,
     providerFailure = false;
@@ -79,6 +79,21 @@ async function fixture(secure = false) {
       store,
       transport,
       () => new Date(time),
+      onboardingEnabled
+        ? {
+            async status(tokenHash) {
+              if (!sessions.has(tokenHash))
+                throw Error('onboarding_unauthorized');
+              return { workspaces: [] };
+            },
+            async create(tokenHash, name) {
+              if (!sessions.has(tokenHash))
+                throw Error('onboarding_unauthorized');
+              assert.equal(name, 'My team');
+              return { tenantId: identity.memberships[0].tenantId };
+            },
+          }
+        : undefined,
     ),
   );
   const server = app.listen(0, '127.0.0.1');
@@ -355,4 +370,39 @@ test('login configuration refuses unsafe origins and credentials in URLs', () =>
     assert.throws(() =>
       validateLoginConfig({ clientId: 'x', clientSecret: 'y', origin }),
     );
+});
+
+test('onboarding routes require a session, exact Origin and a strict workspace payload', async () => {
+  const f = await fixture(false, true);
+  try {
+    assert.equal((await f.request('/auth/onboarding')).status, 401);
+    const { cookie, response } = await f.login();
+    assert.equal(response.headers.get('location'), f.origin + '/onboarding');
+    assert.deepEqual(
+      await (
+        await f.request('/auth/onboarding', { headers: { cookie } })
+      ).json(),
+      { workspaces: [] },
+    );
+    const create = (body: unknown, origin = f.origin) =>
+      f.request('/auth/onboarding/workspace', {
+        method: 'POST',
+        headers: { cookie, origin, 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    assert.equal(
+      (await create({ name: 'My team' }, 'https://evil.example')).status,
+      403,
+    );
+    for (const body of [
+      { name: '' },
+      { name: 'x'.repeat(81) },
+      { name: 'My team', tenantId: randomUUID() },
+      { name: 'bad\nname' },
+    ])
+      assert.equal((await create(body)).status, 400);
+    assert.equal((await create({ name: ' My team ' })).status, 200);
+  } finally {
+    await f.close();
+  }
 });

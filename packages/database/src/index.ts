@@ -37,3 +37,6 @@ export type {
   LinkScope,
   VerifiedInstallationLink,
 } from './installation-link.js';
+
+export { createOnboardingStore, workspaceNameSchema } from './onboarding.js';
+export type { OnboardingStore, OnboardingStatus } from './onboarding.js';

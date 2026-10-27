@@ -279,3 +279,7 @@ Existing Octokit App/user authentication verifies immutable actor/account/App id
 ## Part 7 · Phase 7.3 — Tenant isolation verification
 
 A dedicated npm gate composes focused Node tests with local PostgreSQL identity, installation-link and two-tenant relationship checks. Composite foreign-key failures are asserted by Prisma code P2003, while worker eligibility is checked using swapped tenant/run pairs and independent positive controls. The GitHub resolver now checks returned installation/App identity before token issuance. No dependency, migration or RLS policy was added. See [isolation evidence and limits](docs/TENANT_ISOLATION.md).
+
+## Part 7 · Phase 7.4 — Onboarding
+
+Next.js client state and a server-configured `/auth/*` rewrite connect the setup page to Express. The API adds bounded, Origin-checked bootstrap requests and membership-scoped setup summaries. Prisma transactions lock session/user rows and create tenant/owner records atomically; same-name retries return the original workspace. No migration or dependency was required. See [onboarding configuration and limits](apps/api/ONBOARDING.md).

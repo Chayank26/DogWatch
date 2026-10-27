@@ -1,17 +1,17 @@
 export default function Home() {
   return (
     <main>
-      <p className="eyebrow">DogWatch · Project foundation</p>
+      <p className="eyebrow">DogWatch · Pull request QA</p>
       <h1>A second pair of eyes for every pull request.</h1>
       <p className="intro">
         Autonomous QA that will inspect changed code, test APIs, and explore
         your application before merge.
       </p>
       <section aria-labelledby="status">
-        <h2 id="status">We’re building the foundation</h2>
+        <h2 id="status">Start with your workspace</h2>
         <p>
-          This is the initial project shell. Repository connections and QA runs
-          will become available in later phases.
+          Sign in with GitHub, create your first workspace, and review your
+          setup progress before connecting repositories.
         </p>
         <ol>
           <li>Connect a GitHub repository.</li>
@@ -19,7 +19,9 @@ export default function Home() {
           <li>Request QA on a pull request.</li>
           <li>Review findings and evidence.</li>
         </ol>
-        <p className="note">No sign-in or data collection is enabled yet.</p>
+        <a className="button" href="/onboarding">
+          Set up your workspace
+        </a>
       </section>
     </main>
   );

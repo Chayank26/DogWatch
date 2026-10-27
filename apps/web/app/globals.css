@@ -47,3 +47,67 @@ li {
 .note {
   color: #9fe4bd;
 }
+
+a {
+  color: #9fe4bd;
+}
+button,
+.button {
+  display: inline-block;
+  border: 1px solid #9fe4bd;
+  border-radius: 8px;
+  padding: 12px 18px;
+  background: #9fe4bd;
+  color: #101820;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+form {
+  display: grid;
+  gap: 14px;
+  max-width: 460px;
+}
+input {
+  width: 100%;
+  border: 1px solid #84998f;
+  border-radius: 8px;
+  padding: 12px;
+  background: #101820;
+  color: #edf4f1;
+  font: inherit;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.checklist {
+  padding-left: 24px;
+}
+.checklist li {
+  padding: 12px 0;
+}
+.checklist p {
+  margin: 6px 0;
+  color: #bccbc5;
+}
+.error {
+  padding: 16px;
+  border: 1px solid #f9a59c;
+  border-radius: 8px;
+  color: #ffd0c9;
+}

@@ -315,3 +315,9 @@ A same-tenant retry returns unchanged; another tenant cannot claim the installat
 The verification command creates independent local tenant fixtures and attempts to exchange their identifiers across database relationships, worker eligibility and artifact references. Own-scope controls succeed; foreign-scope operations fail. Existing session, membership, installation-link and report tests run alongside these checks.
 
 This verifies implemented boundaries without exposing new product routes. Privileged database access, future production consumption and future authenticated download/dashboard APIs remain explicit limits in the isolation matrix.
+
+## Part 7 · Phase 7.4 — Onboarding
+
+A visitor enters setup and signs in through GitHub. Users without memberships can create their first workspace and become its owner; existing users see only their own workspace memberships and recorded setup counts. Errors offer retry, and logout revokes the session.
+
+Installation linking and repository configuration still require administrator assistance. The checklist explains those limits and never starts QA or infers readiness from a stored record. The UI is local repository code and was not deployed.

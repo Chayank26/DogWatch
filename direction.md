@@ -578,3 +578,17 @@ Next proposed phase: Part 7, Phase 7.4 — onboarding. Stop before implementatio
 ### Phase 7.3 verification
 
 All 285 tests passed. The dedicated isolation gate passed 54 focused tests plus real local PostgreSQL tenant-relationship, identity and installation-link suites. Own-scope positive controls succeeded; swapped relationships failed with foreign-key errors, swapped worker references failed eligibility, and foreign artifact references failed reads. All random database/filesystem fixtures were removed. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The build-generated web declaration was restored. No live GitHub request, customer data, migration, dependency or hosted CI run was introduced. RLS and future production/public-download boundaries remain explicitly unverified.
+
+## Part 7 · Phase 7.4 — Onboarding
+
+- Replaced the foundation-only landing message with a local onboarding entry and added a responsive workspace setup page with signed-out, loading, unavailable, first-workspace and current-membership states.
+- Added authenticated status and first-workspace creation routes, strict request limits, Origin checks, atomic tenant/owner creation and concurrent retry handling. Existing members cannot bootstrap an unrelated additional workspace through this route.
+- Wired the browser origin to the API through an operator-controlled Next.js rewrite and redirected successful login into onboarding when enabled. No credentials enter client storage.
+- Shows installation/repository records separately from live access or QA readiness. Browser App authorization/linking, invitations and repository configuration remain explicitly pending rather than exposing placeholder actions.
+- Applied the Sites skill's local-only workflow and installed Next.js documentation. No publication, new dependency or database migration was performed.
+
+Next proposed phase: Part 7, Phase 7.5 — run and evidence views. Stop before implementation.
+
+### Phase 7.4 verification
+
+All 286 tests passed. Real PostgreSQL checks verified atomic first-workspace creation, concurrent duplicate submissions, owner assignment, tenant-scoped status and role/disablement/revocation guards; random fixtures were removed. Headless Chromium against the production-built page with synthetic API responses verified signed-out, unavailable/retry, creation, setup checklist, mobile overflow and logout states. Workspace type checks, production builds, lint, formatting and whitespace checks passed. The temporary web server was stopped and the generated web declaration restored. Live GitHub OAuth, production proxy/TLS and install-to-first-run onboarding remain unverified. No migration, dependency or deployment was introduced.

@@ -39,3 +39,5 @@ Operators can change/delete memberships to alter access, set `User.disabledAt` t
 Live GitHub login and production TLS/proxy behavior remain unverified. Before exposing login publicly, configure ingress rate limits and operational expiry pruning for `LoginAttempt` and `LoginSession`; expired records are rejected on reads but not automatically removed. This phase introduces neither distributed rate limiting nor a cleanup scheduler. Installation access, row-level policies, artifact authorization and end-to-end tenant isolation remain their separate roadmap phases. No GitHub credentials are stored, so token encryption/storage is not introduced here.
 
 Protocol reference: [GitHub OAuth web application flow](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps).
+
+Phase 7.4 adds an explicit first-workspace bootstrap exception to operator provisioning: authenticated users with no memberships can create a new workspace and its owner membership. It never joins an existing tenant. See [onboarding](ONBOARDING.md); invitations and other membership changes remain operator-controlled.

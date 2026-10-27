@@ -1,5 +1,7 @@
 /** Opt-in browser identity. OAuth credentials never enter sessions or worker inputs. */
-import { Router } from 'express';
+import { Router, json } from 'express';
+import { workspaceNameSchema } from '@dogwatch/database';
+import type { OnboardingStore } from '@dogwatch/database';
 import type { Request } from 'express';
 import { createHash, randomBytes } from 'node:crypto';
 import { z } from 'zod';
@@ -55,6 +57,7 @@ export function createIdentityRouter(
   store: IdentityStore,
   transport: typeof fetch = fetch,
   now = () => new Date(),
+  onboarding?: OnboardingStore,
 ) {
   const config = validateLoginConfig(input);
   const secure = config.origin.startsWith('https:');
@@ -193,7 +196,7 @@ export function createIdentityRouter(
       );
       res
         .cookie(sessionName, session, { ...options, maxAge: 28800000 })
-        .redirect(config.origin + '/auth/me');
+        .redirect(config.origin + (onboarding ? '/onboarding' : '/auth/me'));
     } catch {
       res.status(503).json({ error: 'Login unavailable' });
     }
@@ -240,6 +243,70 @@ export function createIdentityRouter(
       res.status(503).json({ error: 'Identity unavailable' });
     }
   });
+  if (onboarding) {
+    router.get('/onboarding', async (req, res) => {
+      const session = cookie(req, sessionName);
+      if (!session) {
+        res.status(401).json({ error: 'Login required' });
+        return;
+      }
+      try {
+        res.json(await onboarding.status(hash(session)));
+      } catch (error) {
+        res
+          .status(
+            error instanceof Error &&
+              error.message === 'onboarding_unauthorized'
+              ? 401
+              : 503,
+          )
+          .json({ error: 'Onboarding unavailable' });
+      }
+    });
+    router.post(
+      '/onboarding/workspace',
+      json({ limit: '2kb', inflate: false }),
+      async (req, res) => {
+        if (req.get('origin') !== config.origin) {
+          res.status(403).json({ error: 'Invalid origin' });
+          return;
+        }
+        const session = cookie(req, sessionName);
+        if (!session) {
+          res.status(401).json({ error: 'Login required' });
+          return;
+        }
+        const input = z
+          .strictObject({ name: workspaceNameSchema })
+          .safeParse(req.body);
+        if (!input.success) {
+          res
+            .status(400)
+            .json({ error: 'Provide a workspace name of 1–80 characters' });
+          return;
+        }
+        try {
+          res.json(await onboarding.create(hash(session), input.data.name));
+        } catch (error) {
+          const code = error instanceof Error ? error.message : '';
+          res
+            .status(
+              code === 'onboarding_unauthorized'
+                ? 401
+                : code === 'onboarding_already_member'
+                  ? 409
+                  : 503,
+            )
+            .json({
+              error:
+                code === 'onboarding_already_member'
+                  ? 'You already belong to a workspace'
+                  : 'Workspace creation unavailable',
+            });
+        }
+      },
+    );
+  }
   router.post('/logout', async (req, res) => {
     if (req.get('origin') !== config.origin) {
       res.status(403).json({ error: 'Invalid origin' });

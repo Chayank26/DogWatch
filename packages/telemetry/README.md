@@ -34,10 +34,17 @@ Dispatcher transaction outcomes are logged only after transaction completion; id
 
 The logger catches synchronous formatting/sink exceptions. Injected HTTP/dispatcher loggers are protected too, so a logging failure cannot turn a committed result into a retry. The default destination drops records if stdout is destroyed or its queued bytes exceed 64 KiB, and handles stdout stream errors without re-emitting raw errors. Log records are bounded by fixed fields rather than serialized application objects. No buffering service, retry queue, delivery guarantee or flush-on-shutdown guarantee is claimed.
 
-`droppedLogCount()` exposes a process-local diagnostic count. It is not a metric exporter or alert; the next phase can consume it. Custom sinks must be synchronous and bounded: blocking sinks block their caller, and asynchronous sink delivery is outside this contract. Logging is not a durable audit ledger; RunControlEvent and other application persistence remain authoritative.
+`droppedLogCount()` exposes a process-local diagnostic count. Phase 8.2 exposes it as `dogwatch_logs_dropped_total` on the optional scrape endpoint. Custom sinks must be synchronous and bounded: blocking sinks block their caller, and asynchronous sink delivery is outside this contract. Logging is not a durable audit ledger; RunControlEvent and other application persistence remain authoritative.
 
 ## Verification
 
 `npm test` includes telemetry allowlist/failure/context tests and HTTP correlation/abort tests. `npm run db:verify:telemetry` checks committed dispatcher outcomes and broken-sink isolation using local PostgreSQL fixtures. `npm run queue:verify` exercises real local Redis harness retries and emits correlated records; fixtures are isolated and removed. The queue verification fixture now uses a valid budget and explicit test quota capacity so quota validation does not hide queue behavior.
 
 No browser, live GitHub/customer request, cloud service, database migration or deployment is required for this phase. Production log routing, retention, collector availability and alerting remain operator work.
+
+## Metrics (Phase 8.2)
+
+The default logger now aggregates sanitized events before calling its sink.
+`metricsText()` renders process-local Prometheus counters/histograms and
+`startMetricsServer(metricsPort(value))` enables an optional dedicated loopback
+scrape listener. See [configuration, label contract and alert runbooks](../../ops/monitoring/README.md).

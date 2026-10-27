@@ -1,5 +1,9 @@
 /** API process entry point; configure secrets in the shell, never in source files. */
-import { createLogger } from '@dogwatch/telemetry';
+import {
+  createLogger,
+  metricsPort,
+  startMetricsServer,
+} from '@dogwatch/telemetry';
 const log = createLogger('api');
 import { createRerunService } from './run-controls.js';
 import { createApiApp } from './app.js';
@@ -74,6 +78,9 @@ const persist =
     ? (input: Parameters<typeof acceptDelivery>[1]) =>
         acceptDelivery(database, input)
     : undefined;
+const metrics = await startMetricsServer(
+  metricsPort(process.env.API_METRICS_PORT),
+);
 const server = createApiApp(
   secret,
   authorization,
@@ -105,6 +112,8 @@ const server = createApiApp(
 // Graceful shutdown stops new requests and releases keep-alive connections.
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
+    metrics?.close();
+    metrics?.closeAllConnections();
     server.close(() => {
       void database?.$disconnect();
       log('service.lifecycle', 'stopped');

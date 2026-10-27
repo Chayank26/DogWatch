@@ -122,3 +122,8 @@ Phase 7.6 adds owner-only manual rerun settings and requests from run details. A
 Phase 7.7 adds transactional quota reservations for webhook/manual runs, trusted usage settlement and `/usage`. Apply migrations first. See [usage accounting and limits](apps/api/USAGE.md), including default quotas and the pending automatic settlement workflow. Run `npm run db:verify:usage` for local race/reconciliation checks.
 
 Phase 8.1 adds structured JSON logs and request/run correlation across API acceptance, dispatcher and queue boundaries. See [telemetry](packages/telemetry/README.md) for allowed fields, privacy/failure behavior and tracing limits. Verify local dispatch logs with `npm run db:verify:telemetry`.
+
+Phase 8.2 adds optional loopback Prometheus endpoints, bounded event counters and
+latency histograms, plus locally testable alert rules. See the
+[monitoring setup and runbooks](ops/monitoring/README.md). Scraping and production
+notification delivery are not enabled automatically.

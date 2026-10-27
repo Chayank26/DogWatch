@@ -2,7 +2,11 @@
  * Phase 2.4 runner hosts the outbox dispatcher only. Production QA consumption
  * stays disabled until preview readiness and isolated execution are implemented.
  */
-import { createLogger } from '@dogwatch/telemetry';
+import {
+  createLogger,
+  metricsPort,
+  startMetricsServer,
+} from '@dogwatch/telemetry';
 const log = createLogger('dispatcher');
 import { setTimeout as pause } from 'node:timers/promises';
 import { createDatabase, dispatchNext } from '@dogwatch/database';
@@ -10,11 +14,13 @@ import { createRunQueue, enqueueRun } from '@dogwatch/queue';
 
 const databaseUrl = process.env.DATABASE_URL;
 const redisUrl = process.env.REDIS_URL;
+const scrapePort = metricsPort(process.env.DISPATCHER_METRICS_PORT);
 if (!databaseUrl && !redisUrl) {
   log('service.lifecycle', 'disabled');
 } else {
   if (!databaseUrl || !redisUrl)
     throw new Error('Dispatcher requires both DATABASE_URL and REDIS_URL');
+  const metrics = await startMetricsServer(scrapePort);
   const database = createDatabase(databaseUrl);
   const queue = createRunQueue(redisUrl);
   let stopping = false;
@@ -37,6 +43,8 @@ if (!databaseUrl && !redisUrl) {
       }
     }
   } finally {
+    metrics?.close();
+    metrics?.closeAllConnections();
     await queue.close();
     await database.$disconnect();
     log('service.lifecycle', 'stopped');

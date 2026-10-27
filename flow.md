@@ -345,3 +345,15 @@ After execution has stopped, a trusted supervisor reports complete usage and set
 Every API request receives a server-generated X-Request-ID. A successful durable acceptance links that request to its run; dispatcher and queue events retain stable run correlation while each attempt gets a separate span. Aborted HTTP responses and failed operations have sanitized outcomes without exposing payloads.
 
 Operators can follow request ID → accepted run ID → dispatch/processor records. Logs are operational evidence, not an audit ledger or proof that customer QA ran. External collectors, searchable dashboards and alerts are not configured yet.
+
+## Phase 8.2 — Operational metrics flow
+
+Default logger → sanitized fixed-field event → bounded in-memory counters and
+histograms → JSON log sink. Failed sinks increment the log-loss counter without
+removing the metric observation. A separately configured loopback GET /metrics
+renders the process registry, bypassing application request instrumentation.
+A same-host Prometheus can scrape configured targets and evaluate the checked-in
+rules; no collector or notification receiver is started automatically. Shutdown
+closes scrape connections. Counters reset with the process; first observations
+create series. Dispatch/queue metrics represent handoff and attempts, not QA
+completion or unique-run billing. See ops/monitoring/README.md for runbooks.

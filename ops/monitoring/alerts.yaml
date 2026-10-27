@@ -1,0 +1,49 @@
+groups:
+  - name: dogwatch
+    rules:
+      - alert: DogWatchTargetDown
+        expr: up{job=~"dogwatch-api|dogwatch-dispatcher"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: DogWatch configured metrics target is unreachable
+      - alert: DogWatchApiErrors
+        expr: |
+          (sum by (job, instance) (increase(dogwatch_events_total{service="api",event="http.request",status_class="5xx",route!="/health"}[5m]))
+          / sum by (job, instance) (increase(dogwatch_events_total{service="api",event="http.request",route!="/health"}[5m])) > 0.05)
+          and (sum by (job, instance) (increase(dogwatch_events_total{service="api",event="http.request",route!="/health"}[5m])) >= 20)
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: DogWatch API errors exceed five percent with sufficient traffic
+      - alert: DogWatchDispatchFailures
+        expr: sum by (job, instance) (increase(dogwatch_events_total{event="outbox.dispatch",outcome="failed"}[5m])) >= 3
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: DogWatch dispatcher has repeated failures
+      - alert: DogWatchQueueConnectionFailures
+        expr: sum by (job, instance) (increase(dogwatch_events_total{event="queue.connection",outcome="failed"}[5m])) >= 3
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: DogWatch queue has repeated connection failures
+      - alert: DogWatchTelemetryLoss
+        expr: increase(dogwatch_logs_dropped_total[5m]) > 0 or increase(dogwatch_metric_series_discarded_total[5m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: DogWatch operational telemetry is being discarded
+      - alert: DogWatchApiLatency
+        expr: |
+          (histogram_quantile(0.95, sum by (job, instance, le) (rate(dogwatch_duration_seconds_bucket{service="api",event="http.request",route!="/health"}[5m]))) > 2)
+          and (sum by (job, instance) (increase(dogwatch_duration_seconds_count{service="api",event="http.request",route!="/health"}[5m])) >= 20)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: DogWatch API p95 latency exceeds two seconds with sufficient traffic

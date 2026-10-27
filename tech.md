@@ -299,3 +299,19 @@ Prisma quota/reservation tables combine tenant-row admission locks, UTC acceptan
 ## Part 8 · Phase 8.1 — Logs and tracing
 
 A new internal telemetry workspace uses Node AsyncLocalStorage, crypto-generated request/span IDs and deterministic run trace IDs. A fixed serializer emits JSON metadata with bounded fields; custom/default sink failures cannot alter application outcomes. API completion hooks, post-transaction dispatcher events and Redis processor attempt events provide correlation without changing queue payloads or persisting secrets. Build prerequisites include the local package. See [telemetry contracts and limits](packages/telemetry/README.md).
+
+## Phase 8.2 — Metrics and alerts
+
+The internal telemetry workspace aggregates sanitized event records into bounded,
+process-local Prometheus counters and classic duration histograms before log sink
+writes. No tenant/run/request identifiers become labels. Separate optional IPv4
+loopback listeners use API_METRICS_PORT and DISPATCHER_METRICS_PORT; the disabled
+dispatcher still exits. Scrapes do not enter application middleware. Registry
+caps, discard counts, process start time and resident memory make resource and
+telemetry loss visible. No third-party runtime dependency or migration is added.
+
+`ops/monitoring` holds the same-host scrape example, six alert rules, synthetic
+promtool fixtures and operational runbooks. Alerts cover target loss, API errors
+and latency with volume gates, dispatch/Redis failures and telemetry loss.
+Production routing/retention, backlog/readiness metrics and recovery remain
+outside this phase; QA consumption remains disabled.

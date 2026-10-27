@@ -1,0 +1,161 @@
+rule_files:
+  - alerts.yaml
+evaluation_interval: 1m
+tests:
+  - name: Sustained failures and latency fire after hold periods
+    interval: 1m
+    input_series:
+      - series: up{job="dogwatch-api",instance="local"}
+        values: '0x15'
+      - series: dogwatch_events_total{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",status_class="5xx"}
+        values: 0+10x15
+      - series: dogwatch_events_total{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",status_class="2xx"}
+        values: 0+40x15
+      - series: dogwatch_events_total{job="dogwatch-api",instance="local",event="outbox.dispatch",outcome="failed"}
+        values: 0+2x15
+      - series: dogwatch_events_total{job="dogwatch-api",instance="local",event="queue.connection",outcome="failed"}
+        values: 0+2x15
+      - series: dogwatch_logs_dropped_total{job="dogwatch-api",instance="local"}
+        values: 0+1x15
+      - series: dogwatch_duration_seconds_bucket{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",le="1"}
+        values: 0+1x15
+      - series: dogwatch_duration_seconds_bucket{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",le="5"}
+        values: 0+10x15
+      - series: dogwatch_duration_seconds_bucket{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",le="+Inf"}
+        values: 0+10x15
+      - series: dogwatch_duration_seconds_count{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me"}
+        values: 0+10x15
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: DogWatchTargetDown
+        exp_alerts:
+          - exp_labels:
+              job: dogwatch-api
+              instance: local
+              severity: critical
+            exp_annotations:
+              summary: DogWatch configured metrics target is unreachable
+      - eval_time: 10m
+        alertname: DogWatchApiErrors
+        exp_alerts:
+          - exp_labels:
+              job: dogwatch-api
+              instance: local
+              severity: critical
+            exp_annotations:
+              summary: DogWatch API errors exceed five percent with sufficient traffic
+      - eval_time: 10m
+        alertname: DogWatchDispatchFailures
+        exp_alerts:
+          - exp_labels:
+              job: dogwatch-api
+              instance: local
+              severity: warning
+            exp_annotations:
+              summary: DogWatch dispatcher has repeated failures
+      - eval_time: 10m
+        alertname: DogWatchQueueConnectionFailures
+        exp_alerts:
+          - exp_labels:
+              job: dogwatch-api
+              instance: local
+              severity: warning
+            exp_annotations:
+              summary: DogWatch queue has repeated connection failures
+      - eval_time: 10m
+        alertname: DogWatchTelemetryLoss
+        exp_alerts:
+          - exp_labels:
+              job: dogwatch-api
+              instance: local
+              severity: warning
+            exp_annotations:
+              summary: DogWatch operational telemetry is being discarded
+      - eval_time: 10m
+        alertname: DogWatchApiLatency
+        exp_alerts:
+          - exp_labels:
+              job: dogwatch-api
+              instance: local
+              severity: warning
+            exp_annotations:
+              summary: DogWatch API p95 latency exceeds two seconds with sufficient traffic
+      - eval_time: 0m
+        alertname: DogWatchTargetDown
+        exp_alerts: []
+      - eval_time: 0m
+        alertname: DogWatchApiErrors
+        exp_alerts: []
+      - eval_time: 0m
+        alertname: DogWatchDispatchFailures
+        exp_alerts: []
+      - eval_time: 0m
+        alertname: DogWatchQueueConnectionFailures
+        exp_alerts: []
+      - eval_time: 0m
+        alertname: DogWatchTelemetryLoss
+        exp_alerts: []
+      - eval_time: 0m
+        alertname: DogWatchApiLatency
+        exp_alerts: []
+  - name: Low traffic, idle work and counter reset stay quiet
+    interval: 1m
+    input_series:
+      - series: up{job="dogwatch-api",instance="local"}
+        values: 1x15
+      - series: dogwatch_events_total{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",status_class="5xx"}
+        values: 0+1x15
+      - series: dogwatch_events_total{job="dogwatch-api",instance="local",event="outbox.dispatch",outcome="failed"}
+        values: '0x15'
+      - series: dogwatch_logs_dropped_total{job="dogwatch-api",instance="local"}
+        values: 10 10 10 0 0 0 0 0 0 0 0 0 0 0 0 0
+      - series: dogwatch_duration_seconds_bucket{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",le="5"}
+        values: 0+1x15
+      - series: dogwatch_duration_seconds_bucket{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me",le="+Inf"}
+        values: 0+1x15
+      - series: dogwatch_duration_seconds_count{job="dogwatch-api",instance="local",service="api",event="http.request",route="/me"}
+        values: 0+1x15
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: DogWatchTargetDown
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchApiErrors
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchDispatchFailures
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchQueueConnectionFailures
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchTelemetryLoss
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchApiLatency
+        exp_alerts: []
+      - eval_time: 4m
+        alertname: DogWatchTelemetryLoss
+        exp_alerts: []
+  - name: No configured targets or traffic does not invent alerts
+    interval: 1m
+    input_series: []
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: DogWatchTargetDown
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchApiErrors
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchDispatchFailures
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchQueueConnectionFailures
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchTelemetryLoss
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: DogWatchApiLatency
+        exp_alerts: []

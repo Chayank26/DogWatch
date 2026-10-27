@@ -648,3 +648,38 @@ Next proposed phase: Part 8, Phase 8.2 — metrics and alerts. Stop before imple
 ### Phase 8.1 verification
 
 All 300 tests passed, including seven new telemetry/HTTP cases covering field allowlists, secret omission, concurrent context isolation, stable run traces, distinct spans, spoofed headers, aborted requests and sink failure isolation. Real PostgreSQL verification checked committed dispatch outcomes, correlation and broken-sink behavior. Real Redis integration passed after replacing an obsolete fixture budget and assigning test-only quota capacity; crash-window reconciliation, retries, concurrency and invalid-job checks passed. Workspace type checks, builds, lint, formatting and whitespace checks passed. The lockfile adds only a local workspace link, with no third-party package added. Random database/queue fixtures were removed and the generated web declaration restored. No live customer request, browser run, migration, external collector or deployment was exercised.
+
+## Part 8 · Phase 8.2 — Metrics and alerts
+
+- Added dependency-free Prometheus event counters, cumulative duration histograms,
+  process diagnostics and log/metric discard counters. Fixed sanitized labels omit
+  tenant/run/request identifiers; registry caps bound memory and series growth.
+- Collect metrics before log output so sink failures preserve observations. Added
+  optional dedicated loopback scrape listeners for API and enabled dispatcher,
+  strict port configuration and graceful connection cleanup.
+- Added same-host scrape configuration, six alert rules, synthetic rule fixtures
+  and runbooks. API error/latency alerts have volume gates; idle work does not
+  imply failure. No production collector or notification receiver is configured.
+- Updated environment examples and telemetry/progress documentation. No new
+  third-party runtime dependency, migration, UI change or deployment was added.
+
+Next proposed phase: Part 8, Phase 8.3 — recovery drills. Stop before implementation.
+
+### Phase 8.2 verification
+
+All 304 application tests passed, including aggregation, cumulative histogram
+buckets, identifier/secret omission, invalid duration handling, 10,000 distinct
+input paths collapsing to bounded labels, sink failure isolation, port validation,
+scrape routing and bind-conflict checks. Workspace type checks, production builds,
+lint, formatting and whitespace checks passed. A built-API smoke test verified
+health requests appear in metrics, the application does not serve /metrics, and
+SIGTERM closes the scrape endpoint. The generated web declaration was restored.
+
+Prometheus rule/configuration validation remains pending: promtool was unavailable
+locally, and the official Docker image download made insufficient progress after
+an extended wait. A standalone release download was also slow. Both attempts were
+stopped; no collector or notification receiver was started. The checked-in fixtures
+have not yet executed with promtool. Run the three commands in
+ops/monitoring/README.md before treating these alert rules as verified or moving
+to Phase 8.3. No database/Redis integration was rerun because persistence and
+handoff behavior were unchanged. No live customer request or deployment occurred.

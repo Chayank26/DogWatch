@@ -1,6 +1,11 @@
 /** Allowlisted operational metadata only. Never pass raw errors, payloads, URLs or credentials. */
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { observe, renderMetrics } from './metrics.js';
+export { metricsPort, startMetricsServer } from './server.js';
+export function metricsText() {
+  return renderMetrics(droppedLogCount());
+}
 export type Service = 'api' | 'dispatcher' | 'queue';
 export type Event =
   | 'http.request'
@@ -114,7 +119,7 @@ export function protectLogger(log: Logger): Logger {
     }
   };
 }
-/** Process-local diagnostic counter, not a remote metric or delivery guarantee. */
+/** Process-local diagnostic counter, also exposed by the optional metrics endpoint. */
 export function droppedLogCount() {
   return dropped;
 }
@@ -205,6 +210,7 @@ export function createLogger(
         input.attempt! <= 1000000
       )
         record.attempt = input.attempt!;
+      observe(record);
       destination(JSON.stringify(record) + '\n');
     } catch {
       dropped++;

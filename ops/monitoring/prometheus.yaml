@@ -1,0 +1,14 @@
+# Run Prometheus on the SAME HOST/network namespace as the Node processes.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+rule_files:
+  - alerts.yaml
+scrape_configs:
+  - job_name: dogwatch-api
+    static_configs:
+      - targets: ['127.0.0.1:9401']
+  # Enable only when the dispatcher and DISPATCHER_METRICS_PORT are enabled.
+  # - job_name: dogwatch-dispatcher
+  #   static_configs:
+  #     - targets: ['127.0.0.1:9402']

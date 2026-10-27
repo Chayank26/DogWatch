@@ -1,0 +1,1451 @@
+{
+  "schemaVersion": 1,
+  "corpusVersion": "pawmart-v1",
+  "generatedAt": "2026-10-27T17:45:45.029Z",
+  "corpusKind": "synthetic-fault-variants-not-real-PRs",
+  "repeats": 3,
+  "corpus": [
+    {
+      "id": "clean",
+      "mode": "healthy",
+      "labels": []
+    },
+    {
+      "id": "invalid-address-server-error",
+      "mode": "missing-address-500",
+      "labels": ["api"]
+    },
+    {
+      "id": "missing-auth-accepted",
+      "mode": "authentication-bypass",
+      "labels": ["authentication"]
+    },
+    {
+      "id": "foreign-order-readable",
+      "mode": "ownership-bypass",
+      "labels": ["ownership"]
+    },
+    {
+      "id": "customer-admin-report",
+      "mode": "role-bypass",
+      "labels": ["role"]
+    },
+    {
+      "id": "validation-ui-stuck",
+      "mode": "checkout-stuck",
+      "labels": ["ui"]
+    },
+    {
+      "id": "quantity-write-read-loss",
+      "mode": "quantity-lost",
+      "labels": ["coupled"]
+    }
+  ],
+  "sourceDigest": "4d1f5b15ab7e1eea8adde74a97565557a08a0d0efc9fe7031a7f3d6432ab2195",
+  "sources": [
+    "apps/worker/src/benchmark.ts",
+    "apps/worker/src/benchmark-probes.ts",
+    "apps/worker/src/verify-benchmark.ts",
+    "apps/worker/src/smoke-fixture.ts",
+    "apps/worker/src/smoke.ts",
+    "apps/fixture/src/app.ts",
+    "apps/fixture/src/browser.ts",
+    "apps/fixture/public/index.html",
+    "apps/fixture/public/style.css",
+    "package-lock.json"
+  ],
+  "environment": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "baseline": {
+    "kind": "fixed-http-probes",
+    "overall": {
+      "tp": 15,
+      "fp": 0,
+      "fn": 3,
+      "tn": 84,
+      "inconclusive": 6,
+      "notRun": 21,
+      "precision": 1,
+      "recall": 0.8333333333333334,
+      "falsePositiveRate": 0,
+      "evaluated": 99,
+      "total": 126
+    },
+    "categories": {
+      "api": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      },
+      "authentication": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      },
+      "ownership": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 15,
+        "inconclusive": 3,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 18,
+        "total": 21
+      },
+      "role": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 15,
+        "inconclusive": 3,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 18,
+        "total": 21
+      },
+      "ui": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 3,
+        "tn": 0,
+        "inconclusive": 0,
+        "notRun": 21,
+        "precision": null,
+        "recall": 0,
+        "falsePositiveRate": null,
+        "evaluated": 0,
+        "total": 21
+      },
+      "coupled": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      }
+    },
+    "reproducibility": {
+      "stableCells": 42,
+      "totalCells": 42,
+      "rate": 1
+    }
+  },
+  "combined": {
+    "kind": "fixed-http-plus-scripted-browser",
+    "overall": {
+      "tp": 18,
+      "fp": 0,
+      "fn": 0,
+      "tn": 102,
+      "inconclusive": 6,
+      "notRun": 0,
+      "precision": 1,
+      "recall": 1,
+      "falsePositiveRate": 0,
+      "evaluated": 120,
+      "total": 126
+    },
+    "categories": {
+      "api": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      },
+      "authentication": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      },
+      "ownership": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 15,
+        "inconclusive": 3,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 18,
+        "total": 21
+      },
+      "role": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 15,
+        "inconclusive": 3,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 18,
+        "total": 21
+      },
+      "ui": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      },
+      "coupled": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 18,
+        "inconclusive": 0,
+        "notRun": 0,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "evaluated": 21,
+        "total": 21
+      }
+    },
+    "reproducibility": {
+      "stableCells": 42,
+      "totalCells": 42,
+      "rate": 1
+    }
+  },
+  "browserAgent": {
+    "status": "not_evaluated",
+    "incrementalRecall": null
+  },
+  "scriptedBrowserIncrementalRecall": 0.16666666666666663,
+  "measurements": [
+    {
+      "caseId": "clean",
+      "repeat": 0,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 16
+    },
+    {
+      "caseId": "clean",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 0,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "clean",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 264
+    },
+    {
+      "caseId": "clean",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 0,
+      "category": "api",
+      "observation": "detected",
+      "code": "validation_server_error",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 0,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 192
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 0,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "detected",
+      "code": "missing_auth_accepted",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "inconclusive",
+      "code": "owner_control",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 0,
+      "category": "role",
+      "observation": "inconclusive",
+      "code": "admin_control",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 182
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 0,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "detected",
+      "code": "foreign_order_exposed",
+      "requests": 3,
+      "durationMs": 1
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 0,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 201
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 0,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 0,
+      "category": "role",
+      "observation": "detected",
+      "code": "admin_report_exposed",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 203
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 0,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 0,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "detected",
+      "code": "validation_message_missing",
+      "requests": 0,
+      "durationMs": 2160
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 4
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 0,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 4
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 0,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 2
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 0,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 0,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 0,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 196
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 0,
+      "category": "coupled",
+      "observation": "detected",
+      "code": "quantity_lost",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 1,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "clean",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 1,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 182
+    },
+    {
+      "caseId": "clean",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 1,
+      "category": "api",
+      "observation": "detected",
+      "code": "validation_server_error",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 1,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 189
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 1,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "detected",
+      "code": "missing_auth_accepted",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "inconclusive",
+      "code": "owner_control",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 1,
+      "category": "role",
+      "observation": "inconclusive",
+      "code": "admin_control",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 187
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 1,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "detected",
+      "code": "foreign_order_exposed",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 1,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 190
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 1,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 1,
+      "category": "role",
+      "observation": "detected",
+      "code": "admin_report_exposed",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 185
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 1,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 1,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "detected",
+      "code": "validation_message_missing",
+      "requests": 0,
+      "durationMs": 2160
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 4
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 1,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 4
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 1,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 2
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 1,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 1,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 1,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 210
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 1,
+      "category": "coupled",
+      "observation": "detected",
+      "code": "quantity_lost",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "clean",
+      "repeat": 2,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "clean",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "clean",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 1
+    },
+    {
+      "caseId": "clean",
+      "repeat": 2,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 4
+    },
+    {
+      "caseId": "clean",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 193
+    },
+    {
+      "caseId": "clean",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 2,
+      "category": "api",
+      "observation": "detected",
+      "code": "validation_server_error",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 2,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 183
+    },
+    {
+      "caseId": "invalid-address-server-error",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 2,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "detected",
+      "code": "missing_auth_accepted",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "inconclusive",
+      "code": "owner_control",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 2,
+      "category": "role",
+      "observation": "inconclusive",
+      "code": "admin_control",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 183
+    },
+    {
+      "caseId": "missing-auth-accepted",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 2,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "detected",
+      "code": "foreign_order_exposed",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 2,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 181
+    },
+    {
+      "caseId": "foreign-order-readable",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 2,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 2,
+      "category": "role",
+      "observation": "detected",
+      "code": "admin_report_exposed",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 182
+    },
+    {
+      "caseId": "customer-admin-report",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 2,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 1
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 2,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "detected",
+      "code": "validation_message_missing",
+      "requests": 0,
+      "durationMs": 2136
+    },
+    {
+      "caseId": "validation-ui-stuck",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "clear",
+      "code": "quantity_preserved",
+      "requests": 3,
+      "durationMs": 4
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 2,
+      "category": "api",
+      "observation": "clear",
+      "code": "validation_rejected",
+      "requests": 3,
+      "durationMs": 3
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 2,
+      "category": "authentication",
+      "observation": "clear",
+      "code": "authentication_rejected",
+      "requests": 2,
+      "durationMs": 1
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 2,
+      "category": "ownership",
+      "observation": "clear",
+      "code": "foreign_order_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 2,
+      "category": "role",
+      "observation": "clear",
+      "code": "customer_rejected",
+      "requests": 3,
+      "durationMs": 2
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 2,
+      "category": "ui",
+      "observation": "clear",
+      "code": "validation_message_rendered",
+      "requests": 0,
+      "durationMs": 188
+    },
+    {
+      "caseId": "quantity-write-read-loss",
+      "repeat": 2,
+      "category": "coupled",
+      "observation": "detected",
+      "code": "quantity_lost",
+      "requests": 3,
+      "durationMs": 3
+    }
+  ],
+  "runtime": {
+    "api": {
+      "samples": 21,
+      "medianMs": 2,
+      "p95Ms": 4
+    },
+    "authentication": {
+      "samples": 21,
+      "medianMs": 1,
+      "p95Ms": 2
+    },
+    "ownership": {
+      "samples": 21,
+      "medianMs": 2,
+      "p95Ms": 3
+    },
+    "role": {
+      "samples": 21,
+      "medianMs": 2,
+      "p95Ms": 3
+    },
+    "ui": {
+      "samples": 21,
+      "medianMs": 190,
+      "p95Ms": 2160
+    },
+    "coupled": {
+      "samples": 21,
+      "medianMs": 3,
+      "p95Ms": 4
+    }
+  },
+  "totalMs": 10633,
+  "cost": {
+    "modelCalls": 0,
+    "modelTokens": 0,
+    "modelCostUsd": 0,
+    "totalCostUsd": null,
+    "httpProbeRequests": 288,
+    "browserRequests": null
+  },
+  "pilotThreshold": {
+    "status": "not_agreed",
+    "generalAccuracyClaim": false
+  }
+}

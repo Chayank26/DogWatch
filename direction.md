@@ -717,3 +717,38 @@ formatting and whitespace checks passed. Generated databases, queue keys and
 backup files were cleaned, and the generated web declaration restored. No live
 provider/customer traffic, full-cluster restore or production notification was
 exercised.
+
+## Part 8 · Phase 8.4 — Labeled benchmark
+
+- Added seven labeled synthetic PawMart variants covering clean behavior and API,
+  authentication, ownership, role, UI and write/read consistency defects. The new
+  quantity-loss fault is local-only and independently checked by a fixture test.
+- Added blind fixed probes and three-repeat execution with fresh fixture state,
+  using the existing scripted Chromium driver. Added scoring tests for denominators,
+  abstention, false positives/misses, unstable decisions and invalid observations.
+- Recorded a source-digested result snapshot, category metrics, full observations,
+  runtime, repeatability and partial cost accounting. Model-agent contribution and
+  total monetary cost remain unmeasured; no pilot threshold has been agreed.
+- Documented that this is an authored development corpus, not held-out real PRs,
+  general product accuracy or evidence of the 90% aspiration. No new dependency,
+  migration, production QA consumer or deployment was introduced.
+
+Next proposed phase: Part 8, Phase 8.5 — security validation. Stop before implementation.
+
+### Phase 8.4 verification
+
+Three benchmark repetitions produced 126 observations across 42 unique cells and
+six unique defects. HTTP-only recall was 5/6 (83.3%); adding scripted UI assertions
+found 6/6 (100%) with no false positives among conclusive negatives. Six observations
+remained inconclusive because the authentication-bypass variant invalidated role
+and ownership controls. All 42 decision cells were stable across repeats. The final
+local run took 10,633 ms; this is not a production SLA or statistically independent
+sample of 126 defects. Model calls were zero and total host/browser cost unmeasured.
+
+All 311 application tests passed, including new scoring, malformed-control,
+fixture-origin and write/read-label tests. Workspace type checks, builds, lint,
+formatting and whitespace checks passed. Initial type errors around unknown JSON
+responses were corrected with runtime object validation before regenerating the
+final benchmark evidence. Temporary fixture servers/browser processes closed and
+the generated web declaration was restored. No external provider/customer request,
+real PR, model evaluation, security certification or deployment was exercised.

@@ -16,6 +16,7 @@ export const fixtureModes = [
   'authentication-bypass',
   'ownership-bypass',
   'role-bypass',
+  'quantity-lost',
 ] as const;
 export type FixtureMode = (typeof fixtureModes)[number];
 export function parseFixtureMode(value: string = 'healthy'): FixtureMode {
@@ -134,7 +135,7 @@ export function createFixtureApp(mode: FixtureMode = 'healthy') {
       id: `order-created-${++sequence}`,
       owner: response.locals.user as string,
       address: address.trim(),
-      quantity,
+      quantity: mode === 'quantity-lost' ? 1 : quantity,
     };
     orders.set(order.id, order);
     response.status(201).json(order);

@@ -132,3 +132,8 @@ Phase 8.3 adds `npm run recovery:verify`: an isolated local dispatcher-crash,
 PostgreSQL backup/restore and retry drill. See the
 [recovery procedures and limitations](ops/recovery/README.md). It creates and
 cleans its own databases/queue; it does not repair production work automatically.
+
+Phase 8.4 adds `npm run benchmark:verify` and a
+[labeled synthetic benchmark with recorded results](benchmarks/pawmart-v1/README.md).
+It compares fixed HTTP probes with scripted browser checks over three repeats,
+reports inconclusive coverage explicitly, and makes no real-PR accuracy claim.

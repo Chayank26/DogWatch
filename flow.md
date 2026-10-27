@@ -372,3 +372,16 @@ preserve evidence, restore into isolation and reconcile DB/queue/artifact/report
 state before resuming. The runbook distinguishes ordinary pending retries from
 exhausted, cancelled, superseded or ambiguous work. Full-system failover and active
 QA-worker recovery remain pending; the drill sends no customer/provider requests.
+
+## Phase 8.4 — Labeled evaluation flow
+
+Versioned corpus selects a disposable local fixture → blind fixed HTTP or scripted
+browser probe observes one category → fixture/browser close → repeat across all
+cases/categories three times → scorer joins observations to independent labels →
+HTTP-only and HTTP-plus-scripted-browser summaries plus full evidence are written
+locally. Missing measurements invalidate the report; infrastructure/control failures
+remain inconclusive. Expected UI validation errors alone are not UI findings.
+
+The source-digested snapshot and methodology live in benchmarks/pawmart-v1. Model-
+agent contribution, total infrastructure cost, held-out real-PR performance and a
+pilot threshold remain explicitly unmeasured. The next phase is security validation.

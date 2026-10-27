@@ -331,3 +331,20 @@ resources only. No runtime recovery endpoint, migration or dependency was added.
 reconciliation and unresolved production exercises. Production QA consumption
 remains disabled. Prometheus 3.5.0 config/rule/fixture validation now passes,
 closing the previous phase's tool-download blocker.
+
+## Phase 8.4 — Labeled benchmark
+
+Added a versioned seven-variant PawMart corpus with six defect categories and a
+healthy control. The new quantity-loss variant exercises POST→stored state→GET
+consistency. Blind fixture-specific probes receive only origin/category; labels
+are scored separately. Every case/category has fresh fixture state for each of
+three repetitions. The browser probe reuses the bounded fixture Chromium driver.
+These adapters do not measure the production contract generator or model agent.
+
+Scoring rejects missing/duplicate/foreign/malformed observations, counts abstained
+positives as misses, excludes abstained negatives from true negatives, and reports
+null ratios when undefined. Evidence includes source digest, environment, complete
+observations, category metrics, repeatability, runtime and partial cost accounting.
+The checked-in benchmark snapshot reports six inconclusive observations; it does
+not establish general accuracy or an agreed pilot gate. No dependency, migration,
+production consumer or provider integration was added.

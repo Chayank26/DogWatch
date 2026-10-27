@@ -117,3 +117,23 @@ test('fault modes have explicit predictable contracts and unknown modes fail sta
   });
   assert.throws(() => parseFixtureMode('typo'), /Unknown FIXTURE_MODE/);
 });
+
+test('quantity-loss label is observable across order creation and subsequent read', async () => {
+  for (const mode of ['healthy', 'quantity-lost'] as const) {
+    await withFixture(mode, async (url) => {
+      const created = await submit(url, {
+        address: '1 Test Lane',
+        quantity: 2,
+      });
+      assert.equal(created.status, 201);
+      const order = await created.json();
+      const read = await fetch(`${url}/api/orders/${order.id}`, {
+        headers: { Authorization: 'Bearer fixture-alice' },
+      });
+      assert.equal(read.status, 200);
+      const stored = await read.json();
+      assert.equal(stored.id, order.id);
+      assert.equal(stored.quantity, mode === 'healthy' ? 2 : 1);
+    });
+  }
+});

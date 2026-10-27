@@ -31,7 +31,7 @@ Run one mode at a time. The default is `healthy`; unknown modes fail startup.
 | checkout-stuck        | Submit blank address     | API correctly returns 400, but UI stays on Processing.          |
 | authentication-bypass | Missing or invalid token | API incorrectly acts as Alice and accepts protected operations. |
 
-The form deliberately skips native browser validation so server-side edge cases can be exercised. Future Playwright phases will verify client behavior in a real browser; current automated tests exercise HTTP behavior and fault configuration only.
+The form deliberately skips native browser validation so server-side edge cases can be exercised. `npm run smoke:verify` and `npm run benchmark:verify` exercise client behavior in real Chromium; the fixture workspace tests cover HTTP behavior and fault configuration.
 
 ## Synthetic identities and data
 
@@ -58,3 +58,11 @@ TypeScript emits this browser file as ESM; HTML loads it as a module, which defe
 `fixture-admin` is a public synthetic administrator token. `/api/identity` returns the current subject and role; Alice/Bob are customers, and the administrator has role `admin`. `/api/admin/report` is restricted to that administrator in healthy mode. `ownership-bypass` deliberately permits reading another subject's order, while `role-bypass` permits customers to read the protected report. These modes are independent of the existing authentication-bypass mode.
 
 `/authorization-openapi.yaml` describes this separate read-access corpus. `npm run authorization:verify` verifies healthy and faulty targets using independently scoped identity controls and known resource/report evidence. Each target is fresh and disposable; this is not an external identity-provider test. The original `openapi.yaml` retains its boundary/authentication endpoints; its order-owner response enum now also includes `admin`.
+
+## Labeled benchmark addition (Phase 8.4)
+
+`quantity-lost` accepts a valid order but stores quantity 1, demonstrating a
+write/read consistency defect when quantity 2 was requested. The mode remains
+local and explicit (`FIXTURE_MODE=quantity-lost`). `npm run benchmark:verify`
+runs all seven variants with fresh state and repeated HTTP/scripted-browser
+measurements. See [labels, methodology and results](../../benchmarks/pawmart-v1/README.md).

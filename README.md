@@ -1,6 +1,15 @@
 # DogWatch
 
-Autonomous AI QA for opted-in GitHub pull requests. This repository contains GitHub ingress, durable queue dispatch and callable Tier 0 analysis, smoke checks, base comparison and local evidence storage. Production customer QA execution is not enabled yet.
+An opt-in GitHub QA prototype with authorized ingress, durable queue dispatch,
+callable API/browser checks, scoped evidence and reporting primitives. Production
+customer QA execution is not enabled.
+
+Start with the [portfolio overview](docs/portfolio/README.md),
+[recorded demo walkthrough](docs/portfolio/WALKTHROUGH.md),
+[synthetic sample report](docs/portfolio/sample-report.md), and
+[pilot entry gates](docs/portfolio/PILOT.md). The planned local implementation
+phases have deliverables; cloud deployment, the complete live PR pipeline and a
+customer pilot remain outstanding.
 
 ## Local setup
 
@@ -41,9 +50,9 @@ The [CI guide](docs/development/CI.md) explains the automated checks and local e
 
 ## GitHub webhook foundation
 
-The API now exposes a validation-only `/webhooks/github` endpoint. See [App setup and endpoint behavior](docs/github/APP_SETUP.md). No live App is registered, and verified deliveries do not yet create QA runs.
+The API exposes `/webhooks/github`. Without a secret it fails closed; signature-only configuration validates deliveries without creating work. See [App setup and endpoint behavior](docs/github/APP_SETUP.md). Live App registration remains unverified.
 
-Authorization/event filtering can now be enabled separately with protected local policy and App credential files. See the [authorization guide](docs/github/AUTHORIZATION.md). Eligible decisions remain unqueued and unpersisted.
+Authorization/event filtering can now be enabled separately with protected local policy and App credential files. See the [authorization guide](docs/github/AUTHORIZATION.md). Without database-backed acceptance, eligible decisions remain unqueued and unpersisted.
 
 Durable acceptance is now available with explicit database configuration. See [deduplication and outbox setup](docs/github/DURABLE_ACCEPTANCE.md). Accepted runs are saved and can be queued by the configured background dispatcher.
 
@@ -57,7 +66,7 @@ With the authorized durable API configured, an allowed human actor can post `/do
 
 ## Preview readiness
 
-An explicitly callable preparation stage now validates exact-SHA deployment bindings, polls bounded health checks, and saves readiness evidence while respecting stop signals. Normal startup still dispatches only; isolated QA consumption comes next. See [worker guide](apps/worker/README.md). Run `npm run preview:verify` against local Postgres to verify the disposable HTTP fixture.
+An explicitly callable preparation stage now validates exact-SHA deployment bindings, polls bounded health checks, and saves readiness evidence while respecting stop signals. Normal startup still dispatches only; production QA consumption remains gated on orchestration and isolation work. See [worker guide](apps/worker/README.md). Run `npm run preview:verify` against local Postgres to verify the disposable HTTP fixture.
 
 ## Worker isolation
 

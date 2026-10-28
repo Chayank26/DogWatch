@@ -378,3 +378,18 @@ artifacts and rehearsal sources without connection strings. The runbook document
 promotion, migration ordering and rollback constraints; it does not supply an
 immutable production image, TLS, cloud services or a production QA consumer.
 No application authority, dependency or schema migration was added.
+
+## Phase 8.7 — Portfolio and pilot preparation
+
+Added a curated evidence index, updated architecture/current-state documentation,
+a five-minute walkthrough script and a no-go pilot worksheet. Added
+`npm run portfolio:verify` to record three real Chromium fixture clips/screenshots,
+check HTTP/UI outcomes and generate a synthetic sample through the existing
+private-artifact verifier and Markdown renderer. A manifest hashes local output
+assets; temporary private evidence is deleted after rendering.
+
+Documentation separates local/callable capabilities from missing cloud, consumer,
+hosted-evidence and live-integration work. No public PR, publication, participant,
+customer deployment or live pilot was created. No runtime dependency or schema
+change was introduced; the planned local phase sequence does not establish the
+broader full-pipeline release gate.

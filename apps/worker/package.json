@@ -41,7 +41,9 @@
     "preverify:recovery": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
     "verify:recovery": "node --import tsx src/verify-recovery.ts",
     "preverify:benchmark": "npm run build -w @dogwatch/fixture",
-    "verify:benchmark": "node --import tsx src/verify-benchmark.ts"
+    "verify:benchmark": "node --import tsx src/verify-benchmark.ts",
+    "preverify:portfolio": "npm run build -w @dogwatch/fixture && npm run build -w @dogwatch/contracts",
+    "verify:portfolio": "node --import tsx src/verify-portfolio.ts"
   },
   "dependencies": {
     "@apidevtools/openapi-schemas": "^2.1.0",

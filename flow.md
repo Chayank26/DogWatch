@@ -414,3 +414,17 @@ Any failed check or cleanup prevents a passing manifest. This validates a local
 release procedure, not cloud deployment, prior-version rollback or live PR-to-report
 completion. The dispatcher never consumes QA work. Production promotion remains
 subject to the documented security, orchestration and managed-service gates.
+
+## Phase 8.7 — Portfolio demonstration and pilot gating
+
+Start fresh loopback PawMart variants → record actual Chromium form submissions →
+assert healthy validation, seeded API error and stuck-UI outcomes → save local
+clips/screenshots → verify a temporary scoped synthetic artifact → render a sample
+report with baseline unavailable → hash outputs → close fixtures/browser and remove
+temporary evidence. The checked-in sample/manifest are reviewed documentation;
+recordings stay in ignored local storage and nothing is published to GitHub.
+
+Pilot preparation lists owners/consent, deployment, isolation, live-provider,
+hosted-evidence, held-out evaluation and acceptance decisions that must precede a
+live pilot. Its status is no-go. The next work must close those production gates,
+not infer customer readiness from completion of the planned local phases.

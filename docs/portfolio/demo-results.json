@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "scope": "synthetic-local-demo",
+  "generatedAt": "2026-10-28T09:56:56.490Z",
+  "browser": "156.0.8078.4",
+  "directory": ".local/portfolio/3ddbd51b-c2ac-493a-a08c-a65031ba0747",
+  "observations": [
+    {
+      "mode": "healthy",
+      "httpStatus": 400,
+      "ui": "validation-message",
+      "clip": "healthy.webm",
+      "screenshot": "healthy.png"
+    },
+    {
+      "mode": "missing-address-500",
+      "httpStatus": 500,
+      "ui": "validation-message",
+      "clip": "missing-address-500.webm",
+      "screenshot": "missing-address-500.png"
+    },
+    {
+      "mode": "checkout-stuck",
+      "httpStatus": 400,
+      "ui": "pending",
+      "clip": "checkout-stuck.webm",
+      "screenshot": "checkout-stuck.png"
+    }
+  ],
+  "hashes": {
+    "healthy.webm": "83ccb8b83b108c266f49994aed0f2ccd79d994a173dc9029d41dbf18ba2e6432",
+    "healthy.png": "f1500835c96bc1b5c319d7131a019c960962e22fbd5618d52757640923bd9583",
+    "missing-address-500.webm": "c546a61371409bb523561e11cb9da8449fe9cb761b77cd499325871504188f3d",
+    "missing-address-500.png": "f1500835c96bc1b5c319d7131a019c960962e22fbd5618d52757640923bd9583",
+    "checkout-stuck.webm": "d693307c6e55df2bbd89afd2fd8d42f30aa5cca39e2803b6891cf790a6df8c44",
+    "checkout-stuck.png": "22b1fbdca6f3052580d06104d7650884b29fb639501789dd1d6352e4bfab1461",
+    "sample-report.md": "f55004351d3aad418bf940d3c459b051cfd778b0445c6abfb9d7cdb7f8ff5adc"
+  },
+  "publication": "not-published",
+  "livePilot": "not-started"
+}

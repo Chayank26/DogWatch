@@ -57,7 +57,8 @@
     "benchmark:verify": "npm run verify:benchmark -w @dogwatch/worker",
     "presecurity:verify": "npm run build -w @dogwatch/fixture && npm run build -w @dogwatch/worker",
     "security:verify": "node scripts/verify-security.mjs",
-    "release:verify": "node scripts/rehearse-release.mjs"
+    "release:verify": "node scripts/rehearse-release.mjs",
+    "portfolio:verify": "npm run verify:portfolio -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

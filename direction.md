@@ -819,3 +819,38 @@ formatting and whitespace checks passed. Generated containers/network/volumes,
 processes and lock were removed; existing development data services were untouched.
 No cloud deployment, TLS, real OAuth/webhook request, customer execution,
 prior-version rollback or complete opted-in PR pipeline was exercised.
+
+## Part 8 · Phase 8.7 — Portfolio documentation and pilot preparation
+
+- Added an evidence-based portfolio overview, current architecture status,
+  five-minute presentation script, local demo recipes and a no-go pilot worksheet.
+  Corrected stale README statements about configured durable ingress.
+- Added `npm run portfolio:verify`: real Chromium recordings and screenshots of
+  three synthetic fixture modes, checked HTTP/UI outcomes, and a report generated
+  through the existing scoped artifact verifier and Markdown renderer.
+- Saved a reviewed sample report and demo manifest; local video/image hashes were
+  verified. The report uses synthetic IDs, discloses its unavailable baseline and
+  is neither a live PR result nor evidence of newly introduced regression.
+- Explicitly retained cloud, production QA orchestration, hosted evidence, live
+  provider/security validation and agreed pilot thresholds as outstanding work.
+  No participant, repository, demo PR, customer outcome or publication was invented.
+
+The planned local implementation sequence now has deliverables. The broader live
+release gate remains unmet. Next work requires choosing and closing the documented
+production-readiness gates before launching an explicitly authorized pilot; do not
+interpret this phase as approval to publish, contact owners or execute customer QA.
+
+### Phase 8.7 verification
+
+Recorded three WebM clips and three screenshots with real loopback fixture traffic:
+healthy blank-address validation returned 400 and a message; the API-fault variant
+returned 500; the UI-fault variant returned 400 but remained Processing. The renderer
+verified temporary private artifact scope/integrity and produced one finding with
+baseline unavailable. Output hashes matched the manifest, and the stuck-UI screenshot
+was visually inspected. All 328 application tests, type checks, production builds,
+lint, formatting and whitespace checks passed. An initial browser callback type
+error was corrected with a typed locator assertion; sandbox-restricted HTTP tests
+were rerun with local-listener permission. Generated web declarations were restored.
+Fixture servers/browser contexts and temporary private evidence were cleaned up;
+local recordings were retained. No cloud deployment, live PR, owner contact,
+public publication, model evaluation or pilot occurred.

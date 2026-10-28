@@ -785,3 +785,37 @@ verification. Temporary DB fixtures and probe containers were cleaned, services
 started for this phase stopped with volumes retained, and the generated web
 declaration restored. No live model/customer/provider request, penetration test,
 cloud security assessment or production certification was performed.
+
+## Part 8 · Phase 8.6 — Local release rehearsal
+
+- The user selected local release rehearsal before choosing a cloud provider.
+  Added `npm run release:verify` with a random Compose project, disposable
+  PostgreSQL/Redis, explicit process environments and loopback-only listeners.
+- Verified production workspace builds, fresh migrations and idempotent reapply,
+  separate API/dashboard processes and compiled dispatcher handoff. Synthetic
+  OAuth configuration exercises the unauthenticated proxy without contacting GitHub.
+- Verified API/dispatcher restart without duplicate handoff, graceful termination,
+  generated-infrastructure cleanup and restoration of the prior dashboard build.
+  Added a concurrency lock and sanitized artifact/source fingerprint manifest.
+- Documented promotion, stable build-time proxy configuration, migration ordering,
+  rollback constraints and outstanding managed-service/security/orchestration gates.
+  No dependency, schema migration, public listener, cloud resource or QA consumer
+  was added. The full live PR-to-report completion gate remains unmet.
+
+Next proposed phase: Part 8, Phase 8.7 — portfolio documentation and pilot preparation.
+Stop before implementation; a live pilot still requires the documented production gates.
+
+### Phase 8.6 verification
+
+The final local production-build rehearsal passed all six checks. A seeded run
+was durably queued with one Redis job and one dispatch attempt across restart;
+unconfigured webhook requests failed closed and the dashboard's auth proxy
+returned the API's unauthenticated response. The first rehearsal passed functional
+checks but flagged Next's conventional SIGTERM exit code during cleanup; shutdown
+handling was corrected and the complete rehearsal passed. Previous dashboard
+build identity was restored and rehearsal source fingerprints matched the saved
+snapshot. All 328 application tests, type checks, production builds, lint,
+formatting and whitespace checks passed. Generated containers/network/volumes,
+processes and lock were removed; existing development data services were untouched.
+No cloud deployment, TLS, real OAuth/webhook request, customer execution,
+prior-version rollback or complete opted-in PR pipeline was exercised.

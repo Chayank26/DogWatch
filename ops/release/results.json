@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-28T09:26:55.974Z",
+  "scope": "local-production-build-rehearsal",
+  "node": "v24.18.0",
+  "status": "passed",
+  "checks": [
+    "production-workspace-build",
+    "fresh-migration-and-idempotent-reapply",
+    "api-dashboard-proxy-and-unconfigured-webhook-refusal",
+    "compiled-dispatcher-durable-handoff",
+    "process-restarts-preserve-handoff-and-proxy",
+    "graceful-shutdown-and-isolated-cleanup"
+  ],
+  "cleanup": "passed",
+  "limitations": [
+    "no-cloud-deployment",
+    "no-TLS",
+    "no-live-OAuth-or-webhook",
+    "no-production-QA-consumer",
+    "no-hosted-artifacts",
+    "no-complete-PR-to-report-pipeline",
+    "no-previous-version-rollback-tested"
+  ],
+  "artifactHashes": {
+    "package-lock.json": "618ab2e88876009dc7f4fc5d01fa828af59c29364145afb68fe9f63c47114b01",
+    "apps/api/dist/index.js": "9c6298d53a96118101e5a3cfdefab3d414b8824ed13ad2c3e9656bc767db3dd3",
+    "apps/worker/dist/index.js": "6eedb488c16a38d121fa0482d43f4f902ac14b241c320c67cf5641567732b1dc",
+    "apps/web/.next/BUILD_ID": "97c0aeb1caaa55ecf23a97fd516901760cae3488ddaa07dd20d6282ec94cd799"
+  },
+  "rehearsalSourceHashes": {
+    "scripts/rehearse-release.mjs": "453bceab144e201171f81465538b9d41bd943ecf3df3f81ff0a5a7e2133d02d1",
+    "ops/release/compose.yaml": "2537294d7ca714e881f998d3dc5023fe3bcd69194cc37b1523e4bf86ab1ccee1"
+  },
+  "commit": "daa33bb305a8b4e719df115205a5ddca1787237e",
+  "workingTreeDirty": true,
+  "buildId": "oupNlZnmhXU_eqwLG7Sgm",
+  "totalMs": 19218,
+  "cleanupFailures": []
+}

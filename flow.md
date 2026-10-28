@@ -399,3 +399,18 @@ not a live-model persuasion experiment. SSRF probes reject special destinations
 without making metadata requests. Test fixtures and probe containers are cleaned;
 no customer execution or external notification is enabled. The evidence snapshot
 records deployment surfaces that still require validation before production use.
+
+## Phase 8.6 — Local release flow
+
+Generate isolated Compose project → allocate loopback data-service ports → save
+prior dashboard build → build production workspaces with a temporary explicit API
+proxy origin → migrate disposable DB twice → start separate API/dashboard → verify
+unauthenticated proxy and disabled webhook → seed synthetic run/outbox → start
+compiled dispatcher → verify durable queued handoff → restart services without
+replaying work → stop processes and remove generated infrastructure → restore
+prior dashboard build/declaration → persist a sanitized rehearsal manifest.
+
+Any failed check or cleanup prevents a passing manifest. This validates a local
+release procedure, not cloud deployment, prior-version rollback or live PR-to-report
+completion. The dispatcher never consumes QA work. Production promotion remains
+subject to the documented security, orchestration and managed-service gates.

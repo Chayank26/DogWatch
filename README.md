@@ -142,3 +142,9 @@ Phase 8.5 adds `npm run security:verify`, covering adversarial boundary tests an
 real local PostgreSQL/Docker checks. See the
 [security validation matrix and release gaps](docs/security/VALIDATION.md).
 A passing local report is not production security certification.
+
+Phase 8.6 adds `npm run release:verify` for the selected local release rehearsal:
+production builds, disposable data services, separate API/dashboard/dispatcher
+processes, migration/restart checks and cleanup. See the
+[release runbook and remaining deployment gates](ops/release/README.md).
+No cloud service or complete live PR pipeline is deployed by this command.

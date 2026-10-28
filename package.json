@@ -56,7 +56,8 @@
     "recovery:verify": "npm run verify:recovery -w @dogwatch/worker",
     "benchmark:verify": "npm run verify:benchmark -w @dogwatch/worker",
     "presecurity:verify": "npm run build -w @dogwatch/fixture && npm run build -w @dogwatch/worker",
-    "security:verify": "node scripts/verify-security.mjs"
+    "security:verify": "node scripts/verify-security.mjs",
+    "release:verify": "node scripts/rehearse-release.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

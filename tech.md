@@ -362,3 +362,19 @@ Updated the threat model's current-state summary and published a threat-to-evide
 matrix. Customer browser egress/redaction, live providers, hosted artifacts, RLS,
 cloud deployment controls, vulnerability assessment and independent audit remain
 explicitly unvalidated. No runtime authority, dependency or migration was added.
+
+## Phase 8.6 — Local release rehearsal
+
+The user selected local release rehearsal before a hosting provider. Added a
+production-build command with random, isolated PostgreSQL/Redis infrastructure,
+explicit per-process environments, synthetic OAuth configuration and loopback
+listeners. The compiled API, dashboard and dispatcher are started separately.
+The dashboard proxy origin is set at build time. Migration reapplication, durable
+handoff, same-build restarts, graceful termination and cleanup are checked.
+
+A rehearsal lock prevents concurrent runs; prior dashboard build output and its
+generated declaration are restored afterward. Evidence fingerprints selected
+artifacts and rehearsal sources without connection strings. The runbook documents
+promotion, migration ordering and rollback constraints; it does not supply an
+immutable production image, TLS, cloud services or a production QA consumer.
+No application authority, dependency or schema migration was added.

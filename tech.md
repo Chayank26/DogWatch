@@ -348,3 +348,17 @@ observations, category metrics, repeatability, runtime and partial cost accounti
 The checked-in benchmark snapshot reports six inconclusive observations; it does
 not establish general accuracy or an agreed pilot gate. No dependency, migration,
 production consumer or provider integration was added.
+
+## Phase 8.5 — Security validation
+
+Added a repeatable security gate command, source-digested structured evidence and
+an adversarial corpus for prompt-driven privilege escalation, canonicalized
+loopback/metadata destinations and log/metric canaries. It runs the full test suite,
+real local tenant/session/installation checks and offline Docker isolation probes.
+Stages are bounded, stop on failure and publish fixed metadata rather than raw
+subprocess output. The test gate refuses zero discovered tests or skipped tests.
+
+Updated the threat model's current-state summary and published a threat-to-evidence
+matrix. Customer browser egress/redaction, live providers, hosted artifacts, RLS,
+cloud deployment controls, vulnerability assessment and independent audit remain
+explicitly unvalidated. No runtime authority, dependency or migration was added.

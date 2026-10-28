@@ -137,3 +137,8 @@ Phase 8.4 adds `npm run benchmark:verify` and a
 [labeled synthetic benchmark with recorded results](benchmarks/pawmart-v1/README.md).
 It compares fixed HTTP probes with scripted browser checks over three repeats,
 reports inconclusive coverage explicitly, and makes no real-PR accuracy claim.
+
+Phase 8.5 adds `npm run security:verify`, covering adversarial boundary tests and
+real local PostgreSQL/Docker checks. See the
+[security validation matrix and release gaps](docs/security/VALIDATION.md).
+A passing local report is not production security certification.

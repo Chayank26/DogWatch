@@ -752,3 +752,36 @@ responses were corrected with runtime object validation before regenerating the
 final benchmark evidence. Temporary fixture servers/browser processes closed and
 the generated web declaration was restored. No external provider/customer request,
 real PR, model evaluation, security certification or deployment was exercised.
+
+## Part 8 · Phase 8.5 — Security validation
+
+- Added 17 adversarial cases for prompt-driven privilege escalation, canonicalized
+  loopback/private/metadata destinations and secret canaries in logs/metrics.
+  Prompt cases drive hostile structured proposals through the real validation
+  loop; they do not claim to measure live-model resistance to persuasion.
+- Added `npm run security:verify`: full application suite followed by actual local
+  PostgreSQL tenant/session/installation gates and offline Docker containment.
+  Source-digested reports retain gate metadata, reject zero/skipped test discovery,
+  stop on failure and avoid publishing raw subprocess output.
+- Updated the current threat model, threat-to-evidence matrix and explicit release
+  gaps. Production browser egress/redaction, active QA-worker isolation, hosted
+  artifacts, live providers, cloud controls and independent audit remain pending.
+- No additional runtime vulnerability was demonstrated by this bounded corpus.
+  No runtime authority, dependency, schema migration or deployment was introduced.
+
+Next proposed phase: Part 8, Phase 8.6 — deployment. Stop before implementation.
+
+### Phase 8.5 verification
+
+All 328 application tests passed with zero skips. Real local PostgreSQL checks
+verified tenant isolation, session revocation and installation ownership; real
+Docker probes verified offline/non-root/read-only/resource restrictions, host
+canary absence and timeout/cancellation cleanup. A negative prerequisite exercise
+with PostgreSQL stopped produced a failed database gate, nonzero exit and no later
+gates; a subsequent complete run produced the passing evidence snapshot. Type
+checks, builds, lint, formatting and whitespace checks passed. The runner's initial
+JavaScript lint errors were corrected with explicit Node imports before final
+verification. Temporary DB fixtures and probe containers were cleaned, services
+started for this phase stopped with volumes retained, and the generated web
+declaration restored. No live model/customer/provider request, penetration test,
+cloud security assessment or production certification was performed.

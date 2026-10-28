@@ -1,10 +1,18 @@
 # DogWatch threat model
 
-**Scope:** Part 1, Phase 1.3 design baseline, updated for Phase 1.4 local infrastructure. Update this document when new trust boundaries or capabilities are implemented. This is an implementation plan, not an assertion that DogWatch currently enforces all listed controls.
+**Scope:** Design baseline and historical implementation notes through Phase 8.5. Update this document when trust boundaries or capabilities change. Planned controls are not assertions of current enforcement; consult the linked validation matrix for evidence and remaining gates.
 
 ## What exists today
 
-There is an informational local website, an API health endpoint, a worker scaffold, shared runtime contracts with tested pure opt-in rules, and local Postgres/Redis services. The initial migration enforces tenant-consistent foreign keys and run/outbox identity constraints. The database factory and rollback verification are available, and optionally configured ingress now persists authorized run/receipt/outbox records (Phase 2.3). A raw-body signature-verifying webhook endpoint now exists (Phase 2.1), but it only acknowledges and discards valid objects. Optional App installation/actor authorization and event filtering exist; there is no dashboard user authorization or queue consumer, browser agent, secret store, artifact service, or database row-level read policy. Runtime shape validation and foreign keys are not read authorization.
+DogWatch now has optional authorized GitHub ingress, tenant-scoped persistence,
+outbox dispatch, login/membership and owner controls, private local evidence,
+bounded callable QA stages, reporting primitives and operational telemetry.
+The production QA consumer remains disabled. Hosted artifact delivery, customer
+browser egress/credential isolation, production RLS and live provider integration
+are not established by local tests. See [Phase 8.5 validation](VALIDATION.md) for
+current evidence and unresolved release gates. The implementation updates below
+are historical snapshots; earlier “not implemented” statements describe their
+respective phases, not the current feature set.
 
 ## Assets and actors
 
@@ -110,3 +118,13 @@ Callable authentication probes require an explicit scoped operation policy, a pa
 ### Phase 4.5 implementation boundary
 
 Read-only role/ownership probes require exact scoped endpoint grants, two distinct scoped synthetic credentials and target-confirmed subject/role controls. Ownership probes confirm both known own-resource bindings before cross-access; role probes confirm protected content under the allowed role. A security observation requires the successful response schema plus configured object/content evidence, even if returned with a denial status. Bare 2xx, missing resources and unavailable controls do not prove access. Bounded property checks retain only booleans and deterministic metadata, never raw responses or tokens. Shared `ApiRuntime` preserves the existing transport, budget and cancellation boundary. Writes are refused before execution because unauthorized mutation requires additional state proof. Live identity providers, customer orchestration, isolated outbound enforcement and durable evidence/cleanup remain pending. See [authorization profile](../../apps/worker/API_AUTHORIZATION.md).
+
+## Phase 8.5 implementation update
+
+A repeatable local security command now runs the complete application suite and
+real PostgreSQL/Docker boundary checks. Added adversarial prompt proposals,
+canonicalized SSRF destinations and telemetry canary tests. The report records
+source provenance, gate status, test counts and explicit unvalidated production
+surfaces. No new runtime authority or customer QA execution is enabled. Consult
+[the validation matrix and limitations](VALIDATION.md) before using these results
+as release evidence.

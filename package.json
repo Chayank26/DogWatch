@@ -54,7 +54,9 @@
     "db:verify:usage": "npm run verify:usage -w @dogwatch/database",
     "db:verify:telemetry": "npm run verify:telemetry -w @dogwatch/database",
     "recovery:verify": "npm run verify:recovery -w @dogwatch/worker",
-    "benchmark:verify": "npm run verify:benchmark -w @dogwatch/worker"
+    "benchmark:verify": "npm run verify:benchmark -w @dogwatch/worker",
+    "presecurity:verify": "npm run build -w @dogwatch/fixture && npm run build -w @dogwatch/worker",
+    "security:verify": "node scripts/verify-security.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

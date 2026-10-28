@@ -385,3 +385,17 @@ remain inconclusive. Expected UI validation errors alone are not UI findings.
 The source-digested snapshot and methodology live in benchmarks/pawmart-v1. Model-
 agent contribution, total infrastructure cost, held-out real-PR performance and a
 pilot threshold remain explicitly unmeasured. The next phase is security validation.
+
+## Phase 8.5 — Security validation flow
+
+Build current fixture/worker dependencies → fingerprint tracked and new source
+files → write running report → run application boundary tests → verify actual
+PostgreSQL tenant/session/installation checks → verify disposable offline Docker
+containment → mark report passed only if every gate succeeds. Failure records the
+failed gate, stops later work and returns nonzero; old success is not reused.
+
+Prompt attacks are adversarial structured proposals through the existing loop,
+not a live-model persuasion experiment. SSRF probes reject special destinations
+without making metadata requests. Test fixtures and probe containers are cleaned;
+no customer execution or external notification is enabled. The evidence snapshot
+records deployment surfaces that still require validation before production use.

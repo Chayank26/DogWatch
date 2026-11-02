@@ -157,3 +157,11 @@ production builds, disposable data services, separate API/dashboard/dispatcher
 processes, migration/restart checks and cleanup. See the
 [release runbook and remaining deployment gates](ops/release/README.md).
 No cloud service or complete live PR pipeline is deployed by this command.
+
+## API-first productization
+
+The selected first working-product workflow is API contract checks. A new
+[durable API supervisor](docs/product/API_EXECUTION.md) connects a queue delivery
+to bounded read-only HTTP execution and atomic result/usage persistence, verified
+with `npm run api-supervisor:verify`. Live consumer configuration, trusted GitHub
+authority, authorized result UI and publication wiring remain pending.

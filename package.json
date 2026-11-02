@@ -58,7 +58,8 @@
     "presecurity:verify": "npm run build -w @dogwatch/fixture && npm run build -w @dogwatch/worker",
     "security:verify": "node scripts/verify-security.mjs",
     "release:verify": "node scripts/rehearse-release.mjs",
-    "portfolio:verify": "npm run verify:portfolio -w @dogwatch/worker"
+    "portfolio:verify": "npm run verify:portfolio -w @dogwatch/worker",
+    "api-supervisor:verify": "npm run verify:supervisor -w @dogwatch/worker"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -393,3 +393,19 @@ hosted-evidence and live-integration work. No public PR, publication, participan
 customer deployment or live pilot was created. No runtime dependency or schema
 change was introduced; the planned local phase sequence does not establish the
 broader full-pipeline release gate.
+
+## Productization 9.1 — Durable read-only API execution
+
+Added an additive tenant-consistent RunExecution table, one claim per run, a
+random fencing token, database-clock lease/deadline, scoped renewal and explicit
+expiry without automatic replay. A queued run requires prior durable handoff and
+an unsettled reservation. Terminal state, bounded API result and measured usage
+commit together under the tenant/run lock order; cancellation or lease loss denies
+commit and retains unknown usage.
+
+The new trusted supervisor binds immutable input scope to the durable run, requires
+an independent current-authority callback, permits GET/HEAD only, and connects
+preview readiness to existing bounded API execution. Readiness requests consume
+the same budget. Confirmed test failures differ from incomplete coverage. A real
+isolated Redis consumer verifies this execution path; normal startup remains a
+dispatcher until trusted configuration/live authority and lifecycle wiring exist.

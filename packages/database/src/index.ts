@@ -60,3 +60,12 @@ export {
   QuotaExceededError,
 } from './usage.js';
 export type { UsageStore, UsageSummary } from './usage.js';
+
+export {
+  claimExecution,
+  renewExecution,
+  finishExecution,
+  expireExecution,
+  executionResultSchema,
+} from './execution.js';
+export type { ExecutionIdentity } from './execution.js';

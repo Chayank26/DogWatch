@@ -428,3 +428,17 @@ Pilot preparation lists owners/consent, deployment, isolation, live-provider,
 hosted-evidence, held-out evaluation and acceptance decisions that must precede a
 live pilot. Its status is no-go. The next work must close those production gates,
 not infer customer readiness from completion of the planned local phases.
+
+## Productization 9.1 — API execution ownership
+
+Published queued run with reservation → trusted authority/scope checks → atomic
+single-owner claim → bounded readiness → contract-generated GET/HEAD checks with
+repeated authority/lease checks → fenced transaction stores result, terminal state
+and measured usage. Duplicate delivery cannot claim again. A failed check can be
+part of a completed execution; incomplete coverage remains inconclusive.
+
+Cancellation or expiry prevents late commit. Unknown work retains its reservation;
+explicit expiry marks active work failed without replaying it. The integration
+harness consumes real isolated queue jobs, but normal production startup still
+needs repository configuration, live GitHub authority and consumer/reconciliation
+wiring before any customer request may enter this path.

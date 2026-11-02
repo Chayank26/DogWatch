@@ -543,3 +543,17 @@ After the pilot, consider additional language analyzers, broader contract format
 - Tenants cannot access each other's data, artifacts, credentials, or execution context.
 - Operators can observe failures, recover jobs, and restore persisted data.
 - Published benchmark results describe demonstrated detection quality, cost, runtime, and limitations.
+
+## Productization continuation — API-first workflow
+
+The user selected a working product with API contract checks first after the local
+phase sequence. The local demonstrations do not satisfy the live-release gate.
+
+| Slice                                 | Status / next outcome                                                                                                                                 |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 9.1 Durable API execution             | Database-clock ownership, read-only supervisor, fenced results and atomic usage settlement implemented; real local queue-to-HTTP integration verified |
+| Next: configured API consumer         | Trusted repository/deployment/contract configuration and live GitHub authority adapter, lifecycle and expiry reconciliation                           |
+| Then: usable results and staging flow | Authorized result UI, finding/report publication and a real opted-in staging PR through the complete path                                             |
+
+Cloud promotion and a live pilot remain subject to the documented security and
+release gates. These entries are integration work, not claims of completed service.

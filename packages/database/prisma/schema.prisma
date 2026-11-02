@@ -77,6 +77,7 @@ model Run {
   createdAt           DateTime     @default(now()) @db.Timestamptz(3)
   repository          Repository   @relation(fields: [tenantId, repositoryId], references: [tenantId, id], onDelete: Restrict)
   outboxEvents        OutboxEvent[]
+  execution RunExecution?
   usage UsageReservation?
   webhookDelivery     WebhookDelivery?
 
@@ -207,4 +208,20 @@ model UsageReservation {
  @@unique([tenantId, runId])
  @@index([tenantId, reservedAt])
  @@index([tenantId, settledAt])
+}
+
+
+// One fenced execution attempt. Expiry never authorizes an automatic replay.
+model RunExecution {
+ runId String @id @db.Uuid
+ tenantId String @db.Uuid
+ token String @db.Uuid
+ startedAt DateTime @default(now()) @db.Timestamptz(3)
+ expiresAt DateTime @db.Timestamptz(3)
+ deadlineAt DateTime @db.Timestamptz(3)
+ finishedAt DateTime? @db.Timestamptz(3)
+ result Json?
+ run Run @relation(fields: [tenantId, runId], references: [tenantId, id], onDelete: Cascade, map: "RunExecution_tenant_run_fkey")
+ @@unique([tenantId, runId])
+ @@index([finishedAt, expiresAt], map: "RunExecution_expiry_idx")
 }

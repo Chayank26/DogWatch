@@ -854,3 +854,26 @@ were rerun with local-listener permission. Generated web declarations were resto
 Fixture servers/browser contexts and temporary private evidence were cleaned up;
 local recordings were retained. No cloud deployment, live PR, owner contact,
 public publication, model evaluation or pilot occurred.
+
+## Part 9 · Phase 9.1 — Durable API execution
+
+The user selected API contract checks as the first working-product workflow.
+Added a read-only API supervisor with trusted authority checks, scoped deployment
+validation, database-clock execution leases and bounded request/time budgets.
+An additive RunExecution migration stores ownership and result metadata. Result,
+terminal run state and measured usage commit atomically; duplicates, cancellation
+and expired ownership cannot commit or silently replay work. Unknown usage stays
+reserved for explicit reconciliation.
+
+Verification passed with real local PostgreSQL, Redis delivery and HTTP checks:
+healthy and failed cases, concurrent ownership, duplicate delivery, revoked
+authority, cancellation, tenant/token isolation, expiry and atomic rollback.
+All 330 application tests, production builds, type checks, lint and Prisma schema
+validation passed. The migration was applied to the local development database.
+See docs/product/API_EXECUTION.md for the execution contract and limitations.
+
+Normal worker startup remains dispatcher-only. Next phase: trusted repository
+configuration and GitHub authority resolution, then the configured consumer and
+user-visible results. The first repository, HTTPS staging URL and OpenAPI location
+are still needed for live integration. No customer run or public deployment was
+performed. Stop here before implementing the next phase.

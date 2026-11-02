@@ -552,7 +552,7 @@ phase sequence. The local demonstrations do not satisfy the live-release gate.
 | Slice                                 | Status / next outcome                                                                                                                                 |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 9.1 Durable API execution             | Database-clock ownership, read-only supervisor, fenced results and atomic usage settlement implemented; real local queue-to-HTTP integration verified |
-| Next: configured API consumer         | Trusted repository/deployment/contract configuration and live GitHub authority adapter, lifecycle and expiry reconciliation                           |
+| 9.2–9.3 Configured API consumer       | Trusted repository/deployment/contract configuration and live GitHub authority adapter, lifecycle and expiry reconciliation                           |
 | Then: usable results and staging flow | Authorized result UI, finding/report publication and a real opted-in staging PR through the complete path                                             |
 
 Cloud promotion and a live pilot remain subject to the documented security and
@@ -560,5 +560,5 @@ release gates. These entries are integration work, not claims of completed servi
 
 Phase 9.2 adds trusted deployment configuration and a GitHub-backed execution
 authority adapter. Accepted webhook runs now retain actor provenance. Worker
-consumer wiring and result presentation remain outstanding; see
+consumer wiring is implemented in Phase 9.3; result presentation remains outstanding; see
 [execution integration](docs/product/API_EXECUTION.md).

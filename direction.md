@@ -910,3 +910,25 @@ listener permission. GitHub responses and database reads in the new authority
 test were synthetic; no live provider or database integration was exercised in
 this phase. Next: shared worker-accessible authority composition and consumer
 lifecycle, followed by user-visible results.
+
+## Phase 9.3 — Configured API worker consumption
+
+Moved GitHub policy, App resolution and execution authority into @dogwatch/github
+for use by both API and worker. Added explicitly enabled API consumption, bounded
+operator configuration reads, tenant-scoped job resolution, sanitized retries,
+shutdown cancellation and bounded expired-lease reconciliation. The default
+remains dispatcher-only. Configuration is read at startup; authority policy is
+reloaded for every check. No fixture execution or credential injection is available
+through environment configuration. See docs/product/API_EXECUTION.md for setup and
+retry limitations. User-visible results and live staging validation remain pending.
+
+### Phase 9.3 verification
+
+All 335 application tests passed. Workspace type checks, the production worker
+build, lint, formatting and whitespace checks passed. Compiled startup exited
+cleanly with execution disabled and refused incomplete enabled configuration.
+Processor tests covered the dispatch race, terminal runs, exact binding lookup
+and cancellation; prior GitHub tests exercise synthetic provider responses. No
+new live GitHub or PostgreSQL/Redis integration run was performed in this phase.
+No customer configuration was enabled. Next phase: authorized stored-result reads
+and dashboard presentation.

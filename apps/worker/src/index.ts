@@ -1,7 +1,4 @@
-/**
- * Phase 2.4 runner hosts the outbox dispatcher only. Production QA consumption
- * stays disabled until preview readiness and isolated execution are implemented.
- */
+/** Dispatcher with explicitly enabled, read-only API consumer. */
 import {
   createLogger,
   metricsPort,
@@ -9,9 +6,16 @@ import {
 } from '@dogwatch/telemetry';
 const log = createLogger('dispatcher');
 import { setTimeout as pause } from 'node:timers/promises';
-import { createDatabase, dispatchNext } from '@dogwatch/database';
-import { createRunQueue, enqueueRun } from '@dogwatch/queue';
+import {
+  createDatabase,
+  dispatchNext,
+  expireExecution,
+} from '@dogwatch/database';
+import { createRunQueue, enqueueRun, createRunWorker } from '@dogwatch/queue';
 
+import { consumerSettings, configureApiConsumer } from './api-consumer.js';
+const settings = consumerSettings(process.env);
+const shutdown = new AbortController();
 const databaseUrl = process.env.DATABASE_URL;
 const redisUrl = process.env.REDIS_URL;
 const scrapePort = metricsPort(process.env.DISPATCHER_METRICS_PORT);
@@ -23,15 +27,37 @@ if (!databaseUrl && !redisUrl) {
   const metrics = await startMetricsServer(scrapePort);
   const database = createDatabase(databaseUrl);
   const queue = createRunQueue(redisUrl);
+  let consumer: ReturnType<typeof createRunWorker> | undefined;
   let stopping = false;
   for (const signal of ['SIGINT', 'SIGTERM'] as const)
     process.once(signal, () => {
       stopping = true;
+      shutdown.abort();
     });
   log('service.lifecycle', 'started');
   try {
+    if (settings) {
+      const processor = await configureApiConsumer(
+        database,
+        settings,
+        shutdown.signal,
+      );
+      consumer = createRunWorker(redisUrl, processor);
+    }
+    let nextExpiry = 0;
     while (!stopping) {
       try {
+        if (consumer && Date.now() >= nextExpiry) {
+          nextExpiry = Date.now() + 10000;
+          const expired = await database.runExecution.findMany({
+            where: { finishedAt: null, expiresAt: { lte: new Date() } },
+            select: { tenantId: true, runId: true },
+            take: 100,
+            orderBy: { expiresAt: 'asc' },
+          });
+          for (const identity of expired)
+            await expireExecution(database, identity);
+        }
         const result = await dispatchNext(database, (data) =>
           enqueueRun(queue, data),
         );
@@ -43,6 +69,8 @@ if (!databaseUrl && !redisUrl) {
       }
     }
   } finally {
+    shutdown.abort();
+    await consumer?.close();
     metrics?.close();
     metrics?.closeAllConnections();
     await queue.close();

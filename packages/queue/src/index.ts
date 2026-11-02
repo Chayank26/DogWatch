@@ -79,8 +79,7 @@ export async function enqueueRun(queue: Queue<RunJob>, input: RunJob) {
 }
 
 /**
- * Reusable worker harness for later isolated execution, currently used only in
- * synthetic verification. Processor implementations must revalidate DB ownership
+ * Worker harness shared by configured API execution and synthetic verification. Processor implementations must revalidate DB ownership
  * and be idempotent: Redis delivery/retries alone do not guarantee exactly once.
  */
 export function createRunWorker(

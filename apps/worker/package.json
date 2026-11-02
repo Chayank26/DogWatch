@@ -8,9 +8,9 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "predev": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
-    "prebuild": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
-    "pretypecheck": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
+    "predev": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue && npm run build -w @dogwatch/github",
+    "prebuild": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue && npm run build -w @dogwatch/github",
+    "pretypecheck": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue && npm run build -w @dogwatch/github",
     "preverify:queue": "npm run build -w @dogwatch/database && npm run build -w @dogwatch/queue",
     "verify:queue": "node --import tsx src/verify-queue.ts",
     "test": "node --import tsx --test src/*.test.ts",
@@ -22,7 +22,7 @@
     "verify:smoke": "node --import tsx src/verify-smoke.ts",
     "preverify:baseline": "npm run build -w @dogwatch/fixture",
     "verify:baseline": "node --import tsx src/verify-baseline.ts",
-    "pretest": "npm run build -w @dogwatch/telemetry && npm run build -w @dogwatch/fixture",
+    "pretest": "npm run build -w @dogwatch/telemetry && npm run build -w @dogwatch/fixture && npm run build -w @dogwatch/github",
     "preverify:api": "npm run build -w @dogwatch/fixture",
     "verify:api": "node --import tsx --test src/api-execution.test.ts src/api-authentication.test.ts src/api-authorization.test.ts src/api-lifecycle.test.ts",
     "preverify:authentication": "npm run build -w @dogwatch/fixture",
@@ -58,6 +58,7 @@
     "typescript": "^6.0.3",
     "yaml": "^2.9.1",
     "zod": "^4.3.6",
-    "@dogwatch/telemetry": "0.1.0"
+    "@dogwatch/telemetry": "0.1.0",
+    "@dogwatch/github": "0.1.0"
   }
 }

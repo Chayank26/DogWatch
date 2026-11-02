@@ -3,7 +3,7 @@
  * behavior can be tested without real credentials or calls to GitHub.
  */
 import { z } from 'zod';
-import { evaluateOptIn, repositoryPolicySchema } from '@dogwatch/contracts';
+import { evaluateOptIn } from '@dogwatch/contracts';
 import type { RepositoryPolicy, OptInEvent } from '@dogwatch/contracts';
 
 // GitHub objects have many extra keys; z.object deliberately strips those keys.
@@ -33,26 +33,12 @@ const commentPayload = z.object({
   }),
 });
 
-/** Remote context is fetched using a repository-restricted installation credential. */
-export interface PullRequestContext {
-  installationActive: boolean;
-  repositoryId: number;
-  number: number;
-  state: 'open' | 'closed';
-  headSha: string;
-  headRepositoryId: number | null;
-  baseRepositoryId: number;
-  labels: string[];
-}
-export interface AuthorizationDependencies {
-  // Tenant ownership comes from trusted configuration, never webhook tenantId.
-  policies: RepositoryPolicy[];
-  resolvePullRequest: (
-    installationId: number,
-    repositoryId: number,
-    number: number,
-  ) => Promise<PullRequestContext>;
-}
+export { parsePolicies } from '@dogwatch/github';
+export type {
+  PullRequestContext,
+  AuthorizationDependencies,
+} from '@dogwatch/github';
+import type { AuthorizationDependencies } from '@dogwatch/github';
 export type AuthorizationResult =
   | {
       status: 'stop_requested';
@@ -70,26 +56,6 @@ export type AuthorizationResult =
       trigger: 'label' | 'command';
     }
   | { status: 'ignored'; queued: false; reason: string };
-
-/** Validate operator configuration once; ambiguous repository ownership is rejected. */
-export function parsePolicies(input: unknown): RepositoryPolicy[] {
-  const policies = z.array(repositoryPolicySchema).max(1000).parse(input);
-  const repositories = new Set<number>();
-  const installations = new Map<number, string>();
-  for (const policy of policies) {
-    if (repositories.has(policy.repositoryId))
-      throw new Error('Duplicate repository policy');
-    if (
-      installations.has(policy.installationId) &&
-      installations.get(policy.installationId) !== policy.tenantId
-    ) {
-      throw new Error('Installation cannot belong to multiple tenants');
-    }
-    repositories.add(policy.repositoryId);
-    installations.set(policy.installationId, policy.tenantId);
-  }
-  return policies;
-}
 
 export async function authorizeDelivery(
   eventName: string | undefined,

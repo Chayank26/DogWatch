@@ -84,13 +84,10 @@ check, while durable local cancellation is fenced transactionally.
 
 ## Next integration work
 
-Normal worker startup still runs the dispatcher only. Before enabling an API
-consumer, wire trusted per-repository execution configuration, a real GitHub
-installation/actor/current-head resolver, protected credential references,
-operational expiry/reconciliation and a consumer lifecycle. Add authorized result
-reads/dashboard presentation, finding/report publication and live staging tests.
-Do not wire the verifier's always-authorized callback or fixture permission into
-customer startup.
+Worker startup defaults to dispatcher-only operation. Phase 9.3 below adds an
+explicitly enabled consumer with trusted configuration, GitHub authority and
+expiry reconciliation. Next work is authorized result reads/dashboard presentation,
+finding/report publication, operational recovery UI and live staging tests.
 
 The first staging repository, HTTPS preview URL and OpenAPI location are needed
 for that integration. Tokens/secrets belong in protected local/provider storage,
@@ -119,3 +116,53 @@ These are internal integration capabilities. Worker startup still dispatches onl
 consumer lifecycle, result presentation and staging validation remain outstanding.
 The first repository, HTTPS staging URL and OpenAPI location are still needed.
 No live GitHub request, customer execution or deployment was performed.
+
+## Phase 9.3 — Configured worker consumer
+
+Worker startup now enables the API consumer only with `API_CONSUMER_ENABLED=true`.
+It requires DATABASE_URL, REDIS_URL, GITHUB_APP_ID, GITHUB_PRIVATE_KEY_FILE,
+GITHUB_POLICIES_FILE and API_EXECUTION_CONFIG_FILE. Missing or malformed settings
+stop startup. Omit the flag to retain dispatcher-only operation. Apply the
+RunExecution migration first. The existing GitHub adapter and execution authority
+now live in @dogwatch/github, shared by API and worker.
+
+The execution file is a JSON array of entries with `binding`, `contractText`,
+`operations` and optional `limits`, as validated by api-configuration.ts. For example:
+
+```json
+[
+  {
+    "binding": {
+      "tenantId": "11111111-1111-4111-8111-111111111111",
+      "repositoryId": 123,
+      "pullRequestNumber": 1,
+      "headSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deploymentId": "operator-verified-immutable-deployment",
+      "url": "https://preview.example.com/health",
+      "allowedOrigins": ["https://preview.example.com"]
+    },
+    "contractText": "{\"openapi\":\"3.0.3\",\"info\":{\"title\":\"Example\",\"version\":\"1\"},\"paths\":{}}",
+    "operations": [{ "method": "GET", "path": "/status" }]
+  }
+]
+```
+
+Replace every example value with the verified deployment and actual OpenAPI text;
+the empty example contract does not provide test coverage. Restart the worker
+when replacing deployment configuration. Policy is reloaded on each authority
+check, so revocation does not require restart. No fixture mode, bearer credentials,
+mutation grants or PR-controlled file loading are enabled by this startup path.
+
+The processor reads tenant-scoped durable run identity before selecting a binding.
+It retries the enqueue-before-commit race and refuses missing configuration or
+unavailable authority with a fixed, sanitized queue error. After BullMQ's existing
+three attempts a pre-claim failure remains a queued database run with a failed
+queue job and reserved usage; an operator must inspect and retry that retained job
+after correcting configuration. There is no automatic reset or new execution.
+
+Every ten seconds the enabled process reconciles up to 100 expired execution
+leases; database-clock checks remain authoritative. Interrupted runs become failed
+without replay or invented usage settlement. SIGINT/SIGTERM abort active work,
+close the consumer, then release queue/database connections. Shutdown can leave a
+lease for the next process to reconcile. No live customer deployment has been
+validated; result presentation and operational reconciliation UI remain next work.

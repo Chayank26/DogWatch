@@ -465,3 +465,14 @@ These are internal integration capabilities. Worker startup still dispatches onl
 consumer lifecycle, result presentation and staging validation remain outstanding.
 The first repository, HTTPS staging URL and OpenAPI location are still needed.
 No live GitHub request, customer execution or deployment was performed.
+
+## Phase 9.3 — Configured API worker consumption
+
+Moved GitHub policy, App resolution and execution authority into @dogwatch/github
+for use by both API and worker. Added explicitly enabled API consumption, bounded
+operator configuration reads, tenant-scoped job resolution, sanitized retries,
+shutdown cancellation and bounded expired-lease reconciliation. The default
+remains dispatcher-only. Configuration is read at startup; authority policy is
+reloaded for every check. No fixture execution or credential injection is available
+through environment configuration. See docs/product/API_EXECUTION.md for setup and
+retry limitations. User-visible results and live staging validation remain pending.

@@ -877,3 +877,36 @@ configuration and GitHub authority resolution, then the configured consumer and
 user-visible results. The first repository, HTTPS staging URL and OpenAPI location
 are still needed for live integration. No customer run or public deployment was
 performed. Stop here before implementing the next phase.
+
+## Phase 9.2 — Trusted API configuration and execution authority
+
+Added `createApiConfiguration` to validate operator-owned read-only API targets
+and resolve an exact tenant/repository/PR/SHA binding into supervisor input. It
+rejects ambiguous bindings, fixture flags, mutations and authentication probes.
+Contract text is supplied by the operator; no PR-controlled file or remote URL is
+loaded. HTTPS/origin validation runs at configuration time; public-address DNS
+validation remains enforced by the execution transport.
+
+Accepted webhook runs now retain their actor ID. `createGitHubExecutionAuthority`
+composes the existing repository-restricted GitHub App adapter with fresh operator
+policy and durable run checks. It refuses disabled policies, removed actors,
+closed/forked/moved PRs, removed opt-in labels, cancellation and unavailable
+configuration/GitHub state. Command opt-in does not require a label. Legacy runs
+without actor provenance and manual reruns are refused by this initial adapter;
+manual rerun authority remains follow-up work. No new credentials or schema
+migration are required.
+
+These are internal integration capabilities. Worker startup still dispatches only;
+consumer lifecycle, result presentation and staging validation remain outstanding.
+The first repository, HTTPS staging URL and OpenAPI location are still needed.
+No live GitHub request, customer execution or deployment was performed.
+
+### Phase 9.2 verification
+
+All 15 affected authorization, GitHub adapter, configuration and supervisor tests
+passed, along with workspace type checks, lint, formatting and whitespace checks.
+HTTP tests initially hit sandbox listener restrictions and passed with local
+listener permission. GitHub responses and database reads in the new authority
+test were synthetic; no live provider or database integration was exercised in
+this phase. Next: shared worker-accessible authority composition and consumer
+lifecycle, followed by user-visible results.

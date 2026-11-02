@@ -117,7 +117,11 @@ export async function acceptDelivery(
             pullRequestNumber: event.pullRequestNumber,
             headSha: event.headSha,
             // The policy is operator-controlled and contains references/IDs, not secrets.
-            policySnapshot: { ...policy, trigger: decision.trigger },
+            policySnapshot: {
+              ...policy,
+              trigger: decision.trigger,
+              actorId: event.actorId,
+            },
             budgetSnapshot: policy.budget,
           },
         });

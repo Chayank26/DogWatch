@@ -557,3 +557,8 @@ phase sequence. The local demonstrations do not satisfy the live-release gate.
 
 Cloud promotion and a live pilot remain subject to the documented security and
 release gates. These entries are integration work, not claims of completed service.
+
+Phase 9.2 adds trusted deployment configuration and a GitHub-backed execution
+authority adapter. Accepted webhook runs now retain actor provenance. Worker
+consumer wiring and result presentation remain outstanding; see
+[execution integration](docs/product/API_EXECUTION.md).

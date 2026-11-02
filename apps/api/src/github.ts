@@ -3,6 +3,7 @@
  * creates a read-only token limited to the configured repository for each lookup.
  * Tokens/keys are never returned to webhook callers, logged, or saved in jobs.
  */
+import { createExecutionAuthority } from './execution-authority.js';
 import { Octokit } from 'octokit';
 import { createAppAuth } from '@octokit/auth-app';
 import type { AuthorizationDependencies } from './authorization.js';
@@ -87,4 +88,19 @@ export function createGitHubResolver(
       labels: pr.labels.map((label) => label.name),
     };
   };
+}
+
+/** Server-side composition for execution; policy is reloaded on every check. */
+export function createGitHubExecutionAuthority(
+  db: Parameters<typeof createExecutionAuthority>[0],
+  loadPolicies: Parameters<typeof createExecutionAuthority>[1],
+  appId: number,
+  privateKey: string,
+  requestFetch: typeof fetch = fetch,
+) {
+  return createExecutionAuthority(
+    db,
+    loadPolicies,
+    createGitHubResolver(appId, privateKey, requestFetch),
+  );
 }

@@ -96,3 +96,26 @@ The first staging repository, HTTPS preview URL and OpenAPI location are needed
 for that integration. Tokens/secrets belong in protected local/provider storage,
 not chat, tracked files, result JSON or queue messages. Mutating API checks and
 browser execution remain separate later capabilities.
+
+## Phase 9.2 — Trusted API configuration and execution authority
+
+Added `createApiConfiguration` to validate operator-owned read-only API targets
+and resolve an exact tenant/repository/PR/SHA binding into supervisor input. It
+rejects ambiguous bindings, fixture flags, mutations and authentication probes.
+Contract text is supplied by the operator; no PR-controlled file or remote URL is
+loaded. HTTPS/origin validation runs at configuration time; public-address DNS
+validation remains enforced by the execution transport.
+
+Accepted webhook runs now retain their actor ID. `createGitHubExecutionAuthority`
+composes the existing repository-restricted GitHub App adapter with fresh operator
+policy and durable run checks. It refuses disabled policies, removed actors,
+closed/forked/moved PRs, removed opt-in labels, cancellation and unavailable
+configuration/GitHub state. Command opt-in does not require a label. Legacy runs
+without actor provenance and manual reruns are refused by this initial adapter;
+manual rerun authority remains follow-up work. No new credentials or schema
+migration are required.
+
+These are internal integration capabilities. Worker startup still dispatches only;
+consumer lifecycle, result presentation and staging validation remain outstanding.
+The first repository, HTTPS staging URL and OpenAPI location are still needed.
+No live GitHub request, customer execution or deployment was performed.

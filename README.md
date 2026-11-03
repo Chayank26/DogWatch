@@ -170,3 +170,6 @@ The worker can now enable read-only API consumption with
 `API_CONSUMER_ENABLED=true` and complete operator/GitHub configuration. See
 [consumer setup and limitations](docs/product/API_EXECUTION.md#phase-93--configured-worker-consumer).
 It remains disabled by default; no live staging execution is claimed.
+
+Recorded API results on `/runs` now include a downloadable Markdown report with
+case outcomes and coverage limitations. This does not publish to GitHub.

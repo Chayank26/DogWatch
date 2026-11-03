@@ -12,6 +12,7 @@ type Run = {
   createdAt: string;
   previewReady: boolean;
   apiChecks?: ApiChecksView;
+  report?: { filename: string; markdown: string } | null;
   evidence?: { message: string };
 };
 export default function Runs() {
@@ -210,6 +211,25 @@ export default function Runs() {
                 </dd>
               </dl>
               <ApiChecks checks={detail.apiChecks} />
+              {detail.report && (
+                <button
+                  onClick={() => {
+                    const report = detail.report!;
+                    const url = URL.createObjectURL(
+                      new Blob([report.markdown], {
+                        type: 'text/markdown;charset=utf-8',
+                      }),
+                    );
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = report.filename;
+                    link.click();
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                  }}
+                >
+                  Download API report
+                </button>
+              )}
               <h3>Findings and evidence</h3>
               <p>{detail.evidence?.message}</p>
               <p className="note">

@@ -566,3 +566,6 @@ consumer wiring is implemented in Phase 9.3; result presentation remains outstan
 Phase 9.4 implements authorized stored API result reads and dashboard presentation.
 Database isolation/redaction and production-browser rendering were verified
 locally. Live opted-in staging validation and report publication remain pending.
+
+Phase 9.5 adds authorized Markdown report downloads. Live staging verification
+and explicitly authorized GitHub publication remain pending.

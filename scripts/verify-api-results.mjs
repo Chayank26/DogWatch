@@ -67,6 +67,13 @@ try {
           ? { runs: [run], nextCursor: null }
           : {
               ...run,
+              report:
+                mode === 'missing'
+                  ? null
+                  : {
+                      filename: 'dogwatch-api-fixture.md',
+                      markdown: '# Synthetic API report\n1 failed\n',
+                    },
               apiChecks:
                 mode === 'missing'
                   ? { status: 'unavailable' }
@@ -124,6 +131,14 @@ try {
     await page.locator('section[aria-label="API checks"] script').count(),
     0,
   );
+  const downloadEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download API report' }).click();
+  const download = await downloadEvent;
+  assert.equal(download.suggestedFilename(), 'dogwatch-api-fixture.md');
+  const stream = await download.createReadStream();
+  let downloaded = '';
+  for await (const chunk of stream) downloaded += chunk.toString();
+  assert.equal(downloaded, '# Synthetic API report\n1 failed\n');
   mode = 'incomplete';
   await open();
   assert.ok(
@@ -140,6 +155,10 @@ try {
   );
   assert.equal(
     await page.getByText('0 passed · 1 failed', { exact: false }).count(),
+    0,
+  );
+  assert.equal(
+    await page.getByRole('button', { name: 'Download API report' }).count(),
     0,
   );
   console.log(

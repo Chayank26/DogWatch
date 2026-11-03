@@ -37,7 +37,8 @@
     "preverify:run-controls": "npm run build -w @dogwatch/telemetry",
     "preverify:usage": "npm run build -w @dogwatch/telemetry",
     "verify:telemetry": "tsx src/verify-telemetry.ts",
-    "preverify:telemetry": "npm run build -w @dogwatch/telemetry"
+    "preverify:telemetry": "npm run build -w @dogwatch/telemetry",
+    "test": "node --import tsx --test src/*.test.ts"
   },
   "devDependencies": {
     "prisma": "^7.10.0"

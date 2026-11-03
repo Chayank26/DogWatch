@@ -497,3 +497,22 @@ prove live GitHub authentication or a customer run. Run it with
 `npm run api-results:verify`; database coverage uses `npm run db:verify:run-views`.
 Next work: live staging integration and report publication. No public deployment
 or customer configuration was enabled in this phase.
+
+## Phase 9.5 — Downloadable API reports
+
+Added a deterministic Markdown report to authorized run detail reads and a
+Download API report button on the run page. Reports include commit/run scope,
+recorded outcomes, case details, coverage gaps and an explicit unavailable-baseline
+statement. They do not claim passing overall coverage or newly introduced
+regressions. Contract text is escaped to prevent Markdown links, HTML and mentions.
+Large reports stay below 50 KB and disclose omitted detail entries while retaining
+full summary counts. Unavailable results have no report download.
+
+Verification passed: two report tests, real PostgreSQL authorized result/report
+reads and revocation/isolation checks, Chromium download filename/content and
+unavailable-result behavior, workspace type checks, production web build, lint,
+formatting and whitespace checks. Browser responses were synthetic; no live GitHub
+or customer execution occurred. Temporary verification services were stopped.
+
+Next: live staging validation and explicitly authorized GitHub publication. The
+report is downloadable for review; this phase does not post comments or checks.

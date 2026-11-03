@@ -104,6 +104,8 @@ try {
   });
   const detail = await views.detail(token, tenants[0], runs[0][0]);
   assert.equal(detail.apiChecks.status, 'recorded');
+  assert.ok(detail.report?.markdown.includes('0 passed · 1 failed'));
+  assert.equal(detail.report?.filename, `dogwatch-api-${runs[0][0]}.md`);
   if (detail.apiChecks.status !== 'recorded') throw Error('Missing result');
   assert.equal(detail.apiChecks.result.results[0].status, 'failed');
   assert.ok(!JSON.stringify(detail).includes(executionToken));

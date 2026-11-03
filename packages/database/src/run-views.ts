@@ -1,3 +1,4 @@
+import { renderApiReport } from './api-report.js';
 import { z } from 'zod';
 import { executionResultSchema } from './execution.js';
 import type { PrismaClient, Prisma } from './generated/prisma/client.js';
@@ -22,6 +23,7 @@ export type RunDetail = RunView & {
         finishedAt: string;
         result: z.infer<typeof executionResultSchema>;
       };
+  report: { filename: string; markdown: string } | null;
   evidence: { status: 'not_cataloged'; message: string };
 };
 export interface RunViewStore {
@@ -139,6 +141,17 @@ export function createRunViewStore(db: PrismaClient): RunViewStore {
                   result: parsed.data,
                 }
               : { status: 'unavailable' },
+          report:
+            run.execution?.finishedAt && parsed.success
+              ? {
+                  filename: `dogwatch-api-${run.id}.md`,
+                  markdown: renderApiReport(
+                    view(run),
+                    run.execution.finishedAt.toISOString(),
+                    parsed.data,
+                  ),
+                }
+              : null,
           evidence: {
             status: 'not_cataloged',
             message:

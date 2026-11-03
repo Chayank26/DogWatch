@@ -183,3 +183,16 @@ state. Evidence availability remains separate. Verify storage authorization with
 `npm run db:verify:run-views`, and the production UI with
 `npm run api-results:verify` (synthetic API responses; requires Chromium and free
 loopback port 3119). Live staging and GitHub publication remain outstanding.
+
+## Phase 9.5 — Download a report
+
+Open a run with recorded API results and select **Download API report**. The
+Markdown file contains recorded outcomes and coverage limitations for that run
+and commit. The same authorized detail read supplies the report; no public report
+URL or unauthenticated artifact endpoint is created. Downloads are generated from
+validated stored metadata and contain no execution tokens, response bodies or
+credentials. Reports under 50 KB may omit details, explicitly counted in the file.
+
+Baseline comparison is unavailable and reports do not assert regression causality.
+GitHub posting remains disabled. Publication requires explicit authorization and
+fresh authority checks; live staging verification still requires an actual target.

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { executionResultSchema } from './execution.js';
 import type { PrismaClient, Prisma } from './generated/prisma/client.js';
 const requestSchema = z.strictObject({
   sessionHash: z.string().regex(/^[a-f0-9]{64}$/),
@@ -14,6 +15,13 @@ export type RunView = {
   previewReady: boolean;
 };
 export type RunDetail = RunView & {
+  apiChecks:
+    | { status: 'unavailable' }
+    | {
+        status: 'recorded';
+        finishedAt: string;
+        result: z.infer<typeof executionResultSchema>;
+      };
   evidence: { status: 'not_cataloged'; message: string };
 };
 export interface RunViewStore {
@@ -114,11 +122,23 @@ export function createRunViewStore(db: PrismaClient): RunViewStore {
       return authorized(sessionHash, tenantId, async (tx) => {
         const run = await tx.run.findFirst({
           where: { id: runId, tenantId },
-          select,
+          select: {
+            ...select,
+            execution: { select: { finishedAt: true, result: true } },
+          },
         });
         if (!run) throw Error('run_view_not_found');
+        const parsed = executionResultSchema.safeParse(run.execution?.result);
         return {
           ...view(run),
+          apiChecks:
+            run.execution?.finishedAt && parsed.success
+              ? {
+                  status: 'recorded',
+                  finishedAt: run.execution.finishedAt.toISOString(),
+                  result: parsed.data,
+                }
+              : { status: 'unavailable' },
           evidence: {
             status: 'not_cataloged',
             message:

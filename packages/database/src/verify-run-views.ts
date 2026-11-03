@@ -71,7 +71,75 @@ try {
     views.detail(token, tenants[0], runs[1][0]),
     /not_found/,
   );
+  assert.equal(
+    (await views.detail(token, tenants[0], runs[0][0])).apiChecks.status,
+    'unavailable',
+  );
+  const executionToken = randomUUID();
+  const result = {
+    status: 'completed',
+    code: 'api_completed',
+    requests: 2,
+    results: [
+      {
+        caseId: 'case-1',
+        operationKey: 'GET /status',
+        status: 'failed',
+        code: 'server_error',
+        httpStatus: 500,
+      },
+    ],
+    coverageGaps: [],
+  };
+  await db.runExecution.create({
+    data: {
+      runId: runs[0][0],
+      tenantId: tenants[0],
+      token: executionToken,
+      expiresAt: new Date(),
+      deadlineAt: new Date(),
+      finishedAt: new Date(),
+      result,
+    },
+  });
   const detail = await views.detail(token, tenants[0], runs[0][0]);
+  assert.equal(detail.apiChecks.status, 'recorded');
+  if (detail.apiChecks.status !== 'recorded') throw Error('Missing result');
+  assert.equal(detail.apiChecks.result.results[0].status, 'failed');
+  assert.ok(!JSON.stringify(detail).includes(executionToken));
+  await db.runExecution.update({
+    where: { runId: runs[0][0] },
+    data: { result: { secret: 'invalid-metadata' } },
+  });
+  assert.equal(
+    (await views.detail(token, tenants[0], runs[0][0])).apiChecks.status,
+    'unavailable',
+  );
+  await db.runExecution.update({
+    where: { runId: runs[0][0] },
+    data: { result, finishedAt: null },
+  });
+  assert.equal(
+    (await views.detail(token, tenants[0], runs[0][0])).apiChecks.status,
+    'unavailable',
+  );
+  await db.runExecution.update({
+    where: { runId: runs[0][0] },
+    data: {
+      result: {
+        ...result,
+        status: 'inconclusive',
+        coverageGaps: [{ code: 'case_budget' }],
+      },
+      finishedAt: new Date(),
+    },
+  });
+  const incomplete = await views.detail(token, tenants[0], runs[0][0]);
+  assert.equal(
+    incomplete.apiChecks.status === 'recorded' &&
+      incomplete.apiChecks.result.status,
+    'inconclusive',
+  );
   assert.equal(detail.evidence.status, 'not_cataloged');
   assert.ok(!JSON.stringify(detail).includes('must-not-leak'));
   assert.ok(!JSON.stringify(detail).includes('private.example'));

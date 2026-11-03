@@ -476,3 +476,24 @@ remains dispatcher-only. Configuration is read at startup; authority policy is
 reloaded for every check. No fixture execution or credential injection is available
 through environment configuration. See docs/product/API_EXECUTION.md for setup and
 retry limitations. User-visible results and live staging validation remain pending.
+
+## Phase 9.4 — Authorized API result presentation
+
+Run detail reads now include validated finished API execution metadata through the
+existing session and tenant membership transaction. Only result and finish time
+are selected; tokens, leases and private configuration are excluded. Missing,
+malformed or unfinished results are unavailable, never inferred to be passing.
+The dashboard displays case outcome counts, individual checks, HTTP statuses and
+coverage gaps, separately from evidence availability and run lifecycle state.
+Contract strings render as escaped text. No baseline regression claim is inferred.
+
+Verification: real local PostgreSQL checks passed for member access, tenant/run
+isolation, session/membership revocation, metadata validation and token exclusion.
+An isolated production dashboard with synthetic authenticated responses passed
+Chromium checks for failed cases, incomplete coverage, absent results, escaped
+contract text and clearing stale results. Workspace type checks, web production
+build, lint, formatting and whitespace checks passed. The browser test does not
+prove live GitHub authentication or a customer run. Run it with
+`npm run api-results:verify`; database coverage uses `npm run db:verify:run-views`.
+Next work: live staging integration and report publication. No public deployment
+or customer configuration was enabled in this phase.

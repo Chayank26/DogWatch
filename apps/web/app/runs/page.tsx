@@ -1,4 +1,6 @@
 'use client';
+import ApiChecks from './api-checks';
+import type { ApiChecksView } from './api-checks';
 import Controls from './controls';
 import { useEffect, useRef, useState } from 'react';
 type Run = {
@@ -9,6 +11,7 @@ type Run = {
   state: string;
   createdAt: string;
   previewReady: boolean;
+  apiChecks?: ApiChecksView;
   evidence?: { message: string };
 };
 export default function Runs() {
@@ -206,6 +209,7 @@ export default function Runs() {
                     : 'Not recorded'}
                 </dd>
               </dl>
+              <ApiChecks checks={detail.apiChecks} />
               <h3>Findings and evidence</h3>
               <p>{detail.evidence?.message}</p>
               <p className="note">

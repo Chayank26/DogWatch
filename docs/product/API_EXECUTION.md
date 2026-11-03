@@ -166,3 +166,20 @@ without replay or invented usage settlement. SIGINT/SIGTERM abort active work,
 close the consumer, then release queue/database connections. Shutdown can leave a
 lease for the next process to reconcile. No live customer deployment has been
 validated; result presentation and operational reconciliation UI remain next work.
+
+## Phase 9.4 — Read results in the dashboard
+
+Sign in, open `/runs`, choose your workspace and select a run. API checks now show
+recorded passed/failed/inconclusive/skipped counts, expandable individual outcomes
+and coverage gaps. Refresh and reopen the run to fetch newer results; this view
+does not poll automatically. Completed execution can contain failed checks.
+Missing, invalid or unfinished result metadata displays as unavailable. No
+baseline comparison or overall passing verdict is invented.
+
+The existing authenticated run-detail endpoint returns `apiChecks` only under its
+session/membership guard and tenant-scoped run query. It selects the finished time
+and validated bounded result, excluding the execution token and internal lease
+state. Evidence availability remains separate. Verify storage authorization with
+`npm run db:verify:run-views`, and the production UI with
+`npm run api-results:verify` (synthetic API responses; requires Chromium and free
+loopback port 3119). Live staging and GitHub publication remain outstanding.

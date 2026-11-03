@@ -562,3 +562,7 @@ Phase 9.2 adds trusted deployment configuration and a GitHub-backed execution
 authority adapter. Accepted webhook runs now retain actor provenance. Worker
 consumer wiring is implemented in Phase 9.3; result presentation remains outstanding; see
 [execution integration](docs/product/API_EXECUTION.md).
+
+Phase 9.4 implements authorized stored API result reads and dashboard presentation.
+Database isolation/redaction and production-browser rendering were verified
+locally. Live opted-in staging validation and report publication remain pending.

@@ -163,8 +163,8 @@ No cloud service or complete live PR pipeline is deployed by this command.
 The selected first working-product workflow is API contract checks. A new
 [durable API supervisor](docs/product/API_EXECUTION.md) connects a queue delivery
 to bounded read-only HTTP execution and atomic result/usage persistence, verified
-with `npm run api-supervisor:verify`. Authorized result UI, publication wiring
-and live staging validation remain pending.
+with `npm run api-supervisor:verify`. Authorized result reads and dashboard presentation are implemented. Publication
+wiring and live staging validation remain pending.
 
 The worker can now enable read-only API consumption with
 `API_CONSUMER_ENABLED=true` and complete operator/GitHub configuration. See

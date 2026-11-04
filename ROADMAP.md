@@ -569,3 +569,6 @@ locally. Live opted-in staging validation and report publication remain pending.
 
 Phase 9.5 adds authorized Markdown report downloads. Live staging verification
 and explicitly authorized GitHub publication remain pending.
+
+Phase 9.6 adds offline staging configuration validation and enforces contract/grant
+consistency at startup. A live target is still required for staging verification.

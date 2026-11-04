@@ -516,3 +516,20 @@ or customer execution occurred. Temporary verification services were stopped.
 
 Next: live staging validation and explicitly authorized GitHub publication. The
 report is downloadable for review; this phase does not post comments or checks.
+
+## Phase 9.6 — Staging configuration validation
+
+Added offline `npm run api-config:check -- /path/to/api-execution.json` using the
+same configuration parser as consumer startup. Empty configurations, invalid or
+unsupported OpenAPI, missing/duplicate operation grants and operations requiring
+credentials are rejected before consumption. Anonymous security alternatives are
+supported. The command uses bounded file reads, returns nonzero on failure and
+prints no configuration contents. It performs no network or database calls.
+
+Five affected tests and valid/invalid CLI checks passed, including sanitized
+errors. Worker production build, lint, formatting and whitespace checks passed.
+No live staging run was possible: the repository remote is known but target
+repository, HTTPS staging URL and OpenAPI location are still unconfirmed. These
+were requested from the user. This is configuration validation, not proof of
+connectivity, deployment identity or GitHub authority. Live staging validation
+and explicitly authorized publication remain pending.

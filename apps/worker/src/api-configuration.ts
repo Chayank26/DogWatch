@@ -1,4 +1,5 @@
 /** Operator-owned, immutable deployment configuration; never loaded from PR content. */
+import { validateApiContract } from './openapi.js';
 import { z } from 'zod';
 import { scopeSchema, grantSchema, limitsSchema } from './api-execution.js';
 import type { ApiExecutionInput } from './api-execution.js';
@@ -20,7 +21,7 @@ const entrySchema = z.strictObject({
   limits: limitsSchema.optional(),
 });
 export function createApiConfiguration(input: unknown) {
-  const entries = z.array(entrySchema).max(1000).parse(input);
+  const entries = z.array(entrySchema).min(1).max(1000).parse(input);
   const keys = new Set<string>();
   const key = (b: {
     tenantId: string;
@@ -36,6 +37,33 @@ export function createApiConfiguration(input: unknown) {
     ]);
   for (const entry of entries) {
     validatePreviewUrl(new URL(entry.binding.url), entry.binding);
+    const contract = validateApiContract(
+      {
+        tenantId: entry.binding.tenantId,
+        repositoryId: entry.binding.repositoryId,
+        headSha: entry.binding.headSha,
+      },
+      entry.contractText,
+    );
+    if (contract.status !== 'supported')
+      throw Error('execution_contract_invalid');
+    const grants = new Set<string>();
+    for (const grant of entry.operations) {
+      const identity = `${grant.method} ${grant.path}`;
+      if (grants.has(identity)) throw Error('execution_operation_duplicate');
+      grants.add(identity);
+      const operation = contract.operations.find(
+        (op) => op.method === grant.method && op.path === grant.path,
+      );
+      if (!operation) throw Error('execution_operation_missing');
+      if (
+        operation.security.length &&
+        !operation.security.some(
+          (requirement) => Object.keys(requirement).length === 0,
+        )
+      )
+        throw Error('execution_credentials_unsupported');
+    }
     const identity = key(entry.binding);
     if (keys.has(identity)) throw Error('execution_configuration_ambiguous');
     keys.add(identity);

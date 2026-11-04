@@ -17,7 +17,13 @@ const entry = {
     url: 'https://preview.example.com/health',
     allowedOrigins: ['https://preview.example.com'],
   },
-  contractText: '{}',
+  contractText: JSON.stringify({
+    openapi: '3.0.3',
+    info: { title: 'Fixture', version: '1' },
+    paths: {
+      '/check': { get: { responses: { '200': { description: 'OK' } } } },
+    },
+  }),
   operations: [{ method: 'GET', path: '/check' }],
 };
 test('configuration requires exact deployment scope and returns independent inputs', () => {
@@ -49,5 +55,44 @@ test('ambiguous, private, mutable and fixture configurations are refused', () =>
         },
       },
     ]),
+  );
+});
+
+test('startup rejects malformed contracts, missing and duplicate grants and required credentials', () => {
+  assert.throws(
+    () => createApiConfiguration([{ ...entry, contractText: '{}' }]),
+    /execution_contract_invalid/,
+  );
+  assert.throws(
+    () =>
+      createApiConfiguration([
+        { ...entry, operations: [{ method: 'GET', path: '/absent' }] },
+      ]),
+    /execution_operation_missing/,
+  );
+  assert.throws(
+    () =>
+      createApiConfiguration([
+        { ...entry, operations: [...entry.operations, ...entry.operations] },
+      ]),
+    /execution_operation_duplicate/,
+  );
+  const secured = JSON.parse(entry.contractText);
+  secured.components = {
+    securitySchemes: { bearer: { type: 'http', scheme: 'bearer' } },
+  };
+  secured.security = [{ bearer: [] }];
+  assert.throws(
+    () =>
+      createApiConfiguration([
+        { ...entry, contractText: JSON.stringify(secured) },
+      ]),
+    /execution_credentials_unsupported/,
+  );
+  secured.security.push({});
+  assert.ok(
+    createApiConfiguration([
+      { ...entry, contractText: JSON.stringify(secured) },
+    ])(scope),
   );
 });

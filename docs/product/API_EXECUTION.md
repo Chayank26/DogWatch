@@ -141,14 +141,14 @@ The execution file is a JSON array of entries with `binding`, `contractText`,
       "url": "https://preview.example.com/health",
       "allowedOrigins": ["https://preview.example.com"]
     },
-    "contractText": "{\"openapi\":\"3.0.3\",\"info\":{\"title\":\"Example\",\"version\":\"1\"},\"paths\":{}}",
+    "contractText": "{\"openapi\":\"3.0.3\",\"info\":{\"title\":\"Example\",\"version\":\"1\"},\"paths\":{\"/status\":{\"get\":{\"responses\":{\"200\":{\"description\":\"OK\"}}}}}}",
     "operations": [{ "method": "GET", "path": "/status" }]
   }
 ]
 ```
 
 Replace every example value with the verified deployment and actual OpenAPI text;
-the empty example contract does not provide test coverage. Restart the worker
+the example contract only declares a status response, not your actual API behavior. Restart the worker
 when replacing deployment configuration. Policy is reloaded on each authority
 check, so revocation does not require restart. No fixture mode, bearer credentials,
 mutation grants or PR-controlled file loading are enabled by this startup path.
@@ -196,3 +196,13 @@ credentials. Reports under 50 KB may omit details, explicitly counted in the fil
 Baseline comparison is unavailable and reports do not assert regression causality.
 GitHub posting remains disabled. Publication requires explicit authorization and
 fresh authority checks; live staging verification still requires an actual target.
+
+## Phase 9.6 — Check configuration before enabling consumption
+
+Run `npm run api-config:check -- .local/api-execution.json`. It validates the
+nonempty configuration and supported OpenAPI locally, checks every grant against
+the contract and rejects duplicate grants or operations requiring credentials.
+The initial consumer only supports anonymous GET/HEAD access. A successful check
+does not contact GitHub, resolve target DNS or verify the deployment; those checks
+still happen during execution. Invalid configuration exits nonzero without
+printing its contents. Consumer startup applies the same validation.

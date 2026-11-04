@@ -20,7 +20,13 @@ const configuration = createApiConfiguration([
       url: 'https://example.com/health',
       allowedOrigins: ['https://example.com'],
     },
-    contractText: '{}',
+    contractText: JSON.stringify({
+      openapi: '3.0.3',
+      info: { title: 'Fixture', version: '1' },
+      paths: {
+        '/check': { get: { responses: { '200': { description: 'OK' } } } },
+      },
+    }),
     operations: [{ method: 'GET', path: '/check' }],
   },
 ]);
